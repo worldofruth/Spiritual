@@ -1,17 +1,32 @@
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
 <title>Grace Planner</title>
+
+<!-- TYPOGRAPHY -->
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<link
+href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap"
+rel="stylesheet"
+/>
 
 <style>
+
+/* =========================================================
+RESET
+========================================================= */
 
 *{
 margin:0;
@@ -25,98 +40,126 @@ scroll-behavior:smooth;
 
 body{
 
---bg:#070707;
---card:#121212;
---text:#f6f1ea;
---muted:#948c84;
---accent:#d6b88d;
---line:rgba(255,255,255,.06);
---glow:rgba(215,185,142,.12);
-
 font-family:'Inter',sans-serif;
 
-background:
-radial-gradient(circle at top,
-var(--glow),
-transparent 35%
-),
-var(--bg);
+background:var(--bg);
 
 color:var(--text);
 
-min-height:100vh;
-
 overflow-x:hidden;
 
-transition:.4s ease;
+transition:
+background .35s ease,
+color .35s ease;
 
 }
 
-/* THEMES */
+/* =========================================================
+THEMES
+========================================================= */
+
+:root{
+
+/* DEFAULT = MIDNIGHT */
+
+--bg:#080808;
+
+--card:#121212;
+
+--text:#f5f1ea;
+
+--muted:#948d86;
+
+--accent:#d8b88b;
+
+--line:rgba(255,255,255,.06);
+
+--shadow:
+0 10px 30px rgba(0,0,0,.18);
+
+}
+
+/* SAND */
 
 body.theme-sand{
 
---bg:#f6efe6;
+--bg:#f5eee6;
+
 --card:#fffaf4;
---text:#211d19;
---muted:#7c736a;
---accent:#b68e61;
+
+--text:#231d18;
+
+--muted:#7b7268;
+
+--accent:#b88f65;
+
 --line:rgba(0,0,0,.06);
---glow:rgba(182,142,97,.16);
+
+--shadow:
+0 10px 30px rgba(0,0,0,.06);
 
 }
+
+/* ROSE */
 
 body.theme-rose{
 
---bg:#f8eef1;
+--bg:#f7eef1;
+
 --card:#fff8f9;
---text:#2a2022;
---muted:#8f7c82;
---accent:#cf9ba8;
+
+--text:#2b2123;
+
+--muted:#8a7a81;
+
+--accent:#cc9daa;
+
 --line:rgba(0,0,0,.05);
---glow:rgba(207,155,168,.15);
+
+--shadow:
+0 10px 30px rgba(0,0,0,.06);
 
 }
+
+/* BLUE */
 
 body.theme-blue{
 
---bg:#0d1422;
---card:#172031;
+--bg:#0d1522;
+
+--card:#172132;
+
 --text:#eef4ff;
---muted:#92a1bb;
---accent:#8ca7da;
+
+--muted:#96a3bc;
+
+--accent:#8ea7d9;
+
 --line:rgba(255,255,255,.06);
---glow:rgba(140,167,218,.12);
 
 }
+
+/* SAGE */
 
 body.theme-sage{
 
 --bg:#eef2ed;
+
 --card:#fbfdf9;
---text:#20251f;
---muted:#738072;
+
+--text:#1f241f;
+
+--muted:#748072;
+
 --accent:#89a68d;
+
 --line:rgba(0,0,0,.05);
---glow:rgba(137,166,141,.16);
 
 }
 
-body::before{
-
-content:'';
-
-position:fixed;
-inset:0;
-
-background-image:
-url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='rgba(255,255,255,0.02)'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
-
-opacity:.35;
-
-pointer-events:none;
-
-}
+/* =========================================================
+GLOBAL
+========================================================= */
 
 .hidden{
 display:none !important;
@@ -131,13 +174,61 @@ margin:auto;
 padding:
 24px
 22px
-140px;
+180px;
 
 min-height:100vh;
 
 }
 
-/* TOPBAR */
+/* =========================================================
+TYPOGRAPHY
+========================================================= */
+
+.hero small{
+
+display:block;
+
+font-size:11px;
+
+letter-spacing:4px;
+
+margin-bottom:18px;
+
+color:var(--muted);
+
+}
+
+.hero h1{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:64px;
+
+line-height:.92;
+
+font-weight:500;
+
+margin-bottom:16px;
+
+letter-spacing:-1px;
+
+}
+
+.hero p{
+
+line-height:1.75;
+
+max-width:320px;
+
+color:var(--muted);
+
+font-size:15px;
+
+}
+
+/* =========================================================
+TOPBAR
+========================================================= */
 
 .topbar{
 
@@ -145,7 +236,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 
-margin-bottom:50px;
+margin-bottom:42px;
 
 }
 
@@ -159,10 +250,10 @@ color:var(--accent);
 
 }
 
-.icon-btn{
+.theme-button{
 
-width:54px;
-height:54px;
+width:52px;
+height:52px;
 
 border-radius:50%;
 
@@ -175,19 +266,263 @@ display:flex;
 align-items:center;
 justify-content:center;
 
+cursor:pointer;
+
+backdrop-filter:blur(10px);
+
+transition:.25s ease;
+
+}
+
+.theme-button:hover{
+
+transform:translateY(-2px);
+
+}
+
+/* =========================================================
+CARDS
+========================================================= */
+
+.card{
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+border-radius:32px;
+
+padding:22px;
+
+margin-top:18px;
+
 backdrop-filter:blur(20px);
+
+box-shadow:var(--shadow);
+
+}
+
+.label{
+
+font-size:11px;
+
+letter-spacing:4px;
+
+margin-bottom:18px;
+
+color:var(--accent);
+
+}
+
+.section-title{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:14px;
+
+}
+
+.section-title h2{
+
+font-size:13px;
+
+font-weight:500;
+
+letter-spacing:3px;
+
+color:var(--muted);
+
+}
+
+.link{
+
+font-size:12px;
+
+letter-spacing:2px;
 
 cursor:pointer;
 
-transition:.3s ease;
+color:var(--accent);
 
 }
 
-.icon-btn:hover{
-transform:scale(.95);
+/* =========================================================
+BUTTONS
+========================================================= */
+
+.button{
+
+width:100%;
+
+padding:18px;
+
+border:none;
+
+border-radius:22px;
+
+background:var(--accent);
+
+color:white;
+
+font-weight:600;
+
+cursor:pointer;
+
+margin-top:18px;
+
+transition:.25s ease;
+
 }
 
-/* THEME MENU */
+.button:hover{
+
+transform:translateY(-1px);
+
+}
+
+/* =========================================================
+INPUTS
+========================================================= */
+
+.input,
+textarea{
+
+width:100%;
+
+margin-top:14px;
+
+padding:16px 18px;
+
+border-radius:22px;
+
+border:1px solid var(--line);
+
+background:
+rgba(255,255,255,.03);
+
+outline:none;
+
+font-family:inherit;
+
+font-size:15px;
+
+color:var(--text);
+
+}
+
+textarea{
+
+resize:none;
+
+min-height:120px;
+
+}
+
+/* =========================================================
+BOTTOM NAV
+========================================================= */
+
+.bottom-nav{
+
+position:fixed;
+
+left:50%;
+bottom:18px;
+
+transform:translateX(-50%);
+
+width:calc(100% - 34px);
+max-width:390px;
+
+padding:18px;
+
+border-radius:34px;
+
+background:
+rgba(15,15,15,.9);
+
+border:1px solid rgba(255,255,255,.05);
+
+display:flex;
+justify-content:space-around;
+
+backdrop-filter:blur(20px);
+
+z-index:999;
+
+}
+
+.nav-item{
+
+text-align:center;
+
+cursor:pointer;
+
+font-size:10px;
+
+letter-spacing:2px;
+
+color:var(--muted);
+
+transition:.25s ease;
+
+}
+
+.nav-item.active{
+
+color:var(--accent);
+
+}
+
+.nav-icon{
+
+font-size:18px;
+
+margin-bottom:8px;
+
+}
+
+/* =========================================================
+FLOATING BUTTON
+========================================================= */
+
+.floating-button{
+
+position:fixed;
+
+right:22px;
+bottom:120px;
+
+width:62px;
+height:62px;
+
+border-radius:50%;
+
+background:var(--accent);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+color:white;
+
+font-size:28px;
+
+cursor:pointer;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,.18);
+
+z-index:999;
+
+}
+
+/* =========================================================
+THEME MENU
+========================================================= */
 
 .theme-menu{
 
@@ -196,36 +531,20 @@ position:fixed;
 top:90px;
 right:22px;
 
-width:220px;
+width:230px;
 
 padding:20px;
+
+border-radius:28px;
 
 background:var(--card);
 
 border:1px solid var(--line);
 
-border-radius:28px;
-
-backdrop-filter:blur(30px);
-
-z-index:99999;
+z-index:9999;
 
 box-shadow:
-0 20px 50px rgba(0,0,0,.2);
-
-}
-
-.theme-menu h3{
-
-font-size:13px;
-
-letter-spacing:3px;
-
-margin-bottom:18px;
-
-color:var(--muted);
-
-font-weight:500;
+0 20px 40px rgba(0,0,0,.18);
 
 }
 
@@ -241,7 +560,7 @@ border-radius:18px;
 
 cursor:pointer;
 
-transition:.25s ease;
+transition:.2s ease;
 
 }
 
@@ -254,673 +573,40 @@ rgba(255,255,255,.04);
 
 .theme-preview{
 
-width:24px;
-height:24px;
+width:22px;
+height:22px;
 
 border-radius:50%;
 
 }
 
+/* =========================================================
+PREVIEWS
+========================================================= */
+
 .preview-midnight{
-background:#0c0c0c;
+background:#090909;
 }
 
 .preview-sand{
-background:#b68e61;
+background:#b88f65;
 }
 
 .preview-rose{
-background:#cf9ba8;
+background:#cc9daa;
 }
 
 .preview-blue{
-background:#8ca7da;
+background:#8ea7d9;
 }
 
 .preview-sage{
 background:#89a68d;
 }
 
-/* HERO */
-
-.hero small{
-
-display:block;
-
-margin-bottom:20px;
-
-font-size:11px;
-
-letter-spacing:4px;
-
-color:var(--muted);
-
-}
-
-.hero h1{
-
-font-family:'Cormorant Garamond',serif;
-
-font-size:72px;
-
-line-height:.9;
-
-font-weight:500;
-
-margin-bottom:18px;
-
-}
-
-.hero p{
-
-line-height:1.8;
-
-max-width:320px;
-
-color:var(--muted);
-
-}
-
-/* CARDS */
-
-.card{
-
-margin-top:22px;
-
-padding:28px;
-
-border-radius:34px;
-
-background:
-linear-gradient(
-180deg,
-rgba(255,255,255,.04),
-rgba(255,255,255,.015)
-);
-
-border:1px solid var(--line);
-
-backdrop-filter:blur(24px);
-
-box-shadow:
-0 20px 50px rgba(0,0,0,.12);
-
-}
-
-body.theme-sand .card,
-body.theme-rose .card,
-body.theme-sage .card{
-
-background:
-linear-gradient(
-180deg,
-rgba(255,255,255,.85),
-rgba(255,255,255,.65)
-);
-
-}
-
-.label{
-
-font-size:11px;
-
-letter-spacing:4px;
-
-margin-bottom:22px;
-
-color:var(--accent);
-
-}
-
-.verse{
-
-font-family:'Cormorant Garamond',serif;
-
-font-size:48px;
-
-line-height:1.1;
-
-margin-bottom:22px;
-
-}
-
-.reference{
-
-color:var(--muted);
-
-line-height:1.7;
-
-}
-
-.note{
-
-font-size:20px;
-
-line-height:1.8;
-
-font-style:italic;
-
-color:var(--muted);
-
-}
-
-/* STATS */
-
-.stats{
-
-display:grid;
-grid-template-columns:1fr 1fr;
-
-gap:14px;
-
-margin-top:18px;
-
-}
-
-.stat{
-
-padding:24px;
-
-border-radius:28px;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid var(--line);
-
-}
-
-.stat-number{
-
-font-size:34px;
-
-margin-bottom:10px;
-
-}
-
-.stat-label{
-
-font-size:14px;
-
-line-height:1.7;
-
-color:var(--muted);
-
-}
-
-/* TASK */
-
-.task{
-
-padding:22px;
-
-border-radius:28px;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid var(--line);
-
-margin-bottom:14px;
-
-display:flex;
-gap:18px;
-
-cursor:pointer;
-
-transition:.3s ease;
-
-}
-
-.task:hover{
-transform:translateY(-2px);
-}
-
-.task-line{
-
-width:3px;
-
-border-radius:20px;
-
-background:var(--accent);
-
-}
-
-.task small{
-
-display:block;
-
-margin-bottom:8px;
-
-font-size:10px;
-
-letter-spacing:3px;
-
-color:var(--muted);
-
-}
-
-.task h3{
-
-font-family:'Cormorant Garamond',serif;
-
-font-size:30px;
-
-font-weight:500;
-
-}
-
-.task-icons{
-
-margin-top:10px;
-
-display:flex;
-gap:8px;
-
-font-size:14px;
-
-}
-
-/* WEEKLY */
-
-.week-grid{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:14px;
-
-margin-top:22px;
-
-}
-
-.week-day{
-
-padding:24px;
-
-border-radius:30px;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid var(--line);
-
-min-height:160px;
-
-cursor:pointer;
-
-transition:.3s ease;
-
-}
-
-.week-day:hover{
-transform:translateY(-2px);
-}
-
-.week-day small{
-
-display:block;
-
-margin-bottom:10px;
-
-font-size:10px;
-
-letter-spacing:3px;
-
-color:var(--muted);
-
-}
-
-.week-day h3{
-
-font-family:'Cormorant Garamond',serif;
-
-font-size:34px;
-
-font-weight:500;
-
-margin-bottom:12px;
-
-}
-
-.week-icons{
-
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-
-font-size:14px;
-
-}
-
-/* TOGGLE */
-
-.toggle{
-
-display:flex;
-
-background:
-rgba(255,255,255,.04);
-
-border:1px solid var(--line);
-
-padding:6px;
-
-border-radius:999px;
-
-margin-top:24px;
-
-}
-
-.toggle button{
-
-flex:1;
-
-padding:14px;
-
-border:none;
-
-background:transparent;
-
-color:var(--muted);
-
-border-radius:999px;
-
-cursor:pointer;
-
-}
-
-.toggle button.active{
-
-background:var(--accent);
-
-color:white;
-
-}
-
-/* CALENDAR */
-
-.calendar{
-
-display:grid;
-
-grid-template-columns:repeat(7,1fr);
-
-gap:10px;
-
-margin-top:20px;
-
-}
-
-.day{
-
-aspect-ratio:1;
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-border-radius:18px;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid var(--line);
-
-cursor:pointer;
-
-}
-
-.day.active{
-
-background:var(--accent);
-
-color:white;
-
-}
-
-/* JOURNAL */
-
-textarea,
-.input{
-
-width:100%;
-
-margin-top:14px;
-
-padding:18px;
-
-border:none;
-
-outline:none;
-
-border-radius:24px;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid var(--line);
-
-font-family:inherit;
-
-color:var(--text);
-
-}
-
-textarea{
-
-resize:none;
-
-min-height:160px;
-
-}
-
-.mood-grid{
-
-display:grid;
-
-grid-template-columns:repeat(5,1fr);
-
-gap:10px;
-
-margin-top:18px;
-
-}
-
-.mood{
-
-padding:14px;
-
-border-radius:18px;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid var(--line);
-
-text-align:center;
-
-cursor:pointer;
-
-font-size:20px;
-
-transition:.25s ease;
-
-}
-
-.mood:hover{
-
-transform:translateY(-2px);
-
-border-color:var(--accent);
-
-}
-
-.history-entry{
-
-padding:18px 0;
-
-border-bottom:1px solid var(--line);
-
-}
-
-.history-entry:last-child{
-border-bottom:none;
-}
-
-.history-entry h4{
-
-margin-bottom:8px;
-
-font-size:14px;
-
-color:var(--accent);
-
-}
-
-/* BUTTON */
-
-.button{
-
-width:100%;
-
-padding:18px;
-
-margin-top:18px;
-
-border:none;
-
-border-radius:24px;
-
-cursor:pointer;
-
-font-weight:600;
-
-background:
-linear-gradient(
-180deg,
-var(--accent),
-rgba(0,0,0,.25)
-);
-
-color:white;
-
-}
-
-/* PRAYERS */
-
-.prayer-category{
-
-padding:24px;
-
-border-radius:30px;
-
-background:
-rgba(255,255,255,.03);
-
-border:1px solid var(--line);
-
-margin-top:18px;
-
-}
-
-.prayer-category h3{
-
-font-family:'Cormorant Garamond',serif;
-
-font-size:38px;
-
-font-weight:500;
-
-margin-bottom:10px;
-
-}
-
-.badge{
-
-display:inline-block;
-
-padding:
-8px
-14px;
-
-border-radius:999px;
-
-background:
-rgba(255,255,255,.06);
-
-margin-top:12px;
-
-font-size:12px;
-
-color:var(--accent);
-
-}
-
-/* SETTINGS */
-
-.setting-row{
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-padding:18px 0;
-
-border-bottom:1px solid var(--line);
-
-}
-
-.switch{
-
-width:54px;
-height:30px;
-
-border-radius:999px;
-
-background:
-rgba(255,255,255,.08);
-
-position:relative;
-
-cursor:pointer;
-
-}
-
-.switch::after{
-
-content:'';
-
-position:absolute;
-
-width:22px;
-height:22px;
-
-border-radius:50%;
-
-background:white;
-
-top:4px;
-left:4px;
-
-transition:.3s ease;
-
-}
-
-.switch.active{
-
-background:var(--accent);
-
-}
-
-.switch.active::after{
-
-left:28px;
-
-}
-
-/* SHEET */
+/* =========================================================
+SHEETS
+========================================================= */
 
 .sheet{
 
@@ -937,7 +623,7 @@ padding:30px;
 border-top-left-radius:40px;
 border-top-right-radius:40px;
 
-z-index:999999;
+z-index:99999;
 
 max-height:90vh;
 
@@ -945,6 +631,20 @@ overflow:auto;
 
 box-shadow:
 0 -20px 50px rgba(0,0,0,.25);
+
+animation:sheetUp .3s ease;
+
+}
+
+@keyframes sheetUp{
+
+from{
+transform:translateY(100%);
+}
+
+to{
+transform:none;
+}
 
 }
 
@@ -954,15 +654,15 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 
-margin-bottom:24px;
+margin-bottom:22px;
 
 }
 
-.sheet h2{
+.sheet-title{
 
 font-family:'Cormorant Garamond',serif;
 
-font-size:48px;
+font-size:42px;
 
 font-weight:500;
 
@@ -978,74 +678,25 @@ color:var(--muted);
 
 }
 
-/* NAV */
+/* =========================================================
+EMPTY STATES
+========================================================= */
 
-.bottom-nav{
+.empty-state{
 
-position:fixed;
-
-bottom:18px;
-left:50%;
-
-transform:translateX(-50%);
-
-width:calc(100% - 34px);
-max-width:390px;
-
-padding:18px;
-
-border-radius:34px;
-
-background:
-rgba(15,15,15,.85);
-
-border:1px solid rgba(255,255,255,.05);
-
-backdrop-filter:blur(30px);
-
-display:flex;
-justify-content:space-around;
-
-z-index:9999;
-
-}
-
-body.theme-sand .bottom-nav,
-body.theme-rose .bottom-nav,
-body.theme-sage .bottom-nav{
-
-background:
-rgba(255,255,255,.75);
-
-}
-
-.nav-item{
+padding:32px 0;
 
 text-align:center;
 
-font-size:10px;
-
-letter-spacing:2px;
+line-height:1.8;
 
 color:var(--muted);
 
-cursor:pointer;
-
 }
 
-.nav-item.active{
-color:var(--accent);
-}
-
-.nav-icon{
-
-font-size:20px;
-
-margin-bottom:8px;
-
-}
-
-/* ONBOARDING */
+/* =========================================================
+ONBOARDING
+========================================================= */
 
 .onboarding{
 
@@ -1060,7 +711,7 @@ align-items:center;
 
 padding:30px;
 
-z-index:9999999;
+z-index:999999;
 
 }
 
@@ -1075,11 +726,15 @@ max-width:380px;
 
 font-family:'Cormorant Garamond',serif;
 
-font-size:78px;
+font-size:76px;
 
 line-height:.9;
 
+font-weight:500;
+
 margin-bottom:18px;
+
+letter-spacing:-2px;
 
 }
 
@@ -1087,9 +742,41 @@ margin-bottom:18px;
 
 line-height:1.8;
 
+margin-bottom:28px;
+
 color:var(--muted);
 
-margin-bottom:28px;
+}
+
+/* =========================================================
+SCREEN PLACEHOLDER
+========================================================= */
+
+.screen-placeholder{
+
+padding-top:80px;
+
+}
+
+.screen-placeholder h2{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:48px;
+
+margin-bottom:16px;
+
+font-weight:500;
+
+}
+
+.screen-placeholder p{
+
+line-height:1.8;
+
+color:var(--muted);
+
+max-width:320px;
 
 }
 
@@ -1098,7 +785,9 @@ margin-bottom:28px;
 
 <body>
 
-<!-- ONBOARDING -->
+<!-- =========================================================
+ONBOARDING
+========================================================= -->
 
 <div
 class="onboarding"
@@ -1134,9 +823,15 @@ Entrer
 
 </div>
 
+<!-- =========================================================
+APP
+========================================================= -->
+
 <div class="app">
 
-<!-- TOPBAR -->
+<!-- =========================================================
+TOPBAR
+========================================================= -->
 
 <div class="topbar">
 
@@ -1145,7 +840,7 @@ GRACE PLANNER
 </div>
 
 <div
-class="icon-btn"
+class="theme-button"
 onclick="toggleThemeMenu()"
 >
 ✦
@@ -1153,16 +848,14 @@ onclick="toggleThemeMenu()"
 
 </div>
 
-<!-- THEME MENU -->
+<!-- =========================================================
+THEME MENU
+========================================================= -->
 
 <div
 class="theme-menu hidden"
 id="themeMenu"
 >
-
-<h3>
-THÈMES
-</h3>
 
 <div
 class="theme-option"
@@ -1206,7 +899,9 @@ onclick="setTheme('theme-sage')"
 
 </div>
 
-<!-- HOME -->
+<!-- =========================================================
+HOME
+========================================================= -->
 
 <section id="homeScreen">
 
@@ -1218,7 +913,7 @@ MERCREDI 13 MAI
 
 <h1 id="heroName">
 Bonjour,<br>
-Clémence
+Vikie
 </h1>
 
 <p>
@@ -1228,616 +923,112 @@ chacun de tes pas aujourd’hui.
 
 </div>
 
-<div class="card">
+<div class="screen-placeholder">
 
-<div class="label">
-PAROLE DU JOUR
-</div>
+<h2>
+Home
+</h2>
 
-<div class="verse">
-“Je connais les projets
-que j’ai formés sur vous.”
-</div>
-
-<div class="reference">
-Jérémie 29:11
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="label">
-PLANNING DU JOUR
-</div>
-
-<div class="task">
-
-<div class="task-line"></div>
-
-<div>
-
-<small>
-PRIÈRE
-</small>
-
-<h3>
-Famille
-</h3>
-
-<div class="task-icons">
-✞
-</div>
-
-</div>
-
-</div>
-
-<div class="task">
-
-<div class="task-line"></div>
-
-<div>
-
-<small>
-ENSEIGNEMENT
-</small>
-
-<h3>
-Jean 15
-</h3>
-
-<div class="task-icons">
-📖
-</div>
-
-</div>
-
-</div>
-
-<div class="task">
-
-<div class="task-line"></div>
-
-<div>
-
-<small>
-JEÛNE
-</small>
-
-<h3>
-3 jours
-</h3>
-
-<div class="task-icons">
-🔥
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="stats">
-
-<div class="stat">
-
-<div class="stat-number">
-🔥 18
-</div>
-
-<div class="stat-label">
-jours avec Dieu
-</div>
-
-</div>
-
-<div class="stat">
-
-<div class="stat-number">
-4h12
-</div>
-
-<div class="stat-label">
-avec Dieu cette semaine
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="label">
-PETITE NOTE
-</div>
-
-<div class="note">
-Même dans le silence,
-Dieu prépare quelque chose de beau.
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="label">
-CETTE SEMAINE AVEC DIEU
-</div>
-
-<div class="note">
-3 méditations<br>
-5 prières<br>
-1 période de jeûne<br>
-4 enseignements
-</div>
+<p>
+La Home complète sera branchée
+à l’étape suivante.
+</p>
 
 </div>
 
 </section>
 
-<!-- PLANNER -->
+<!-- =========================================================
+PLANNER
+========================================================= -->
 
 <section
 id="plannerScreen"
 class="hidden"
 >
 
-<div class="hero">
+<div class="screen-placeholder">
 
-<small>
-PLANNER
-</small>
-
-<h1>
-Ta semaine
-</h1>
+<h2>
+Planner
+</h2>
 
 <p>
-Organise tes temps spirituels
-avec paix et clarté.
+Weekly + Monthly planner
+seront ajoutés à l’étape suivante.
 </p>
-
-</div>
-
-<div class="toggle">
-
-<button
-class="active"
-id="weeklyBtn"
-onclick="showWeekly()"
->
-Weekly
-</button>
-
-<button
-id="monthlyBtn"
-onclick="showMonthly()"
->
-Monthly
-</button>
-
-</div>
-
-<!-- WEEKLY -->
-
-<div id="weeklyPlanner">
-
-<div class="week-grid">
-
-<div
-class="week-day"
-onclick="openSheet('Lundi 4 Mai')"
->
-
-<small>
-LUNDI
-</small>
-
-<h3>
-04
-</h3>
-
-<div class="week-icons">
-✞ 📖 🔥
-</div>
-
-</div>
-
-<div
-class="week-day"
-onclick="openSheet('Mardi 5 Mai')"
->
-
-<small>
-MARDI
-</small>
-
-<h3>
-05
-</h3>
-
-<div class="week-icons">
-📖
-</div>
-
-</div>
-
-<div
-class="week-day"
-onclick="openSheet('Mercredi 6 Mai')"
->
-
-<small>
-MERCREDI
-</small>
-
-<h3>
-06
-</h3>
-
-<div class="week-icons">
-✞
-</div>
-
-</div>
-
-<div
-class="week-day"
-onclick="openSheet('Jeudi 7 Mai')"
->
-
-<small>
-JEUDI
-</small>
-
-<h3>
-07
-</h3>
-
-<div class="week-icons">
-🔥
-</div>
-
-</div>
-
-<div
-class="week-day"
-onclick="openSheet('Vendredi 8 Mai')"
->
-
-<small>
-VENDREDI
-</small>
-
-<h3>
-08
-</h3>
-
-<div class="week-icons">
-✞ 📖
-</div>
-
-</div>
-
-<div
-class="week-day"
-onclick="openSheet('Samedi 9 Mai')"
->
-
-<small>
-SAMEDI
-</small>
-
-<h3>
-09
-</h3>
-
-<div class="week-icons">
-📖
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- MONTHLY -->
-
-<div
-id="monthlyPlanner"
-class="hidden"
->
-
-<div class="card">
-
-<div class="label">
-MAI 2026
-</div>
-
-<div class="calendar">
-
-<div class="day">1</div>
-<div class="day">2</div>
-<div class="day active">3</div>
-<div class="day">4</div>
-<div class="day">5</div>
-<div class="day">6</div>
-<div class="day">7</div>
-
-<div class="day">8</div>
-<div class="day">9</div>
-<div class="day">10</div>
-<div class="day">11</div>
-<div class="day">12</div>
-<div class="day">13</div>
-<div class="day">14</div>
-
-</div>
-
-<button class="button">
-+ Ajouter une période de jeûne
-</button>
-
-</div>
 
 </div>
 
 </section>
 
-<!-- JOURNAL -->
+<!-- =========================================================
+JOURNAL
+========================================================= -->
 
 <section
 id="journalScreen"
 class="hidden"
 >
 
-<div class="hero">
+<div class="screen-placeholder">
 
-<small>
-JOURNAL
-</small>
-
-<h1>
-Ton coeur
-</h1>
+<h2>
+Journal
+</h2>
 
 <p>
-Écris ce que Dieu met dans ton coeur.
+Le journal spirituel complet
+sera ajouté ensuite.
 </p>
-
-</div>
-
-<div class="card">
-
-<div class="label">
-MERCREDI 13 MAI
-</div>
-
-<div class="mood-grid">
-
-<div class="mood">
-🤍
-</div>
-
-<div class="mood">
-😊
-</div>
-
-<div class="mood">
-🙏
-</div>
-
-<div class="mood">
-😔
-</div>
-
-<div class="mood">
-🔥
-</div>
-
-</div>
-
-<textarea
-id="journalText"
-placeholder="Écris ici..."
-></textarea>
-
-<button
-class="button"
-onclick="saveJournal()"
->
-Sauvegarder
-</button>
-
-</div>
-
-<div class="card">
-
-<div class="label">
-HISTORIQUE
-</div>
-
-<div id="journalHistory"></div>
 
 </div>
 
 </section>
 
-<!-- PRAYERS -->
+<!-- =========================================================
+PRAYERS
+========================================================= -->
 
 <section
 id="prayerScreen"
 class="hidden"
 >
 
-<div class="hero">
+<div class="screen-placeholder">
 
-<small>
-PRIÈRES
-</small>
+<h2>
+Prières
+</h2>
 
-<h1>
-Tes sujets
-</h1>
-
-</div>
-
-<div class="prayer-category">
-
-<h3>
-Famille
-</h3>
-
-<p class="reference">
-3 sujets de prière
+<p>
+Les thèmes et sujets de prières
+seront branchés ensuite.
 </p>
-
-<div class="badge">
-Exaucée ✨
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="task">
-
-<div class="task-line"></div>
-
-<div>
-
-<small>
-SUJET
-</small>
-
-<h3>
-Protection des parents
-</h3>
-
-</div>
-
-</div>
-
-<div class="task">
-
-<div class="task-line"></div>
-
-<div>
-
-<small>
-SUJET
-</small>
-
-<h3>
-Paix dans la famille
-</h3>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="prayer-category">
-
-<h3>
-Amis
-</h3>
-
-<p class="reference">
-2 sujets de prière
-</p>
-
-</div>
-
-<div class="card">
-
-<div class="label">
-DIEU A RÉPONDU ICI ✨
-</div>
-
-<div class="note">
-Merci Seigneur pour cette guérison.
-</div>
 
 </div>
 
 </section>
 
-<!-- SETTINGS -->
+<!-- =========================================================
+SETTINGS
+========================================================= -->
 
 <section
 id="settingsScreen"
 class="hidden"
 >
 
-<div class="hero">
+<div class="screen-placeholder">
 
-<small>
-SETTINGS
-</small>
+<h2>
+Settings
+</h2>
 
-<h1>
-Préférences
-</h1>
-
-</div>
-
-<div class="card">
-
-<div class="setting-row">
-
-<span>
-Notifications
-</span>
-
-<div class="switch active"></div>
-
-</div>
-
-<div class="setting-row">
-
-<span>
-Rappel de prière
-</span>
-
-<div class="switch active"></div>
-
-</div>
-
-<div class="setting-row">
-
-<span>
-Rappel journal
-</span>
-
-<div class="switch"></div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="label">
-PRÉNOM
-</div>
-
-<input
-class="input"
-id="settingsName"
-placeholder="Ton prénom"
-/>
-
-<button
-class="button"
-onclick="saveName()"
->
-Sauvegarder
-</button>
+<p>
+Les préférences et thèmes
+seront finalisés ensuite.
+</p>
 
 </div>
 
@@ -1845,59 +1036,17 @@ Sauvegarder
 
 </div>
 
-<!-- SHEET -->
+<!-- =========================================================
+FLOATING BUTTON
+========================================================= -->
 
-<div
-class="sheet hidden"
-id="plannerSheet"
->
-
-<div class="sheet-header">
-
-<h2 id="sheetTitle">
-Lundi
-</h2>
-
-<div
-class="close"
-onclick="closeSheet()"
->
-×
+<div class="floating-button">
++
 </div>
 
-</div>
-
-<input
-class="input"
-placeholder="Sujet de prière"
-/>
-
-<input
-class="input"
-placeholder="Enseignement"
-/>
-
-<textarea
-placeholder="Méditation / notes"
-></textarea>
-
-<input
-class="input"
-placeholder="Réunion"
-/>
-
-<input
-class="input"
-placeholder="Période de jeûne"
-/>
-
-<button class="button">
-Sauvegarder
-</button>
-
-</div>
-
-<!-- NAV -->
+<!-- =========================================================
+BOTTOM NAV
+========================================================= -->
 
 <nav class="bottom-nav">
 
@@ -1933,7 +1082,7 @@ onclick="showScreen('journalScreen', this)"
 >
 
 <div class="nav-icon">
-☾
+✎
 </div>
 
 JOURNAL
@@ -1970,22 +1119,109 @@ SETTINGS
 
 <script>
 
-/* NAVIGATION */
+/* =========================================================
+GLOBAL STATE
+========================================================= */
+
+let state = {
+
+profile:{
+name:''
+},
+
+planner:{},
+
+journal:[],
+
+prayers:[],
+
+settings:{
+theme:''
+}
+
+};
+
+/* =========================================================
+LOAD STATE
+========================================================= */
+
+function loadState(){
+
+const saved =
+localStorage.getItem('gracePlannerState');
+
+if(saved){
+
+state = JSON.parse(saved);
+
+}
+
+}
+
+/* =========================================================
+SAVE STATE
+========================================================= */
+
+function saveState(){
+
+localStorage.setItem(
+'gracePlannerState',
+JSON.stringify(state)
+);
+
+}
+
+/* =========================================================
+ONBOARDING
+========================================================= */
+
+function startApp(){
+
+const name =
+document
+.getElementById('nameInput')
+.value
+.trim();
+
+if(!name) return;
+
+state.profile.name = name;
+
+saveState();
+
+document
+.getElementById('heroName')
+.innerHTML =
+`Bonjour,<br>${name}`;
+
+document
+.getElementById('onboarding')
+.style.display='none';
+
+}
+
+/* =========================================================
+NAVIGATION
+========================================================= */
 
 const screens = [
+
 'homeScreen',
 'plannerScreen',
 'journalScreen',
 'prayerScreen',
 'settingsScreen'
+
 ];
 
 function showScreen(id, el){
 
 screens.forEach(screen=>{
+
 document
 .getElementById(screen)
 .classList.add('hidden');
+
 });
 
 document
@@ -1995,14 +1231,18 @@ document
 document
 .querySelectorAll('.nav-item')
 .forEach(item=>{
+
 item.classList.remove('active');
+
 });
 
 el.classList.add('active');
 
 }
 
-/* THEME MENU */
+/* =========================================================
+THEMES
+========================================================= */
 
 function toggleThemeMenu(){
 
@@ -2011,8 +1251,6 @@ document
 .classList.toggle('hidden');
 
 }
-
-/* THEMES */
 
 function setTheme(theme){
 
@@ -2024,26 +1262,1239 @@ document.body.classList.remove(
 );
 
 if(theme){
+
 document.body.classList.add(theme);
+
 }
 
-localStorage.setItem(
-'graceTheme',
-theme
+state.settings.theme = theme;
+
+saveState();
+
+}
+
+/* =========================================================
+INIT
+========================================================= */
+
+function init(){
+
+loadState();
+
+if(state.profile.name){
+
+document
+.getElementById('heroName')
+.innerHTML =
+`Bonjour,<br>${state.profile.name}`;
+
+document
+.getElementById('onboarding')
+.style.display='none';
+
+}
+
+if(state.settings.theme){
+
+document.body.classList.add(
+state.settings.theme
 );
 
 }
 
-/* SAVED THEME */
-
-const savedTheme =
-localStorage.getItem('graceTheme');
-
-if(savedTheme){
-document.body.classList.add(savedTheme);
 }
 
-/* WEEKLY / MONTHLY */
+init();
+
+</script>
+
+</body>
+</html>
+
+<!-- =========================================================
+ÉTAPE 2 — HOME COMPLÈTE
+À AJOUTER DANS LA FOUNDATION
+========================================================= -->
+
+<style>
+
+/* =========================================================
+VERSE
+========================================================= */
+
+.verse{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:30px;
+
+line-height:1.35;
+
+margin-bottom:16px;
+
+letter-spacing:-.3px;
+
+}
+
+.reference{
+
+line-height:1.7;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+TASKS
+========================================================= */
+
+.task{
+
+display:flex;
+align-items:flex-start;
+
+gap:14px;
+
+padding:18px 0;
+
+border-bottom:1px solid var(--line);
+
+}
+
+.task:last-child{
+border-bottom:none;
+}
+
+.checkbox{
+
+width:22px;
+height:22px;
+
+border-radius:50%;
+
+border:1.5px solid var(--accent);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:12px;
+
+cursor:pointer;
+
+flex-shrink:0;
+
+margin-top:2px;
+
+transition:.25s ease;
+
+}
+
+.checkbox.completed{
+
+background:var(--accent);
+
+color:white;
+
+}
+
+.task-content h4{
+
+font-size:15px;
+
+font-weight:500;
+
+margin-bottom:6px;
+
+}
+
+.task-content p{
+
+font-size:13px;
+
+line-height:1.6;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+STATS
+========================================================= */
+
+.stats{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:12px;
+
+margin-top:16px;
+
+}
+
+.stat{
+
+padding:20px;
+
+border-radius:26px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+backdrop-filter:blur(20px);
+
+}
+
+.stat-number{
+
+font-size:20px;
+
+font-weight:600;
+
+margin-bottom:8px;
+
+}
+
+.stat-label{
+
+font-size:14px;
+
+line-height:1.6;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+PERSONAL NOTE
+========================================================= */
+
+.personal-note{
+
+width:100%;
+
+min-height:120px;
+
+background:transparent;
+
+border:none;
+
+outline:none;
+
+resize:none;
+
+font-size:18px;
+
+line-height:1.8;
+
+font-family:'Inter',sans-serif;
+
+color:var(--text);
+
+}
+
+/* =========================================================
+TRACKER
+========================================================= */
+
+.tracker-item{
+
+display:flex;
+align-items:center;
+
+gap:14px;
+
+padding:14px 0;
+
+}
+
+.tracker-badge{
+
+width:38px;
+height:38px;
+
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:
+rgba(255,255,255,.04);
+
+border:1px solid var(--line);
+
+font-size:15px;
+
+}
+
+.tracker-content h4{
+
+font-size:15px;
+
+margin-bottom:4px;
+
+}
+
+.tracker-content p{
+
+font-size:13px;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+SMALL ENCOURAGEMENT
+========================================================= */
+
+.soft-encouragement{
+
+margin-top:18px;
+
+padding-left:6px;
+
+font-size:14px;
+
+line-height:1.7;
+
+color:var(--muted);
+
+font-style:italic;
+
+}
+
+</style>
+
+<!-- =========================================================
+REMPLACE LE CONTENU DU homeScreen PAR ÇA
+========================================================= -->
+
+<section id="homeScreen">
+
+<!-- HERO -->
+
+<div class="hero">
+
+<small id="todayDate">
+MERCREDI 13 MAI
+</small>
+
+<h1 id="heroName">
+Bonjour,<br>
+Vikie
+</h1>
+
+<p>
+Que la paix du Seigneur accompagne
+chacun de tes pas aujourd’hui.
+</p>
+
+<div class="soft-encouragement">
+Prends un moment de calme avec Dieu aujourd’hui ✨
+</div>
+
+</div>
+
+<!-- VERSET -->
+
+<div class="card">
+
+<div class="label">
+PAROLE DU JOUR
+</div>
+
+<div class="verse">
+“Je connais les projets que j’ai formés sur vous.”
+</div>
+
+<div class="reference">
+Jérémie 29:11
+</div>
+
+</div>
+
+<!-- TODAY TASKS -->
+
+<div class="card">
+
+<div class="section-title">
+
+<h2>
+PLANNING DU JOUR
+</h2>
+
+<div
+class="link"
+onclick="showScreen('plannerScreen', document.querySelectorAll('.nav-item')[1])"
+>
+VOIR
+</div>
+
+</div>
+
+<div id="todayTasks"></div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat">
+
+<div
+class="stat-number"
+id="completedActivities"
+>
+0 activité
+</div>
+
+<div class="stat-label">
+complétée cette semaine
+</div>
+
+</div>
+
+<div class="stat">
+
+<div
+class="stat-number"
+id="registeredPrayers"
+>
+0 prière
+</div>
+
+<div class="stat-label">
+enregistrée cette semaine
+</div>
+
+</div>
+
+</div>
+
+<!-- NOTE -->
+
+<div class="card">
+
+<div class="label">
+PETITE NOTE
+</div>
+
+<textarea
+class="personal-note"
+id="personalNote"
+placeholder="Écris ce que tu veux garder dans ton coeur..."
+></textarea>
+
+</div>
+
+<!-- TRACKER -->
+
+<div class="card">
+
+<div class="label">
+CETTE SEMAINE AVEC DIEU ✨
+</div>
+
+<div id="weekTracker"></div>
+
+</div>
+
+</section>
+
+<script>
+
+/* =========================================================
+HOME NOTE
+========================================================= */
+
+function initPersonalNote(){
+
+const note =
+document.getElementById('personalNote');
+
+note.value =
+state.settings.personalNote || '';
+
+note.addEventListener('input', ()=>{
+
+state.settings.personalNote =
+note.value;
+
+saveState();
+
+});
+
+}
+
+/* =========================================================
+TODAY TASKS
+========================================================= */
+
+function renderTodayTasks(){
+
+const container =
+document.getElementById('todayTasks');
+
+const plannerEntries =
+Object.entries(state.planner);
+
+if(plannerEntries.length === 0){
+
+container.innerHTML = `
+
+<div class="empty-state">
+Aucune activité prévue aujourd’hui ✨
+</div>
+
+`;
+
+return;
+
+}
+
+container.innerHTML='';
+
+plannerEntries.slice(0,3).forEach(([key, value])=>{
+
+if(
+!value.prayer &&
+!value.teaching &&
+!value.meditation
+) return;
+
+container.innerHTML += `
+
+<div class="task">
+
+<div
+class="checkbox ${value.completed ? 'completed':''}"
+onclick="toggleTask('${key}')"
+>
+
+${value.completed ? '✓' : ''}
+
+</div>
+
+<div class="task-content">
+
+<h4>
+${value.prayer || value.teaching || 'Temps spirituel'}
+</h4>
+
+<p>
+${key}
+</p>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* =========================================================
+TOGGLE TASK
+========================================================= */
+
+function toggleTask(key){
+
+state.planner[key].completed =
+!state.planner[key].completed;
+
+saveState();
+
+renderTodayTasks();
+
+renderWeekTracker();
+
+renderStats();
+
+}
+
+/* =========================================================
+STATS
+========================================================= */
+
+function renderStats(){
+
+const plannerValues =
+Object.values(state.planner);
+
+const completed =
+plannerValues.filter(
+item=>item.completed
+).length;
+
+const prayers =
+plannerValues.filter(
+item=>item.prayer
+).length;
+
+document
+.getElementById('completedActivities')
+.innerText =
+`${completed} activité${completed>1?'s':''}`;
+
+document
+.getElementById('registeredPrayers')
+.innerText =
+`${prayers} prière${prayers>1?'s':''}`;
+
+}
+
+/* =========================================================
+TRACKER
+========================================================= */
+
+function renderWeekTracker(){
+
+const tracker =
+document.getElementById('weekTracker');
+
+const plannerValues =
+Object.values(state.planner);
+
+if(plannerValues.length === 0){
+
+tracker.innerHTML = `
+
+<div class="empty-state">
+Commence à compléter tes temps spirituels.
+</div>
+
+`;
+
+return;
+
+}
+
+const completed =
+plannerValues.filter(
+item=>item.completed
+).length;
+
+const teachings =
+plannerValues.filter(
+item=>item.teaching
+).length;
+
+const meditations =
+plannerValues.filter(
+item=>item.meditation
+).length;
+
+tracker.innerHTML = `
+
+<div class="tracker-item">
+
+<div class="tracker-badge">
+✓
+</div>
+
+<div class="tracker-content">
+
+<h4>
+${completed} activité(s) complétée(s)
+</h4>
+
+<p>
+Temps spirituels validés
+</p>
+
+</div>
+
+</div>
+
+<div class="tracker-item">
+
+<div class="tracker-badge">
+📖
+</div>
+
+<div class="tracker-content">
+
+<h4>
+${teachings} enseignement(s)
+</h4>
+
+<p>
+Ajoutés dans le planner
+</p>
+
+</div>
+
+</div>
+
+<div class="tracker-item">
+
+<div class="tracker-badge">
+✦
+</div>
+
+<div class="tracker-content">
+
+<h4>
+${meditations} méditation(s)
+</h4>
+
+<p>
+Temps de réflexion enregistrés
+</p>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =========================================================
+INIT HOME
+========================================================= */
+
+function initHome(){
+
+initPersonalNote();
+
+renderTodayTasks();
+
+renderWeekTracker();
+
+renderStats();
+
+}
+
+/* =========================================================
+AJOUTER DANS init()
+========================================================= */
+
+/*
+
+initHome();
+
+*/
+
+</script>
+
+<!-- =========================================================
+ÉTAPE 3 — PLANNER COMPLET
+Weekly + Monthly + Bottom Sheet + Tracking
+========================================================= -->
+
+<style>
+
+/* =========================================================
+PLANNER HEADER
+========================================================= */
+
+.planner-hero{
+
+margin-bottom:26px;
+
+}
+
+.planner-description{
+
+margin-top:12px;
+
+line-height:1.8;
+
+color:var(--muted);
+
+max-width:320px;
+
+}
+
+/* =========================================================
+TOGGLE
+========================================================= */
+
+.toggle{
+
+display:flex;
+
+padding:6px;
+
+border-radius:999px;
+
+background:
+rgba(255,255,255,.04);
+
+border:1px solid var(--line);
+
+margin-top:22px;
+
+}
+
+.toggle button{
+
+flex:1;
+
+padding:14px;
+
+border:none;
+
+background:transparent;
+
+border-radius:999px;
+
+font-family:inherit;
+
+cursor:pointer;
+
+color:var(--muted);
+
+transition:.25s ease;
+
+}
+
+.toggle button.active{
+
+background:var(--accent);
+
+color:white;
+
+}
+
+/* =========================================================
+WEEK GRID
+========================================================= */
+
+.week-grid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:12px;
+
+margin-top:22px;
+
+}
+
+.week-day{
+
+min-height:140px;
+
+padding:18px;
+
+border-radius:28px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+
+cursor:pointer;
+
+transition:.25s ease;
+
+}
+
+.week-day:hover{
+
+transform:translateY(-2px);
+
+}
+
+.week-day small{
+
+font-size:10px;
+
+letter-spacing:3px;
+
+color:var(--muted);
+
+}
+
+.week-day h3{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:34px;
+
+margin-top:10px;
+
+font-weight:500;
+
+}
+
+.week-icons{
+
+display:flex;
+gap:6px;
+
+flex-wrap:wrap;
+
+font-size:13px;
+
+}
+
+/* =========================================================
+MONTH GRID
+========================================================= */
+
+.month-grid{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+gap:10px;
+
+margin-top:22px;
+
+}
+
+.month-day{
+
+aspect-ratio:1;
+
+border-radius:18px;
+
+border:1px solid var(--line);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+background:
+rgba(255,255,255,.03);
+
+position:relative;
+
+cursor:pointer;
+
+transition:.25s ease;
+
+}
+
+.month-day:hover{
+
+transform:translateY(-2px);
+
+}
+
+.month-day.active{
+
+background:var(--accent);
+
+color:white;
+
+}
+
+.month-icons{
+
+position:absolute;
+
+bottom:5px;
+
+display:flex;
+gap:2px;
+
+font-size:10px;
+
+}
+
+/* =========================================================
+PLANNER PREVIEW
+========================================================= */
+
+.planner-preview{
+
+margin-top:10px;
+
+font-size:12px;
+
+line-height:1.5;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+CHECK ROW
+========================================================= */
+
+.check-row{
+
+display:flex;
+align-items:center;
+
+gap:14px;
+
+padding:20px 0;
+
+}
+
+.check-label h4{
+
+font-size:15px;
+
+margin-bottom:4px;
+
+}
+
+.check-label p{
+
+font-size:13px;
+
+line-height:1.6;
+
+color:var(--muted);
+
+}
+
+</style>
+
+<!-- =========================================================
+REMPLACE LE CONTENU DU plannerScreen PAR ÇA
+========================================================= -->
+
+<section
+id="plannerScreen"
+class="hidden"
+>
+
+<div class="planner-hero hero">
+
+<small>
+PLANNER
+</small>
+
+<h1 id="plannerTitle">
+Ta semaine
+</h1>
+
+<p
+class="planner-description"
+id="plannerDescription"
+>
+Organise tes temps spirituels
+avec paix et clarté.
+</p>
+
+</div>
+
+<!-- TOGGLE -->
+
+<div class="toggle">
+
+<button
+class="active"
+id="weeklyBtn"
+onclick="showWeekly()"
+>
+Weekly
+</button>
+
+<button
+id="monthlyBtn"
+onclick="showMonthly()"
+>
+Monthly
+</button>
+
+</div>
+
+<!-- WEEKLY -->
+
+<div id="weeklyPlanner">
+
+<div
+class="week-grid"
+id="weekGrid"
+></div>
+
+</div>
+
+<!-- MONTHLY -->
+
+<div
+id="monthlyPlanner"
+class="hidden"
+>
+
+<div class="card">
+
+<div class="label">
+MAI 2026
+</div>
+
+<div
+class="month-grid"
+id="monthGrid"
+></div>
+
+<button
+class="button"
+onclick="openPlannerSheet('Période de jeûne')"
+>
++ Ajouter une période de jeûne
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================================================
+PLANNER SHEET
+========================================================= -->
+
+<div
+class="sheet hidden"
+id="plannerSheet"
+>
+
+<div class="sheet-header">
+
+<h2
+class="sheet-title"
+id="plannerSheetTitle"
+>
+Jour
+</h2>
+
+<div
+class="close"
+onclick="closePlannerSheet()"
+>
+×
+</div>
+
+</div>
+
+<input
+class="input"
+id="plannerPrayer"
+placeholder="Sujet de prière"
+/>
+
+<input
+class="input"
+id="plannerTeaching"
+placeholder="Enseignement"
+/>
+
+<textarea
+id="plannerMeditation"
+placeholder="Méditation / notes"
+></textarea>
+
+<input
+class="input"
+id="plannerMeeting"
+placeholder="Réunion / culte"
+/>
+
+<input
+class="input"
+id="plannerFasting"
+placeholder="Jeûne"
+/>
+
+<input
+class="input"
+id="plannerGoal"
+placeholder="Objectif spirituel"
+/>
+
+<div class="check-row">
+
+<div
+class="checkbox"
+id="plannerCompleted"
+onclick="togglePlannerComplete()"
+></div>
+
+<div class="check-label">
+
+<h4>
+Activité terminée
+</h4>
+
+<p>
+Valider lorsque ton temps spirituel est terminé.
+</p>
+
+</div>
+
+</div>
+
+<button
+class="button"
+onclick="savePlannerDay()"
+>
+Sauvegarder
+</button>
+
+</div>
+
+<script>
+
+/* =========================================================
+PLANNER STATE
+========================================================= */
+
+let currentPlannerDay = null;
+
+/* =========================================================
+WEEK DATA
+========================================================= */
+
+const weekDays = [
+
+{
+day:'LUNDI',
+date:'04'
+},
+
+{
+day:'MARDI',
+date:'05'
+},
+
+{
+day:'MERCREDI',
+date:'06'
+},
+
+{
+day:'JEUDI',
+date:'07'
+},
+
+{
+day:'VENDREDI',
+date:'08'
+},
+
+{
+day:'SAMEDI',
+date:'09'
+}
+
+];
+
+/* =========================================================
+SHOW WEEKLY
+========================================================= */
 
 function showWeekly(){
 
@@ -2063,7 +2514,21 @@ document
 .getElementById('monthlyBtn')
 .classList.remove('active');
 
+document
+.getElementById('plannerTitle')
+.innerText =
+'Ta semaine';
+
+document
+.getElementById('plannerDescription')
+.innerText =
+'Organise tes temps spirituels avec paix et clarté.';
+
 }
+
+/* =========================================================
+SHOW MONTHLY
+========================================================= */
 
 function showMonthly(){
 
@@ -2083,162 +2548,75 @@ document
 .getElementById('weeklyBtn')
 .classList.remove('active');
 
-}
-
-/* SHEET */
-
-function openSheet(day){
+document
+.getElementById('plannerTitle')
+.innerText =
+'Ton mois';
 
 document
-.getElementById('plannerSheet')
-.classList.remove('hidden');
-
-document
-.getElementById('sheetTitle')
-.innerText = day;
+.getElementById('plannerDescription')
+.innerText =
+'Visualise tes événements et périodes spirituelles du mois.';
 
 }
 
-function closeSheet(){
+/* =========================================================
+RENDER WEEK
+========================================================= */
 
-document
-.getElementById('plannerSheet')
-.classList.add('hidden');
+function renderWeek(){
 
-}
+const grid =
+document.getElementById('weekGrid');
 
-/* ONBOARDING */
+grid.innerHTML='';
 
-function startApp(){
+weekDays.forEach(item=>{
 
-const name =
-document.getElementById('nameInput').value || 'Clémence';
+const key =
+`${item.day}-${item.date}`;
 
-localStorage.setItem(
-'graceName',
-name
-);
+const data =
+state.planner[key] || {};
 
-document
-.getElementById('heroName')
-.innerHTML =
-`Bonjour,<br>${name}`;
+grid.innerHTML += `
 
-document
-.getElementById('settingsName')
-.value = name;
+<div
+class="week-day"
+onclick="openPlannerSheet('${key}')"
+>
 
-document
-.getElementById('onboarding')
-.style.display='none';
+<div>
 
-}
+<small>
+${item.day}
+</small>
 
-/* LOAD USER */
+<h3>
+${item.date}
+</h3>
 
-window.onload = ()=>{
+</div>
 
-const savedName =
-localStorage.getItem('graceName');
+<div>
 
-if(savedName){
+<div class="week-icons">
 
-document
-.getElementById('heroName')
-.innerHTML =
-`Bonjour,<br>${savedName}`;
+${data.prayer ? '✞' : ''}
+${data.teaching ? '📖' : ''}
+${data.meditation ? '✦' : ''}
+${data.fasting ? '🔥' : ''}
+${data.completed ? '✓' : ''}
 
-document
-.getElementById('settingsName')
-.value = savedName;
+</div>
 
-document
-.getElementById('onboarding')
-.style.display='none';
+<div class="planner-preview">
 
-}
+${data.prayer || data.teaching || 'Aucune activité'}
 
-loadJournal();
+</div>
 
-};
-
-/* SAVE NAME */
-
-function saveName(){
-
-const name =
-document.getElementById('settingsName').value;
-
-localStorage.setItem(
-'graceName',
-name
-);
-
-document
-.getElementById('heroName')
-.innerHTML =
-`Bonjour,<br>${name}`;
-
-}
-
-/* JOURNAL */
-
-function saveJournal(){
-
-const text =
-document.getElementById('journalText').value;
-
-if(!text) return;
-
-const entries =
-JSON.parse(
-localStorage.getItem('journalEntries') || '[]'
-);
-
-entries.unshift({
-
-date:new Date().toLocaleDateString('fr-FR'),
-
-text:text
-
-});
-
-localStorage.setItem(
-'journalEntries',
-JSON.stringify(entries)
-);
-
-document
-.getElementById('journalText')
-.value='';
-
-loadJournal();
-
-}
-
-function loadJournal(){
-
-const container =
-document.getElementById('journalHistory');
-
-if(!container) return;
-
-const entries =
-JSON.parse(
-localStorage.getItem('journalEntries') || '[]'
-);
-
-container.innerHTML='';
-
-entries.forEach(entry=>{
-
-container.innerHTML += `
-
-<div class="history-entry">
-
-<h4>${entry.date}</h4>
-
-<p>${entry.text}</p>
+</div>
 
 </div>
 
@@ -2248,7 +2626,2906 @@ container.innerHTML += `
 
 }
 
+/* =========================================================
+RENDER MONTH
+========================================================= */
+
+function renderMonth(){
+
+const grid =
+document.getElementById('monthGrid');
+
+grid.innerHTML='';
+
+for(let i=1;i<=31;i++){
+
+const key =
+`${i} Mai`;
+
+const data =
+state.planner[key] || {};
+
+grid.innerHTML += `
+
+<div
+class="month-day ${data.completed ? 'active':''}"
+onclick="openPlannerSheet('${key}')"
+>
+
+${i}
+
+<div class="month-icons">
+
+${data.prayer ? '✞' : ''}
+${data.teaching ? '📖' : ''}
+${data.fasting ? '🔥' : ''}
+
+</div>
+
+</div>
+
+`;
+
+}
+
+}
+
+/* =========================================================
+OPEN SHEET
+========================================================= */
+
+function openPlannerSheet(day){
+
+currentPlannerDay = day;
+
+document
+.getElementById('plannerSheet')
+.classList.remove('hidden');
+
+document
+.getElementById('plannerSheetTitle')
+.innerText = day;
+
+const data =
+state.planner[day] || {};
+
+document.getElementById('plannerPrayer').value =
+data.prayer || '';
+
+document.getElementById('plannerTeaching').value =
+data.teaching || '';
+
+document.getElementById('plannerMeditation').value =
+data.meditation || '';
+
+document.getElementById('plannerMeeting').value =
+data.meeting || '';
+
+document.getElementById('plannerFasting').value =
+data.fasting || '';
+
+document.getElementById('plannerGoal').value =
+data.goal || '';
+
+const checkbox =
+document.getElementById('plannerCompleted');
+
+checkbox.classList.remove('completed');
+
+checkbox.innerHTML='';
+
+if(data.completed){
+
+checkbox.classList.add('completed');
+
+checkbox.innerHTML='✓';
+
+}
+
+}
+
+/* =========================================================
+CLOSE SHEET
+========================================================= */
+
+function closePlannerSheet(){
+
+document
+.getElementById('plannerSheet')
+.classList.add('hidden');
+
+}
+
+/* =========================================================
+TOGGLE COMPLETE
+========================================================= */
+
+function togglePlannerComplete(){
+
+const checkbox =
+document.getElementById('plannerCompleted');
+
+checkbox.classList.toggle('completed');
+
+checkbox.innerHTML =
+checkbox.classList.contains('completed')
+? '✓'
+: '';
+
+}
+
+/* =========================================================
+SAVE DAY
+========================================================= */
+
+function savePlannerDay(){
+
+const completed =
+document
+.getElementById('plannerCompleted')
+.classList.contains('completed');
+
+state.planner[currentPlannerDay] = {
+
+prayer:
+document.getElementById('plannerPrayer').value,
+
+teaching:
+document.getElementById('plannerTeaching').value,
+
+meditation:
+document.getElementById('plannerMeditation').value,
+
+meeting:
+document.getElementById('plannerMeeting').value,
+
+fasting:
+document.getElementById('plannerFasting').value,
+
+goal:
+document.getElementById('plannerGoal').value,
+
+completed
+
+};
+
+saveState();
+
+closePlannerSheet();
+
+renderWeek();
+
+renderMonth();
+
+renderTodayTasks();
+
+renderWeekTracker();
+
+renderStats();
+
+}
+
+/* =========================================================
+INIT PLANNER
+========================================================= */
+
+function initPlanner(){
+
+renderWeek();
+
+renderMonth();
+
+}
+
+/* =========================================================
+AJOUTER DANS init()
+========================================================= */
+
+/*
+
+initPlanner();
+
+*/
+
 </script>
 
-</body>
-</html>
+<!-- =========================================================
+ÉTAPE 4 — JOURNAL COMPLET
+Mood Tracker + Entrées + Historique + Sauvegarde
+========================================================= -->
+
+<style>
+
+/* =========================================================
+JOURNAL HERO
+========================================================= */
+
+.journal-hero{
+
+margin-bottom:28px;
+
+}
+
+/* =========================================================
+MOOD PICKER
+========================================================= */
+
+.mood-picker{
+
+display:flex;
+
+gap:12px;
+
+margin-top:18px;
+
+overflow-x:auto;
+
+padding-bottom:6px;
+
+}
+
+.mood-picker::-webkit-scrollbar{
+display:none;
+}
+
+.mood-option{
+
+min-width:58px;
+height:58px;
+
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:24px;
+
+cursor:pointer;
+
+border:1px solid var(--line);
+
+background:
+rgba(255,255,255,.03);
+
+transition:.25s ease;
+
+}
+
+.mood-option.active{
+
+background:var(--accent);
+
+border-color:var(--accent);
+
+transform:translateY(-2px);
+
+}
+
+/* =========================================================
+JOURNAL TEXTAREA
+========================================================= */
+
+.journal-textarea{
+
+width:100%;
+
+min-height:220px;
+
+margin-top:18px;
+
+background:transparent;
+
+border:none;
+
+outline:none;
+
+resize:none;
+
+font-size:17px;
+
+line-height:1.9;
+
+font-family:'Inter',sans-serif;
+
+color:var(--text);
+
+}
+
+/* =========================================================
+JOURNAL ENTRY
+========================================================= */
+
+.journal-entry{
+
+padding:22px;
+
+border-radius:28px;
+
+margin-top:14px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+}
+
+.entry-top{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:14px;
+
+}
+
+.entry-date{
+
+font-size:12px;
+
+letter-spacing:2px;
+
+color:var(--muted);
+
+}
+
+.entry-mood{
+
+font-size:20px;
+
+}
+
+.entry-content{
+
+line-height:1.9;
+
+font-size:15px;
+
+color:var(--text);
+
+white-space:pre-wrap;
+
+}
+
+/* =========================================================
+EMPTY JOURNAL
+========================================================= */
+
+.journal-empty{
+
+padding:36px 0;
+
+text-align:center;
+
+line-height:1.9;
+
+color:var(--muted);
+
+}
+
+</style>
+
+<!-- =========================================================
+REMPLACE LE CONTENU DU journalScreen PAR ÇA
+========================================================= -->
+
+<section
+id="journalScreen"
+class="hidden"
+>
+
+<div class="journal-hero hero">
+
+<small>
+JOURNAL
+</small>
+
+<h1>
+Ton coeur
+</h1>
+
+<p>
+Garde une trace de ce que Dieu
+dépose dans ton esprit.
+</p>
+
+</div>
+
+<!-- JOURNAL WRITER -->
+
+<div class="card">
+
+<div class="label">
+COMMENT TE SENS-TU ?
+</div>
+
+<!-- MOODS -->
+
+<div class="mood-picker">
+
+<div
+class="mood-option"
+onclick="selectMood(this,'🤍')"
+>
+🤍
+</div>
+
+<div
+class="mood-option"
+onclick="selectMood(this,'✨')"
+>
+✨
+</div>
+
+<div
+class="mood-option"
+onclick="selectMood(this,'🙏')"
+>
+🙏
+</div>
+
+<div
+class="mood-option"
+onclick="selectMood(this,'🌿')"
+>
+🌿
+</div>
+
+<div
+class="mood-option"
+onclick="selectMood(this,'☀️')"
+>
+☀️
+</div>
+
+<div
+class="mood-option"
+onclick="selectMood(this,'💧')"
+>
+💧
+</div>
+
+</div>
+
+<!-- TEXT -->
+
+<textarea
+class="journal-textarea"
+id="journalInput"
+placeholder="Écris librement ce que tu ressens, ce que tu apprends, ce que Dieu te montre..."
+></textarea>
+
+<button
+class="button"
+onclick="saveJournalEntry()"
+>
+Enregistrer
+</button>
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="card">
+
+<div class="section-title">
+
+<h2>
+HISTORIQUE
+</h2>
+
+<div class="link">
+SPIRITUEL
+</div>
+
+</div>
+
+<div id="journalHistory"></div>
+
+</div>
+
+</section>
+
+<script>
+
+/* =========================================================
+CURRENT MOOD
+========================================================= */
+
+let currentMood = '🤍';
+
+/* =========================================================
+SELECT MOOD
+========================================================= */
+
+function selectMood(el, mood){
+
+currentMood = mood;
+
+document
+.querySelectorAll('.mood-option')
+.forEach(item=>{
+
+item.classList.remove('active');
+
+});
+
+el.classList.add('active');
+
+}
+
+/* =========================================================
+SAVE JOURNAL
+========================================================= */
+
+function saveJournalEntry(){
+
+const input =
+document.getElementById('journalInput');
+
+const value =
+input.value.trim();
+
+if(!value) return;
+
+const entry = {
+
+id:Date.now(),
+
+date:new Date().toLocaleDateString(
+'fr-FR',
+{
+day:'numeric',
+month:'long',
+year:'numeric'
+}
+),
+
+mood:currentMood,
+
+content:value
+
+};
+
+state.journal.unshift(entry);
+
+saveState();
+
+input.value='';
+
+renderJournalHistory();
+
+}
+
+/* =========================================================
+RENDER HISTORY
+========================================================= */
+
+function renderJournalHistory(){
+
+const history =
+document.getElementById('journalHistory');
+
+if(state.journal.length === 0){
+
+history.innerHTML = `
+
+<div class="journal-empty">
+
+Ton journal est encore vide ✨
+
+<br><br>
+
+Commence à écrire ce que Dieu
+dépose dans ton coeur.
+
+</div>
+
+`;
+
+return;
+
+}
+
+history.innerHTML='';
+
+state.journal.forEach(entry=>{
+
+history.innerHTML += `
+
+<div class="journal-entry">
+
+<div class="entry-top">
+
+<div class="entry-date">
+${entry.date}
+</div>
+
+<div class="entry-mood">
+${entry.mood}
+</div>
+
+</div>
+
+<div class="entry-content">
+${entry.content}
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* =========================================================
+INIT JOURNAL
+========================================================= */
+
+function initJournal(){
+
+renderJournalHistory();
+
+}
+
+/* =========================================================
+AJOUTER DANS init()
+========================================================= */
+
+/*
+
+initJournal();
+
+*/
+
+</script>
+
+<!-- =========================================================
+ÉTAPE 5 — PRIÈRES COMPLÈTES
+Thèmes + Sujets + Exaucées + Archivage
+========================================================= -->
+
+<style>
+
+/* =========================================================
+PRAYERS HERO
+========================================================= */
+
+.prayer-hero{
+
+margin-bottom:28px;
+
+}
+
+/* =========================================================
+PRAYER THEME CARD
+========================================================= */
+
+.prayer-theme{
+
+padding:22px;
+
+margin-top:14px;
+
+border-radius:30px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+cursor:pointer;
+
+transition:.25s ease;
+
+}
+
+.prayer-theme:hover{
+
+transform:translateY(-2px);
+
+}
+
+.prayer-theme h3{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:36px;
+
+font-weight:500;
+
+margin-bottom:8px;
+
+}
+
+.prayer-theme p{
+
+font-size:14px;
+
+line-height:1.7;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+PRAYER SUBJECT
+========================================================= */
+
+.prayer-subject{
+
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+
+gap:14px;
+
+padding:18px 0;
+
+border-bottom:1px solid var(--line);
+
+}
+
+.prayer-subject:last-child{
+border-bottom:none;
+}
+
+.subject-left{
+
+display:flex;
+gap:14px;
+
+}
+
+.subject-text h4{
+
+font-size:15px;
+
+margin-bottom:6px;
+
+font-weight:500;
+
+}
+
+.subject-text p{
+
+font-size:13px;
+
+line-height:1.6;
+
+color:var(--muted);
+
+}
+
+.subject-actions{
+
+display:flex;
+gap:8px;
+
+}
+
+/* =========================================================
+ACTION BUTTONS
+========================================================= */
+
+.action-btn{
+
+width:38px;
+height:38px;
+
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+cursor:pointer;
+
+border:1px solid var(--line);
+
+background:
+rgba(255,255,255,.03);
+
+transition:.25s ease;
+
+font-size:14px;
+
+}
+
+.action-btn:hover{
+
+transform:translateY(-2px);
+
+}
+
+/* =========================================================
+ANSWERED CARD
+========================================================= */
+
+.answered-card{
+
+padding:18px;
+
+margin-top:14px;
+
+border-radius:24px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+}
+
+.answered-card h4{
+
+margin-bottom:8px;
+
+font-size:15px;
+
+}
+
+.answered-card p{
+
+line-height:1.7;
+
+font-size:14px;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+EMPTY PRAYERS
+========================================================= */
+
+.prayer-empty{
+
+padding:36px 0;
+
+text-align:center;
+
+line-height:1.9;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+FLOATING BTN LABEL
+========================================================= */
+
+.floating-button{
+
+font-size:30px;
+
+}
+
+</style>
+
+<!-- =========================================================
+REMPLACE LE CONTENU DU prayerScreen PAR ÇA
+========================================================= -->
+
+<section
+id="prayerScreen"
+class="hidden"
+>
+
+<div class="prayer-hero hero">
+
+<small>
+PRIÈRES
+</small>
+
+<h1>
+Tes sujets
+</h1>
+
+<p>
+Organise tes espaces de prière
+personnels avec paix.
+</p>
+
+</div>
+
+<!-- THEMES -->
+
+<div id="prayerThemesContainer"></div>
+
+<!-- ANSWERED -->
+
+<div class="card">
+
+<div class="section-title">
+
+<h2>
+DIEU A RÉPONDU ICI ✨
+</h2>
+
+<div class="link">
+EXAUCÉES
+</div>
+
+</div>
+
+<div id="answeredPrayers"></div>
+
+</div>
+
+</section>
+
+<!-- =========================================================
+FLOATING BUTTON
+========================================================= -->
+
+<div
+class="floating-button"
+onclick="openThemeSheet()"
+>
++
+</div>
+
+<!-- =========================================================
+THEME SHEET
+========================================================= -->
+
+<div
+class="sheet hidden"
+id="themeSheet"
+>
+
+<div class="sheet-header">
+
+<h2 class="sheet-title">
+Nouveau thème
+</h2>
+
+<div
+class="close"
+onclick="closeThemeSheet()"
+>
+×
+</div>
+
+</div>
+
+<input
+class="input"
+id="themeNameInput"
+placeholder="Exemple : Famille"
+/>
+
+<button
+class="button"
+onclick="createPrayerTheme()"
+>
+Créer le thème
+</button>
+
+</div>
+
+<!-- =========================================================
+SUBJECT SHEET
+========================================================= -->
+
+<div
+class="sheet hidden"
+id="subjectSheet"
+>
+
+<div class="sheet-header">
+
+<h2
+class="sheet-title"
+id="subjectSheetTitle"
+>
+Sujet
+</h2>
+
+<div
+class="close"
+onclick="closeSubjectSheet()"
+>
+×
+</div>
+
+</div>
+
+<input
+class="input"
+id="subjectInput"
+placeholder="Sujet de prière"
+/>
+
+<textarea
+id="subjectDescription"
+placeholder="Ajoute une précision, une pensée, une intention..."
+></textarea>
+
+<button
+class="button"
+onclick="savePrayerSubject()"
+>
+Ajouter le sujet
+</button>
+
+</div>
+
+<script>
+
+/* =========================================================
+CURRENT THEME
+========================================================= */
+
+let currentThemeId = null;
+
+/* =========================================================
+OPEN THEME SHEET
+========================================================= */
+
+function openThemeSheet(){
+
+document
+.getElementById('themeSheet')
+.classList.remove('hidden');
+
+}
+
+/* =========================================================
+CLOSE THEME SHEET
+========================================================= */
+
+function closeThemeSheet(){
+
+document
+.getElementById('themeSheet')
+.classList.add('hidden');
+
+}
+
+/* =========================================================
+CREATE THEME
+========================================================= */
+
+function createPrayerTheme(){
+
+const input =
+document.getElementById('themeNameInput');
+
+const value =
+input.value.trim();
+
+if(!value) return;
+
+state.prayers.push({
+
+id:Date.now(),
+
+name:value,
+
+subjects:[]
+
+});
+
+saveState();
+
+input.value='';
+
+closeThemeSheet();
+
+renderPrayerThemes();
+
+}
+
+/* =========================================================
+RENDER THEMES
+========================================================= */
+
+function renderPrayerThemes(){
+
+const container =
+document.getElementById('prayerThemesContainer');
+
+if(state.prayers.length === 0){
+
+container.innerHTML = `
+
+<div class="card">
+
+<div class="prayer-empty">
+
+Commence ton premier espace
+de prière ✨
+
+</div>
+
+</div>
+
+`;
+
+return;
+
+}
+
+container.innerHTML='';
+
+state.prayers.forEach(theme=>{
+
+container.innerHTML += `
+
+<div class="prayer-theme">
+
+<div class="section-title">
+
+<div>
+
+<h3>
+${theme.name}
+</h3>
+
+<p>
+${theme.subjects.length} sujet(s) de prière
+</p>
+
+</div>
+
+<div
+class="action-btn"
+onclick="openSubjectSheet(${theme.id})"
+>
++
+</div>
+
+</div>
+
+${renderSubjects(theme)}
+
+</div>
+
+`;
+
+});
+
+}
+
+/* =========================================================
+RENDER SUBJECTS
+========================================================= */
+
+function renderSubjects(theme){
+
+if(theme.subjects.length === 0){
+
+return `
+
+<div class="prayer-empty">
+
+Aucun sujet ajouté pour le moment.
+
+</div>
+
+`;
+
+}
+
+let html='';
+
+theme.subjects.forEach(subject=>{
+
+if(subject.answered) return;
+
+html += `
+
+<div class="prayer-subject">
+
+<div class="subject-left">
+
+<div
+class="checkbox ${subject.completed ? 'completed':''}"
+onclick="togglePrayerSubject(${theme.id}, ${subject.id})"
+>
+
+${subject.completed ? '✓':''}
+
+</div>
+
+<div class="subject-text">
+
+<h4>
+${subject.title}
+</h4>
+
+<p>
+${subject.description || 'Sujet personnel'}
+</p>
+
+</div>
+
+</div>
+
+<div class="subject-actions">
+
+<div
+class="action-btn"
+onclick="markAnswered(${theme.id}, ${subject.id})"
+>
+✨
+</div>
+
+<div
+class="action-btn"
+onclick="deleteSubject(${theme.id}, ${subject.id})"
+>
+×
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+return html;
+
+}
+
+/* =========================================================
+OPEN SUBJECT SHEET
+========================================================= */
+
+function openSubjectSheet(themeId){
+
+currentThemeId = themeId;
+
+document
+.getElementById('subjectSheet')
+.classList.remove('hidden');
+
+const theme =
+state.prayers.find(
+item=>item.id === themeId
+);
+
+document
+.getElementById('subjectSheetTitle')
+.innerText =
+theme.name;
+
+}
+
+/* =========================================================
+CLOSE SUBJECT SHEET
+========================================================= */
+
+function closeSubjectSheet(){
+
+document
+.getElementById('subjectSheet')
+.classList.add('hidden');
+
+}
+
+/* =========================================================
+SAVE SUBJECT
+========================================================= */
+
+function savePrayerSubject(){
+
+const title =
+document
+.getElementById('subjectInput')
+.value
+.trim();
+
+const description =
+document
+.getElementById('subjectDescription')
+.value
+.trim();
+
+if(!title) return;
+
+const theme =
+state.prayers.find(
+item=>item.id === currentThemeId
+);
+
+theme.subjects.push({
+
+id:Date.now(),
+
+title,
+
+description,
+
+completed:false,
+
+answered:false
+
+});
+
+saveState();
+
+document.getElementById('subjectInput').value='';
+document.getElementById('subjectDescription').value='';
+
+closeSubjectSheet();
+
+renderPrayerThemes();
+
+renderAnsweredPrayers();
+
+}
+
+/* =========================================================
+TOGGLE SUBJECT
+========================================================= */
+
+function togglePrayerSubject(themeId, subjectId){
+
+const theme =
+state.prayers.find(
+item=>item.id === themeId
+);
+
+const subject =
+theme.subjects.find(
+item=>item.id === subjectId
+);
+
+subject.completed =
+!subject.completed;
+
+saveState();
+
+renderPrayerThemes();
+
+}
+
+/* =========================================================
+MARK ANSWERED
+========================================================= */
+
+function markAnswered(themeId, subjectId){
+
+const theme =
+state.prayers.find(
+item=>item.id === themeId
+);
+
+const subject =
+theme.subjects.find(
+item=>item.id === subjectId
+);
+
+subject.answered = true;
+
+saveState();
+
+renderPrayerThemes();
+
+renderAnsweredPrayers();
+
+}
+
+/* =========================================================
+DELETE SUBJECT
+========================================================= */
+
+function deleteSubject(themeId, subjectId){
+
+const theme =
+state.prayers.find(
+item=>item.id === themeId
+);
+
+theme.subjects =
+theme.subjects.filter(
+item=>item.id !== subjectId
+);
+
+saveState();
+
+renderPrayerThemes();
+
+renderAnsweredPrayers();
+
+}
+
+/* =========================================================
+ANSWERED PRAYERS
+========================================================= */
+
+function renderAnsweredPrayers(){
+
+const container =
+document.getElementById('answeredPrayers');
+
+let answered=[];
+
+state.prayers.forEach(theme=>{
+
+theme.subjects.forEach(subject=>{
+
+if(subject.answered){
+
+answered.push({
+theme:theme.name,
+...subject
+});
+
+}
+
+});
+
+});
+
+if(answered.length === 0){
+
+container.innerHTML = `
+
+<div class="prayer-empty">
+
+Aucune prière exaucée enregistrée ✨
+
+</div>
+
+`;
+
+return;
+
+}
+
+container.innerHTML='';
+
+answered.forEach(item=>{
+
+container.innerHTML += `
+
+<div class="answered-card">
+
+<h4>
+${item.title}
+</h4>
+
+<p>
+${item.theme}
+</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+/* =========================================================
+INIT PRAYERS
+========================================================= */
+
+function initPrayers(){
+
+renderPrayerThemes();
+
+renderAnsweredPrayers();
+
+}
+
+/* =========================================================
+AJOUTER DANS init()
+========================================================= */
+
+/*
+
+initPrayers();
+
+*/
+
+</script>
+
+<!-- =========================================================
+ÉTAPE 6 — SETTINGS COMPLETS
+Profil + Thèmes + Dark Mode + Notifications UI
+========================================================= -->
+
+<style>
+
+/* =========================================================
+SETTINGS HERO
+========================================================= */
+
+.settings-hero{
+
+margin-bottom:28px;
+
+}
+
+/* =========================================================
+SETTINGS GROUP
+========================================================= */
+
+.settings-group{
+
+margin-top:18px;
+
+}
+
+.settings-group-title{
+
+font-size:12px;
+
+letter-spacing:3px;
+
+margin-bottom:14px;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+SETTINGS ITEM
+========================================================= */
+
+.settings-item{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:20px 0;
+
+border-bottom:1px solid var(--line);
+
+}
+
+.settings-item:last-child{
+border-bottom:none;
+}
+
+.settings-left{
+
+display:flex;
+flex-direction:column;
+
+}
+
+.settings-left h4{
+
+font-size:15px;
+
+font-weight:500;
+
+margin-bottom:6px;
+
+}
+
+.settings-left p{
+
+font-size:13px;
+
+line-height:1.6;
+
+color:var(--muted);
+
+}
+
+/* =========================================================
+SETTINGS ACTION
+========================================================= */
+
+.settings-action{
+
+display:flex;
+align-items:center;
+gap:10px;
+
+}
+
+/* =========================================================
+SWITCH
+========================================================= */
+
+.switch{
+
+width:52px;
+height:30px;
+
+border-radius:999px;
+
+background:
+rgba(255,255,255,.08);
+
+border:1px solid var(--line);
+
+position:relative;
+
+cursor:pointer;
+
+transition:.25s ease;
+
+}
+
+.switch-circle{
+
+position:absolute;
+
+top:3px;
+left:3px;
+
+width:22px;
+height:22px;
+
+border-radius:50%;
+
+background:white;
+
+transition:.25s ease;
+
+}
+
+.switch.active{
+
+background:var(--accent);
+
+}
+
+.switch.active .switch-circle{
+
+left:25px;
+
+}
+
+/* =========================================================
+THEME ROW
+========================================================= */
+
+.theme-row{
+
+display:flex;
+
+gap:12px;
+
+margin-top:16px;
+
+overflow-x:auto;
+
+padding-bottom:4px;
+
+}
+
+.theme-row::-webkit-scrollbar{
+display:none;
+}
+
+.theme-card{
+
+min-width:84px;
+
+padding:14px;
+
+border-radius:24px;
+
+border:1px solid var(--line);
+
+background:
+rgba(255,255,255,.03);
+
+cursor:pointer;
+
+transition:.25s ease;
+
+text-align:center;
+
+}
+
+.theme-card.active{
+
+border-color:var(--accent);
+
+transform:translateY(-2px);
+
+}
+
+.theme-color{
+
+width:36px;
+height:36px;
+
+border-radius:50%;
+
+margin:auto;
+margin-bottom:10px;
+
+}
+
+.theme-name{
+
+font-size:12px;
+
+letter-spacing:1px;
+
+}
+
+/* =========================================================
+PROFILE INPUT
+========================================================= */
+
+.profile-input{
+
+margin-top:16px;
+
+}
+
+/* =========================================================
+SETTINGS SPACING
+========================================================= */
+
+.settings-spacing{
+
+margin-top:22px;
+
+}
+
+</style>
+
+<!-- =========================================================
+REMPLACE LE CONTENU DU settingsScreen PAR ÇA
+========================================================= -->
+
+<section
+id="settingsScreen"
+class="hidden"
+>
+
+<div class="settings-hero hero">
+
+<small>
+SETTINGS
+</small>
+
+<h1>
+Préférences
+</h1>
+
+<p>
+Personnalise Grace Planner
+selon ton rythme spirituel.
+</p>
+
+</div>
+
+<!-- PROFILE -->
+
+<div class="card">
+
+<div class="settings-group-title">
+PROFIL
+</div>
+
+<div class="settings-left">
+
+<h4>
+Ton prénom
+</h4>
+
+<p>
+Modifie le prénom affiché dans l’application.
+</p>
+
+</div>
+
+<input
+class="input profile-input"
+id="settingsNameInput"
+placeholder="Ton prénom"
+/>
+
+<button
+class="button"
+onclick="saveProfileSettings()"
+>
+Sauvegarder
+</button>
+
+</div>
+
+<!-- THEMES -->
+
+<div class="card settings-spacing">
+
+<div class="settings-group-title">
+THÈMES
+</div>
+
+<div class="settings-left">
+
+<h4>
+Apparence
+</h4>
+
+<p>
+Choisis une ambiance visuelle douce et élégante.
+</p>
+
+</div>
+
+<div class="theme-row">
+
+<!-- MIDNIGHT -->
+
+<div
+class="theme-card"
+onclick="selectThemeCard(this,'')"
+>
+
+<div
+class="theme-color"
+style="background:#0b0b0b;"
+></div>
+
+<div class="theme-name">
+MIDNIGHT
+</div>
+
+</div>
+
+<!-- SAND -->
+
+<div
+class="theme-card"
+onclick="selectThemeCard(this,'theme-sand')"
+>
+
+<div
+class="theme-color"
+style="background:#b88f65;"
+></div>
+
+<div class="theme-name">
+SAND
+</div>
+
+</div>
+
+<!-- ROSE -->
+
+<div
+class="theme-card"
+onclick="selectThemeCard(this,'theme-rose')"
+>
+
+<div
+class="theme-color"
+style="background:#cc9daa;"
+></div>
+
+<div class="theme-name">
+ROSE
+</div>
+
+</div>
+
+<!-- BLUE -->
+
+<div
+class="theme-card"
+onclick="selectThemeCard(this,'theme-blue')"
+>
+
+<div
+class="theme-color"
+style="background:#8ea7d9;"
+></div>
+
+<div class="theme-name">
+BLUE
+</div>
+
+</div>
+
+<!-- SAGE -->
+
+<div
+class="theme-card"
+onclick="selectThemeCard(this,'theme-sage')"
+>
+
+<div
+class="theme-color"
+style="background:#89a68d;"
+></div>
+
+<div class="theme-name">
+SAGE
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- NOTIFICATIONS -->
+
+<div class="card settings-spacing">
+
+<div class="settings-group-title">
+NOTIFICATIONS
+</div>
+
+<!-- PRAYER -->
+
+<div class="settings-item">
+
+<div class="settings-left">
+
+<h4>
+Rappel de prière
+</h4>
+
+<p>
+Recevoir un rappel quotidien.
+</p>
+
+</div>
+
+<div
+class="switch"
+id="prayerNotifSwitch"
+onclick="toggleSwitch(this,'prayerNotif')"
+>
+
+<div class="switch-circle"></div>
+
+</div>
+
+</div>
+
+<!-- MEDITATION -->
+
+<div class="settings-item">
+
+<div class="settings-left">
+
+<h4>
+Méditation
+</h4>
+
+<p>
+Recevoir un encouragement spirituel.
+</p>
+
+</div>
+
+<div
+class="switch"
+id="meditationNotifSwitch"
+onclick="toggleSwitch(this,'meditationNotif')"
+>
+
+<div class="switch-circle"></div>
+
+</div>
+
+</div>
+
+<!-- MEETING -->
+
+<div class="settings-item">
+
+<div class="settings-left">
+
+<h4>
+Réunions & cultes
+</h4>
+
+<p>
+Être notifié avant un événement.
+</p>
+
+</div>
+
+<div
+class="switch"
+id="meetingNotifSwitch"
+onclick="toggleSwitch(this,'meetingNotif')"
+>
+
+<div class="switch-circle"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- APP INFO -->
+
+<div class="card settings-spacing">
+
+<div class="settings-group-title">
+GRACE PLANNER
+</div>
+
+<div class="settings-left">
+
+<h4>
+Version fondation premium
+</h4>
+
+<p>
+Application spirituelle minimaliste
+et émotionnelle.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<script>
+
+/* =========================================================
+PROFILE SETTINGS
+========================================================= */
+
+function saveProfileSettings(){
+
+const input =
+document.getElementById('settingsNameInput');
+
+const value =
+input.value.trim();
+
+if(!value) return;
+
+state.profile.name = value;
+
+saveState();
+
+document
+.getElementById('heroName')
+.innerHTML =
+`Bonjour,<br>${value}`;
+
+}
+
+/* =========================================================
+THEME CARD
+========================================================= */
+
+function selectThemeCard(el, theme){
+
+document
+.querySelectorAll('.theme-card')
+.forEach(card=>{
+
+card.classList.remove('active');
+
+});
+
+el.classList.add('active');
+
+setTheme(theme);
+
+}
+
+/* =========================================================
+SWITCHES
+========================================================= */
+
+function toggleSwitch(el, key){
+
+el.classList.toggle('active');
+
+state.settings[key] =
+el.classList.contains('active');
+
+saveState();
+
+}
+
+/* =========================================================
+LOAD SETTINGS UI
+========================================================= */
+
+function loadSettingsUI(){
+
+/* NAME */
+
+document
+.getElementById('settingsNameInput')
+.value =
+state.profile.name || '';
+
+/* SWITCHES */
+
+const switches = [
+
+{
+id:'prayerNotifSwitch',
+key:'prayerNotif'
+},
+
+{
+id:'meditationNotifSwitch',
+key:'meditationNotif'
+},
+
+{
+id:'meetingNotifSwitch',
+key:'meetingNotif'
+}
+
+];
+
+switches.forEach(item=>{
+
+const el =
+document.getElementById(item.id);
+
+if(state.settings[item.key]){
+
+el.classList.add('active');
+
+}
+
+});
+
+/* THEME ACTIVE */
+
+const currentTheme =
+state.settings.theme || '';
+
+const cards =
+document.querySelectorAll('.theme-card');
+
+cards.forEach(card=>{
+
+card.classList.remove('active');
+
+});
+
+if(currentTheme === ''){
+
+cards[0].classList.add('active');
+
+}
+
+if(currentTheme === 'theme-sand'){
+
+cards[1].classList.add('active');
+
+}
+
+if(currentTheme === 'theme-rose'){
+
+cards[2].classList.add('active');
+
+}
+
+if(currentTheme === 'theme-blue'){
+
+cards[3].classList.add('active');
+
+}
+
+if(currentTheme === 'theme-sage'){
+
+cards[4].classList.add('active');
+
+}
+
+}
+
+/* =========================================================
+INIT SETTINGS
+========================================================= */
+
+function initSettings(){
+
+loadSettingsUI();
+
+}
+
+/* =========================================================
+AJOUTER DANS init()
+========================================================= */
+
+/*
+
+initSettings();
+
+*/
+
+</script>
+
+<!-- =========================================================
+ÉTAPE 7 — FINAL POLISH
+Animations + UX + Cleanup + Premium Feel
+========================================================= -->
+
+<style>
+
+/* =========================================================
+GLOBAL PREMIUM ANIMATIONS
+========================================================= */
+
+.card,
+.week-day,
+.month-day,
+.prayer-theme,
+.journal-entry,
+.stat{
+
+transition:
+transform .28s ease,
+background .28s ease,
+border-color .28s ease,
+box-shadow .28s ease;
+
+}
+
+.card:hover,
+.week-day:hover,
+.month-day:hover,
+.prayer-theme:hover,
+.journal-entry:hover,
+.stat:hover{
+
+transform:translateY(-3px);
+
+}
+
+/* =========================================================
+SCREEN TRANSITIONS
+========================================================= */
+
+section{
+
+animation:screenFade .35s ease;
+
+}
+
+@keyframes screenFade{
+
+from{
+opacity:0;
+transform:translateY(12px);
+}
+
+to{
+opacity:1;
+transform:none;
+}
+
+}
+
+/* =========================================================
+BUTTON FEEDBACK
+========================================================= */
+
+.button{
+
+transition:
+transform .2s ease,
+opacity .2s ease;
+
+}
+
+.button:active{
+
+transform:scale(.98);
+
+opacity:.9;
+
+}
+
+/* =========================================================
+CHECKBOX PREMIUM
+========================================================= */
+
+.checkbox{
+
+transition:
+transform .2s ease,
+background .2s ease,
+border-color .2s ease;
+
+}
+
+.checkbox:active{
+
+transform:scale(.92);
+
+}
+
+.checkbox.completed{
+
+animation:checkboxPop .25s ease;
+
+}
+
+@keyframes checkboxPop{
+
+0%{
+transform:scale(.7);
+}
+
+70%{
+transform:scale(1.08);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+/* =========================================================
+BOTTOM NAV PREMIUM
+========================================================= */
+
+.bottom-nav{
+
+box-shadow:
+0 10px 40px rgba(0,0,0,.18);
+
+}
+
+.nav-item{
+
+transition:
+transform .2s ease,
+color .2s ease;
+
+}
+
+.nav-item.active{
+
+transform:translateY(-2px);
+
+}
+
+/* =========================================================
+SHEETS PREMIUM
+========================================================= */
+
+.sheet{
+
+animation:sheetSmooth .32s ease;
+
+}
+
+@keyframes sheetSmooth{
+
+from{
+
+opacity:0;
+transform:translateY(80px);
+
+}
+
+to{
+
+opacity:1;
+transform:none;
+
+}
+
+}
+
+/* =========================================================
+TEXTAREA PREMIUM
+========================================================= */
+
+textarea{
+
+transition:
+border-color .25s ease,
+background .25s ease;
+
+}
+
+textarea:focus,
+.input:focus{
+
+border-color:var(--accent);
+
+background:
+rgba(255,255,255,.05);
+
+}
+
+/* =========================================================
+THEME ACTIVE POLISH
+========================================================= */
+
+.theme-card.active{
+
+box-shadow:
+0 8px 25px rgba(0,0,0,.08);
+
+}
+
+/* =========================================================
+MOOD POLISH
+========================================================= */
+
+.mood-option{
+
+transition:
+transform .2s ease,
+background .2s ease;
+
+}
+
+.mood-option:hover{
+
+transform:translateY(-2px);
+
+}
+
+.mood-option.active{
+
+animation:moodPop .22s ease;
+
+}
+
+@keyframes moodPop{
+
+0%{
+transform:scale(.82);
+}
+
+70%{
+transform:scale(1.08);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+
+/* =========================================================
+SCROLLBAR CLEAN
+========================================================= */
+
+::-webkit-scrollbar{
+width:0;
+height:0;
+}
+
+/* =========================================================
+SMOOTH EMPTY STATES
+========================================================= */
+
+.empty-state,
+.prayer-empty,
+.journal-empty{
+
+animation:fadeSoft .4s ease;
+
+}
+
+@keyframes fadeSoft{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
+}
+
+/* =========================================================
+PRAYER ANSWERED EFFECT
+========================================================= */
+
+.answered-card{
+
+animation:answeredGlow .35s ease;
+
+}
+
+@keyframes answeredGlow{
+
+from{
+
+opacity:0;
+transform:translateY(10px);
+
+}
+
+to{
+
+opacity:1;
+transform:none;
+
+}
+
+}
+
+/* =========================================================
+FLOATING BUTTON
+========================================================= */
+
+.floating-button{
+
+transition:
+transform .25s ease,
+box-shadow .25s ease;
+
+}
+
+.floating-button:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+0 18px 35px rgba(0,0,0,.18);
+
+}
+
+/* =========================================================
+PREMIUM SPACING
+========================================================= */
+
+.hero{
+
+padding-top:8px;
+
+}
+
+.card + .card{
+
+margin-top:20px;
+
+}
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media(max-width:390px){
+
+.hero h1{
+
+font-size:54px;
+
+}
+
+.verse{
+
+font-size:26px;
+
+}
+
+.week-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.bottom-nav{
+
+padding:16px;
+
+}
+
+}
+
+/* =========================================================
+LARGE DEVICES
+========================================================= */
+
+@media(min-width:700px){
+
+.app{
+
+max-width:460px;
+
+}
+
+}
+
+/* =========================================================
+IOS SAFE FEEL
+========================================================= */
+
+body{
+
+padding-bottom:
+env(safe-area-inset-bottom);
+
+}
+
+/* =========================================================
+PREMIUM SHADOWS
+========================================================= */
+
+.card,
+.sheet,
+.prayer-theme,
+.journal-entry{
+
+box-shadow:
+0 10px 35px rgba(0,0,0,.05);
+
+}
+
+/* =========================================================
+SOFT BACKDROP
+========================================================= */
+
+.theme-menu,
+.sheet{
+
+backdrop-filter:blur(30px);
+
+}
+
+/* =========================================================
+SECTION SPACING
+========================================================= */
+
+section{
+
+padding-bottom:30px;
+
+}
+
+/* =========================================================
+TRACKER IMPROVEMENT
+========================================================= */
+
+.tracker-item{
+
+padding:16px 0;
+
+}
+
+/* =========================================================
+SETTINGS PREMIUM
+========================================================= */
+
+.settings-item{
+
+transition:background .2s ease;
+
+}
+
+.settings-item:hover{
+
+background:
+rgba(255,255,255,.02);
+
+}
+
+/* =========================================================
+MONTH ACTIVE
+========================================================= */
+
+.month-day.active{
+
+box-shadow:
+0 8px 20px rgba(0,0,0,.12);
+
+}
+
+/* =========================================================
+JOURNAL ENTRY SPACING
+========================================================= */
+
+.entry-content{
+
+margin-top:6px;
+
+}
+
+/* =========================================================
+SMOOTH APP LOAD
+========================================================= */
+
+.app{
+
+animation:appAppear .45s ease;
+
+}
+
+@keyframes appAppear{
+
+from{
+
+opacity:0;
+transform:translateY(16px);
+
+}
+
+to{
+
+opacity:1;
+transform:none;
+
+}
+
+}
+
+</style>
+
+<script>
+
+/* =========================================================
+FINAL CLEANUP
+========================================================= */
+
+/* AUTO SAVE */
+
+window.addEventListener('beforeunload', ()=>{
+
+saveState();
+
+});
+
+/* =========================================================
+AUTO CLOSE MENUS
+========================================================= */
+
+document.addEventListener('click', e=>{
+
+const menu =
+document.getElementById('themeMenu');
+
+const button =
+document.querySelector('.theme-button');
+
+if(
+menu &&
+!menu.contains(e.target) &&
+!button.contains(e.target)
+){
+
+menu.classList.add('hidden');
+
+}
+
+});
+
+/* =========================================================
+SMOOTH SCREEN CHANGE
+========================================================= */
+
+function smoothScreenTransition(id, el){
+
+showScreen(id, el);
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+});
+
+}
+
+/* =========================================================
+REPLACE NAV CALLS
+========================================================= */
+
+/*
+
+Remplacer :
+showScreen(...)
+
+Par :
+smoothScreenTransition(...)
+
+Dans les boutons nav.
+
+*/
+
+/* =========================================================
+EMPTY CLEANUP
+========================================================= */
+
+function sanitizeInput(str){
+
+return str
+.replace(/</g,'&lt;')
+.replace(/>/g,'&gt;');
+
+}
+
+/* =========================================================
+SAFE SAVE JOURNAL
+========================================================= */
+
+const originalSaveJournal =
+saveJournalEntry;
+
+saveJournalEntry = function(){
+
+const input =
+document.getElementById('journalInput');
+
+input.value =
+sanitizeInput(input.value);
+
+originalSaveJournal();
+
+};
+
+/* =========================================================
+SAFE SAVE PRAYER
+========================================================= */
+
+const originalSavePrayer =
+savePrayerSubject;
+
+savePrayerSubject = function(){
+
+const input =
+document.getElementById('subjectInput');
+
+input.value =
+sanitizeInput(input.value);
+
+originalSavePrayer();
+
+};
+
+/* =========================================================
+SAFE SAVE PLANNER
+========================================================= */
+
+const originalSavePlanner =
+savePlannerDay;
+
+savePlannerDay = function(){
+
+document.getElementById('plannerPrayer').value =
+sanitizeInput(
+document.getElementById('plannerPrayer').value
+);
+
+document.getElementById('plannerMeditation').value =
+sanitizeInput(
+document.getElementById('plannerMeditation').value
+);
+
+originalSavePlanner();
+
+};
+
+/* =========================================================
+INIT FINAL POLISH
+========================================================= */
+
+function initFinalPolish(){
+
+console.log(
+'Grace Planner — Premium Foundation Ready ✨'
+);
+
+}
+
+/* =========================================================
+AJOUTER DANS init()
+========================================================= */
+
+/*
+
+initFinalPolish();
+
+*/
+
+</script>
