@@ -1,0 +1,677 @@
+import { useState, useEffect } from "react";
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+const VERSES = [
+  { ref: "Philippiens 4:13", text: "Je puis tout par celui qui me fortifie." },
+  { ref: "Jérémie 29:11", text: "Je connais les projets que j'ai formés sur vous — projets de paix, pour vous donner un avenir et de l'espérance." },
+  { ref: "Psaumes 23:1", text: "L'Éternel est mon berger : je ne manquerai de rien." },
+  { ref: "Romains 8:28", text: "Toutes choses concourent au bien de ceux qui aiment Dieu." },
+  { ref: "Ésaïe 40:31", text: "Ceux qui se confient en l'Éternel renouvellent leur force." },
+  { ref: "Matthieu 6:33", text: "Cherchez premièrement le royaume de Dieu et sa justice." },
+  { ref: "Josué 1:9", text: "Sois fort et courageux. L'Éternel, ton Dieu, est avec toi dans tout ce que tu entreprendras." },
+  { ref: "Lamentations 3:22-23", text: "Les compassions de l'Éternel ne cessent point. Elles se renouvellent chaque matin." },
+  { ref: "Proverbes 3:5", text: "Confie-toi en l'Éternel de tout ton cœur, et il aplanira tes sentiers." },
+  { ref: "2 Timothée 1:7", text: "Dieu nous a donné un esprit de force, d'amour et de sagesse." },
+  { ref: "Jean 15:5", text: "Celui qui demeure en moi et en qui je demeure porte beaucoup de fruit." },
+  { ref: "Psaumes 46:1", text: "Dieu est pour nous un refuge et un appui, un secours qui ne manque jamais." },
+];
+
+const THEMES = {
+  noir: {
+    name: "Noir", emoji: "◼",
+    bg: "#0e0e0e", surface: "#161616", card: "#1e1e1e",
+    accent: "#d4af7a", text: "#f5f0e8", muted: "#666", border: "#2a2a2a",
+    verseCard: "#1a1a1a",
+  },
+  creme: {
+    name: "Crème", emoji: "◻",
+    bg: "#f7f3ee", surface: "#ffffff", card: "#f0ebe3",
+    accent: "#8b6f47", text: "#1a1612", muted: "#9a8f82", border: "#e0d8cc",
+    verseCard: "#ede8df",
+  },
+  ardoise: {
+    name: "Ardoise", emoji: "◈",
+    bg: "#1c2230", surface: "#242e40", card: "#2a3448",
+    accent: "#7eb8c9", text: "#e8eef5", muted: "#6a7d96", border: "#2e3a50",
+    verseCard: "#222c3e",
+  },
+  sauge: {
+    name: "Sauge", emoji: "◉",
+    bg: "#f2f0eb", surface: "#fafaf7", card: "#e8e6de",
+    accent: "#5a6e52", text: "#1e201a", muted: "#8a9082", border: "#d8d5cc",
+    verseCard: "#e5e2d8",
+  },
+};
+
+const DAYS_FR = ["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+const MONTHS_FR = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
+function getVerse() {
+  const d = new Date();
+  return VERSES[(d.getDate() + d.getMonth() * 3) % VERSES.length];
+}
+function fmt(date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+}
+function sameDay(a, b) {
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function getWeek(ref) {
+  const d = new Date(ref);
+  const mon = new Date(d);
+  mon.setDate(d.getDate() - ((d.getDay()+6)%7));
+  return Array.from({length:7},(_,i)=>{const x=new Date(mon);x.setDate(mon.getDate()+i);return x;});
+}
+
+// ── Onboarding ────────────────────────────────────────────────────────────────
+function Onboarding({ onDone }) {
+  const [step, setStep] = useState(0);
+  const [prenom, setPrenom] = useState("");
+  const [tk, setTk] = useState("noir");
+  const t = THEMES[tk];
+
+  const GLOBAL_STYLES = `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:${t.bg};}
+    @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .u{animation:up 0.5s ease both;}
+    .u2{animation:up 0.5s ease 0.1s both;}
+    .u3{animation:up 0.5s ease 0.2s both;}
+  `;
+
+  return (
+    <div style={{minHeight:"100vh",background:t.bg,color:t.text,display:"flex",
+      alignItems:"center",justifyContent:"center",padding:"1.5rem",
+      fontFamily:"'DM Sans',sans-serif"}}>
+      <style>{GLOBAL_STYLES}</style>
+
+      <div style={{width:"min(360px,100%)",textAlign:"center"}}>
+        {step === 0 && (
+          <>
+            <div className="u" style={{marginBottom:"3rem"}}>
+              <div style={{width:1,height:60,background:t.accent,margin:"0 auto 2rem",opacity:0.6}}/>
+              <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
+                fontSize:"3rem",letterSpacing:"0.12em",lineHeight:1,color:t.text,
+                textTransform:"uppercase",marginBottom:"0.6rem"}}>
+                Spirit<br/>Plan
+              </h1>
+              <p style={{color:t.muted,fontSize:"0.8rem",letterSpacing:"0.2em",textTransform:"uppercase",fontWeight:500}}>
+                Vie spirituelle
+              </p>
+            </div>
+            <div className="u2">
+              <p style={{color:t.muted,fontSize:"0.9rem",lineHeight:1.7,marginBottom:"2.5rem",fontWeight:300}}>
+                Un espace pour nourrir ta relation avec Dieu, jour après jour.
+              </p>
+              <button onClick={()=>setStep(1)}
+                style={{background:t.accent,color:t.bg,border:"none",borderRadius:"4px",
+                  padding:"0.9rem 2.5rem",fontSize:"0.8rem",fontWeight:500,cursor:"pointer",
+                  letterSpacing:"0.15em",textTransform:"uppercase",width:"100%"}}>
+                Commencer
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <div className="u" style={{marginBottom:"2.5rem"}}>
+              <p style={{color:t.muted,fontSize:"0.7rem",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:"1rem"}}>01 / 02</p>
+              <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,fontSize:"2.2rem",
+                letterSpacing:"0.08em",lineHeight:1.2,marginBottom:"0.75rem"}}>
+                Quel est ton prénom ?
+              </h2>
+              <p style={{color:t.muted,fontSize:"0.85rem",fontWeight:300}}>Pour personnaliser ton espace</p>
+            </div>
+            <div className="u2">
+              <input
+                value={prenom} onChange={e=>setPrenom(e.target.value)}
+                onKeyDown={e=>e.key==="Enter"&&prenom.trim()&&setStep(2)}
+                autoFocus placeholder="Ton prénom..."
+                style={{background:"transparent",border:"none",borderBottom:`1px solid ${t.border}`,
+                  padding:"0.75rem 0",fontSize:"1.4rem",color:t.text,width:"100%",
+                  textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
+                  letterSpacing:"0.05em",outline:"none",marginBottom:"2rem"}}
+              />
+              <button disabled={!prenom.trim()} onClick={()=>setStep(2)}
+                style={{background:prenom.trim()?t.accent:"transparent",
+                  color:prenom.trim()?t.bg:t.muted,
+                  border:`1px solid ${prenom.trim()?t.accent:t.border}`,
+                  borderRadius:"4px",padding:"0.9rem 2.5rem",fontSize:"0.8rem",fontWeight:500,
+                  cursor:prenom.trim()?"pointer":"default",letterSpacing:"0.15em",
+                  textTransform:"uppercase",width:"100%",transition:"all 0.3s"}}>
+                Continuer
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <div className="u" style={{marginBottom:"2rem"}}>
+              <p style={{color:t.muted,fontSize:"0.7rem",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:"1rem"}}>02 / 02</p>
+              <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,fontSize:"2.2rem",
+                letterSpacing:"0.08em",lineHeight:1.2,marginBottom:"0.75rem"}}>
+                Choisis ton ambiance
+              </h2>
+            </div>
+            <div className="u2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.75rem",marginBottom:"2rem"}}>
+              {Object.entries(THEMES).map(([key,th])=>(
+                <button key={key} onClick={()=>setTk(key)}
+                  style={{background:th.bg,border:`1px solid ${tk===key?th.accent:th.border}`,
+                    borderRadius:"8px",padding:"1.25rem 1rem",cursor:"pointer",
+                    display:"flex",flexDirection:"column",alignItems:"flex-start",gap:"8px",
+                    transition:"all 0.2s",
+                    boxShadow:tk===key?`inset 0 0 0 1px ${th.accent}`:"none"}}>
+                  <div style={{display:"flex",gap:"4px",alignItems:"center"}}>
+                    <span style={{width:14,height:14,borderRadius:"50%",background:th.accent,display:"block"}}/>
+                    <span style={{width:14,height:14,borderRadius:"50%",background:th.text,display:"block",opacity:0.15}}/>
+                  </div>
+                  <span style={{fontSize:"0.75rem",fontWeight:500,color:th.text,letterSpacing:"0.08em",textTransform:"uppercase"}}>{th.name}</span>
+                </button>
+              ))}
+            </div>
+            <div className="u3">
+              <button onClick={()=>onDone(prenom.trim(),tk)}
+                style={{background:t.accent,color:t.bg,border:"none",borderRadius:"4px",
+                  padding:"0.9rem 2.5rem",fontSize:"0.8rem",fontWeight:500,cursor:"pointer",
+                  letterSpacing:"0.15em",textTransform:"uppercase",width:"100%"}}>
+                Créer mon espace
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Day Modal ─────────────────────────────────────────────────────────────────
+function DayModal({ date, data, onSave, onClose, t }) {
+  const [form, setForm] = useState({
+    priere:data?.priere||"", verset:data?.verset||"",
+    enseignement:data?.enseignement||"", lienEnseignement:data?.lienEnseignement||"",
+    reunion:data?.reunion||"", lienReunion:data?.lienReunion||"",
+    culte:data?.culte||false, rappel:data?.rappel||"",
+  });
+  const u = (k,v) => setForm(p=>({...p,[k]:v}));
+
+  const fieldStyle = {
+    background:"transparent",border:"none",borderBottom:`1px solid ${t.border}`,
+    padding:"0.6rem 0",fontSize:"0.9rem",color:t.text,width:"100%",
+    fontFamily:"'DM Sans',sans-serif",resize:"none",outline:"none",
+  };
+  const labelStyle = {fontSize:"0.65rem",letterSpacing:"0.18em",textTransform:"uppercase",
+    color:t.muted,fontWeight:500,display:"block",marginBottom:"6px",marginTop:"1.25rem"};
+
+  return (
+    <div onClick={e=>{if(e.target===e.currentTarget)onClose();}}
+      style={{position:"fixed",inset:0,background:"#00000088",zIndex:200,backdropFilter:"blur(4px)",
+        display:"flex",alignItems:"flex-end",justifyContent:"center"}}>
+      <div style={{background:t.surface,width:"100%",maxWidth:480,maxHeight:"88vh",
+        overflowY:"auto",padding:"1.75rem 1.5rem",borderRadius:"16px 16px 0 0",
+        animation:"slideUp 0.35s cubic-bezier(.16,1,.3,1)"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"1.25rem"}}>
+          <div>
+            <p style={{fontSize:"0.65rem",letterSpacing:"0.15em",textTransform:"uppercase",color:t.muted,marginBottom:"4px"}}>
+              Planification
+            </p>
+            <h3 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:400,fontSize:"1.4rem",letterSpacing:"0.03em"}}>
+              {date.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"})}
+            </h3>
+          </div>
+          <button onClick={onClose} style={{background:"none",border:"none",color:t.muted,
+            fontSize:"1.2rem",cursor:"pointer",padding:"4px",marginTop:"2px"}}>✕</button>
+        </div>
+
+        <div style={{width:"100%",height:1,background:t.border,marginBottom:"0.5rem"}}/>
+
+        <label style={labelStyle}>Sujet de prière</label>
+        <textarea style={fieldStyle} rows={2} placeholder="Pour quoi vas-tu intercéder aujourd'hui ?"
+          value={form.priere} onChange={e=>u("priere",e.target.value)}/>
+
+        <label style={labelStyle}>Passage à méditer</label>
+        <textarea style={fieldStyle} rows={2} placeholder="Référence ou extrait..."
+          value={form.verset} onChange={e=>u("verset",e.target.value)}/>
+
+        <label style={labelStyle}>Enseignement</label>
+        <input style={{...fieldStyle,resize:"none"}} placeholder="Titre — Prédicateur"
+          value={form.enseignement} onChange={e=>u("enseignement",e.target.value)}/>
+        {form.enseignement && <>
+          <label style={{...labelStyle,marginTop:"0.75rem"}}>Lien de l'enseignement</label>
+          <input style={{...fieldStyle,resize:"none"}} placeholder="https://..."
+            value={form.lienEnseignement} onChange={e=>u("lienEnseignement",e.target.value)}/>
+        </>}
+
+        <label style={labelStyle}>Réunion / Zoom</label>
+        <input style={{...fieldStyle,resize:"none"}} placeholder="Nom, heure..."
+          value={form.reunion} onChange={e=>u("reunion",e.target.value)}/>
+        {form.reunion && <>
+          <label style={{...labelStyle,marginTop:"0.75rem"}}>Lien de la réunion</label>
+          <input style={{...fieldStyle,resize:"none"}} placeholder="https://..."
+            value={form.lienReunion} onChange={e=>u("lienReunion",e.target.value)}/>
+        </>}
+
+        <div style={{display:"flex",alignItems:"center",gap:"0.75rem",marginTop:"1.25rem",marginBottom:"0.5rem"}}>
+          <div onClick={()=>u("culte",!form.culte)}
+            style={{width:20,height:20,borderRadius:"4px",cursor:"pointer",
+              border:`1.5px solid ${form.culte?t.accent:t.border}`,
+              background:form.culte?t.accent:"transparent",display:"flex",alignItems:"center",justifyContent:"center",
+              transition:"all 0.2s",flexShrink:0}}>
+            {form.culte && <span style={{color:t.bg,fontSize:"0.75rem",fontWeight:700}}>✓</span>}
+          </div>
+          <span style={{fontSize:"0.85rem",color:t.text,cursor:"pointer"}} onClick={()=>u("culte",!form.culte)}>
+            Jour de culte
+          </span>
+        </div>
+
+        <label style={labelStyle}>Note / Rappel</label>
+        <textarea style={fieldStyle} rows={2} placeholder="À ne pas oublier..."
+          value={form.rappel} onChange={e=>u("rappel",e.target.value)}/>
+
+        <div style={{width:"100%",height:1,background:t.border,margin:"1.25rem 0"}}/>
+
+        <button onClick={()=>{onSave(date,form);onClose();}}
+          style={{background:t.accent,color:t.bg,border:"none",borderRadius:"4px",
+            padding:"0.9rem",fontSize:"0.8rem",fontWeight:500,cursor:"pointer",
+            letterSpacing:"0.15em",textTransform:"uppercase",width:"100%",
+            fontFamily:"'DM Sans',sans-serif"}}>
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Week View ─────────────────────────────────────────────────────────────────
+function WeekView({ dates, plan, today, t, onPick }) {
+  return (
+    <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"4px"}}>
+      {DAYS_FR.map((d,i)=>(
+        <div key={i} style={{textAlign:"center",fontSize:"0.6rem",letterSpacing:"0.1em",
+          color:t.muted,paddingBottom:"8px",fontWeight:500,textTransform:"uppercase"}}>{d}</div>
+      ))}
+      {dates.map((date,i)=>{
+        const key=fmt(date), data=plan[key];
+        const isToday=sameDay(date,today);
+        const has=data&&(data.priere||data.verset||data.enseignement||data.reunion||data.culte||data.rappel);
+        return (
+          <button key={i} onClick={()=>onPick(date)}
+            style={{border:`1px solid ${isToday?t.accent:has?t.accent+"44":t.border}`,
+              borderRadius:"8px",background:isToday?t.accent+"14":"transparent",
+              color:t.text,padding:"6px 2px",cursor:"pointer",minHeight:74,
+              display:"flex",flexDirection:"column",alignItems:"center",gap:3,
+              transition:"all 0.15s",
+              outline:isToday?`1px solid ${t.accent}`:"none"}}>
+            <span style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:isToday?600:400,
+              fontSize:"1.1rem",color:isToday?t.accent:t.text,lineHeight:1}}>{date.getDate()}</span>
+            {has && (
+              <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:1,marginTop:2}}>
+                {data.priere&&<span style={{width:4,height:4,borderRadius:"50%",background:t.accent,display:"block"}}/>}
+                {data.verset&&<span style={{width:4,height:4,borderRadius:"50%",background:t.accent,display:"block",opacity:0.7}}/>}
+                {data.enseignement&&<span style={{width:4,height:4,borderRadius:"50%",background:t.accent,display:"block",opacity:0.5}}/>}
+                {data.reunion&&<span style={{width:4,height:4,borderRadius:"50%",background:t.muted,display:"block"}}/>}
+                {data.culte&&<span style={{width:4,height:4,borderRadius:0,background:t.accent,display:"block",transform:"rotate(45deg)"}}/>}
+              </div>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Month View ────────────────────────────────────────────────────────────────
+function MonthView({ year, month, plan, today, t, onPick }) {
+  const first=new Date(year,month,1);
+  const last=new Date(year,month+1,0);
+  const cells=[];
+  for(let i=0;i<first.getDay();i++) cells.push(null);
+  for(let d=1;d<=last.getDate();d++) cells.push(new Date(year,month,d));
+
+  return (
+    <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"3px"}}>
+      {DAYS_FR.map((d,i)=>(
+        <div key={i} style={{textAlign:"center",fontSize:"0.58rem",letterSpacing:"0.1em",
+          color:t.muted,paddingBottom:"6px",fontWeight:500,textTransform:"uppercase"}}>{d}</div>
+      ))}
+      {cells.map((date,i)=>{
+        if(!date) return <div key={i}/>;
+        const key=fmt(date), data=plan[key];
+        const isToday=sameDay(date,today);
+        const has=data&&(data.priere||data.verset||data.enseignement||data.reunion||data.culte||data.rappel);
+        return (
+          <button key={i} onClick={()=>onPick(date)}
+            style={{border:`1px solid ${isToday?t.accent:has?t.accent+"33":"transparent"}`,
+              borderRadius:"6px",background:isToday?t.accent+"14":"transparent",
+              color:t.text,padding:"3px 1px",cursor:"pointer",minHeight:36,
+              display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"all 0.15s"}}>
+            <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:"0.95rem",
+              color:isToday?t.accent:t.text,fontWeight:isToday?600:400}}>{date.getDate()}</span>
+            {has&&<span style={{width:4,height:4,borderRadius:"50%",background:t.accent,display:"block"}}/>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+export default function App() {
+  const [ready, setReady] = useState(false);
+  const [prenom, setPrenom] = useState("");
+  const [tk, setTk] = useState("noir");
+  const [plan, setPlan] = useState({});
+  const [page, setPage] = useState("home");
+  const [view, setView] = useState("week");
+  const [selDate, setSelDate] = useState(null);
+  const [modal, setModal] = useState(false);
+  const [settings, setSettings] = useState(false);
+  const [cur, setCur] = useState(new Date());
+
+  const today = new Date();
+  const t = THEMES[tk];
+  const verse = getVerse();
+  const todayKey = fmt(today);
+  const td = plan[todayKey];
+  const hasToday = td&&(td.priere||td.verset||td.enseignement||td.reunion||td.culte||td.rappel);
+  const week = getWeek(cur);
+
+  useEffect(()=>{
+    try {
+      const s = localStorage.getItem("sp3");
+      if(s){ const d=JSON.parse(s); setPrenom(d.p||""); setTk(d.tk||"noir"); setPlan(d.pl||{}); setReady(true); }
+    } catch {}
+  },[]);
+
+  const save = (p,tk,pl) => { try{ localStorage.setItem("sp3",JSON.stringify({p,tk,pl})); }catch{} };
+  const onboard = (p,tk) => { setPrenom(p); setTk(tk); setReady(true); save(p,tk,{}); };
+  const saveDay = (date,data) => {
+    const key=fmt(date), np={...plan,[key]:data};
+    setPlan(np); save(prenom,tk,np);
+  };
+  const open = (date) => { setSelDate(date); setModal(true); };
+
+  const STYLES = `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0;}
+    @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .fi{animation:fadeIn 0.4s ease both;}
+    .fi2{animation:fadeIn 0.4s ease 0.08s both;}
+    .fi3{animation:fadeIn 0.4s ease 0.16s both;}
+    ::-webkit-scrollbar{width:2px;}
+    ::-webkit-scrollbar-thumb{background:${t.border};}
+    input::placeholder,textarea::placeholder{color:${t.muted};}
+  `;
+
+  if(!ready) return <Onboarding onDone={onboard}/>;
+
+  const DAY_LABEL = today.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+
+  return (
+    <div style={{minHeight:"100vh",background:t.bg,color:t.text,fontFamily:"'DM Sans',sans-serif"}}>
+      <style>{STYLES}</style>
+
+      {/* Header */}
+      <header style={{position:"sticky",top:0,zIndex:100,background:t.bg,
+        borderBottom:`1px solid ${t.border}`,padding:"0 1.25rem",
+        display:"flex",justifyContent:"space-between",alignItems:"center",height:52}}>
+        <span style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:600,fontSize:"1.1rem",
+          letterSpacing:"0.15em",textTransform:"uppercase",color:t.text}}>SpiritPlan</span>
+        <button onClick={()=>setSettings(s=>!s)}
+          style={{background:"none",border:`1px solid ${t.border}`,borderRadius:"4px",
+            padding:"5px 10px",cursor:"pointer",color:t.muted,fontSize:"0.7rem",
+            letterSpacing:"0.12em",textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif",fontWeight:500}}>
+          Réglages
+        </button>
+      </header>
+
+      {/* Settings dropdown */}
+      {settings && (
+        <div style={{background:t.surface,borderBottom:`1px solid ${t.border}`,padding:"1.25rem",animation:"fadeIn 0.2s ease"}}>
+          <p style={{fontSize:"0.65rem",letterSpacing:"0.18em",textTransform:"uppercase",color:t.muted,marginBottom:"0.9rem",fontWeight:500}}>
+            Ambiance
+          </p>
+          <div style={{display:"flex",gap:"0.6rem",flexWrap:"wrap"}}>
+            {Object.entries(THEMES).map(([key,th])=>(
+              <button key={key} onClick={()=>{setTk(key);save(prenom,key,plan);setSettings(false);}}
+                style={{background:th.bg,border:`1px solid ${tk===key?th.accent:th.border}`,
+                  borderRadius:"4px",padding:"0.5rem 1rem",cursor:"pointer",color:th.text,
+                  fontSize:"0.75rem",fontWeight:500,letterSpacing:"0.1em",textTransform:"uppercase",
+                  transition:"all 0.2s",fontFamily:"'DM Sans',sans-serif"}}>
+                {th.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div style={{padding:"0 1.25rem",maxWidth:480,margin:"0 auto",paddingBottom:"80px"}}>
+
+        {/* ── ACCUEIL ── */}
+        {page==="home" && (
+          <div>
+            {/* Hero section */}
+            <div className="fi" style={{paddingTop:"2rem",paddingBottom:"1.75rem",
+              borderBottom:`1px solid ${t.border}`,marginBottom:"1.5rem"}}>
+              <p style={{fontSize:"0.65rem",letterSpacing:"0.2em",textTransform:"uppercase",
+                color:t.muted,marginBottom:"0.6rem",fontWeight:500}}>
+                {DAY_LABEL}
+              </p>
+              <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
+                fontSize:"2.8rem",lineHeight:1.05,letterSpacing:"-0.01em",marginBottom:"0",color:t.text}}>
+                Bonjour,<br/>
+                <em style={{fontStyle:"italic",fontWeight:400}}>{prenom}</em>
+              </h1>
+            </div>
+
+            {/* Verset du jour */}
+            <div className="fi2" style={{marginBottom:"1.5rem"}}>
+              <p style={{fontSize:"0.62rem",letterSpacing:"0.2em",textTransform:"uppercase",
+                color:t.accent,marginBottom:"1rem",fontWeight:500}}>Parole du jour</p>
+              <blockquote style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
+                fontStyle:"italic",fontSize:"1.35rem",lineHeight:1.6,color:t.text,
+                marginBottom:"0.6rem",letterSpacing:"0.01em"}}>
+                "{verse.text}"
+              </blockquote>
+              <p style={{fontSize:"0.78rem",color:t.muted,fontWeight:500,letterSpacing:"0.06em"}}>
+                — {verse.ref}
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div style={{width:"100%",height:"1px",background:t.border,marginBottom:"1.5rem"}}/>
+
+            {/* Planning du jour */}
+            <div className="fi3">
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:"1rem"}}>
+                <p style={{fontSize:"0.62rem",letterSpacing:"0.2em",textTransform:"uppercase",color:t.muted,fontWeight:500}}>
+                  Aujourd'hui
+                </p>
+                <button onClick={()=>open(today)}
+                  style={{background:"none",border:"none",cursor:"pointer",color:t.accent,
+                    fontSize:"0.72rem",letterSpacing:"0.12em",textTransform:"uppercase",
+                    fontFamily:"'DM Sans',sans-serif",fontWeight:500,padding:0}}>
+                  + Modifier
+                </button>
+              </div>
+
+              {!hasToday ? (
+                <div style={{padding:"2rem 0",textAlign:"center"}}>
+                  <div style={{width:1,height:32,background:t.border,margin:"0 auto 1rem"}}/>
+                  <p style={{color:t.muted,fontSize:"0.85rem",fontWeight:300,marginBottom:"1.25rem",lineHeight:1.6}}>
+                    Ta journée n'est pas encore planifiée.
+                  </p>
+                  <button onClick={()=>open(today)}
+                    style={{background:"transparent",border:`1px solid ${t.border}`,borderRadius:"4px",
+                      padding:"0.75rem 1.5rem",cursor:"pointer",color:t.text,
+                      fontSize:"0.75rem",letterSpacing:"0.14em",textTransform:"uppercase",
+                      fontFamily:"'DM Sans',sans-serif",fontWeight:500,transition:"all 0.2s"}}>
+                    Planifier maintenant
+                  </button>
+                </div>
+              ) : (
+                <div style={{display:"flex",flexDirection:"column",gap:"0.85rem"}}>
+                  {td.culte && (
+                    <div style={{display:"flex",alignItems:"center",gap:"1rem",
+                      padding:"0.9rem 1rem",background:t.card,borderRadius:"8px",
+                      border:`1px solid ${t.accent}33`}}>
+                      <div style={{width:2,height:28,background:t.accent,borderRadius:1,flexShrink:0}}/>
+                      <div>
+                        <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
+                          color:t.accent,marginBottom:"2px",fontWeight:500}}>Culte</p>
+                        <p style={{fontSize:"0.9rem",fontWeight:400}}>Jour de culte</p>
+                      </div>
+                    </div>
+                  )}
+                  {td.reunion && (
+                    <div style={{display:"flex",alignItems:"center",gap:"1rem",
+                      padding:"0.9rem 1rem",background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
+                      <div style={{width:2,height:28,background:t.muted,borderRadius:1,flexShrink:0}}/>
+                      <div style={{flex:1,minWidth:0}}>
+                        <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
+                          color:t.muted,marginBottom:"2px",fontWeight:500}}>Réunion</p>
+                        <p style={{fontSize:"0.9rem",fontWeight:400,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{td.reunion}</p>
+                        {td.lienReunion&&<a href={td.lienReunion} target="_blank" rel="noreferrer"
+                          style={{fontSize:"0.75rem",color:t.accent,textDecoration:"none",fontWeight:500}}>
+                          Rejoindre →
+                        </a>}
+                      </div>
+                    </div>
+                  )}
+                  {td.priere && (
+                    <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
+                      background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
+                      <div style={{width:2,minHeight:28,background:t.accent,borderRadius:1,flexShrink:0,opacity:0.7}}/>
+                      <div>
+                        <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
+                          color:t.muted,marginBottom:"4px",fontWeight:500}}>Prière</p>
+                        <p style={{fontSize:"0.9rem",fontWeight:300,lineHeight:1.5}}>{td.priere}</p>
+                      </div>
+                    </div>
+                  )}
+                  {td.verset && (
+                    <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
+                      background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
+                      <div style={{width:2,minHeight:28,background:t.accent,borderRadius:1,flexShrink:0,opacity:0.5}}/>
+                      <div>
+                        <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
+                          color:t.muted,marginBottom:"4px",fontWeight:500}}>Méditation</p>
+                        <p style={{fontSize:"0.9rem",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",lineHeight:1.5}}>{td.verset}</p>
+                      </div>
+                    </div>
+                  )}
+                  {td.enseignement ? (
+                    <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
+                      background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
+                      <div style={{width:2,minHeight:28,background:t.accent,borderRadius:1,flexShrink:0,opacity:0.35}}/>
+                      <div>
+                        <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
+                          color:t.muted,marginBottom:"4px",fontWeight:500}}>Enseignement</p>
+                        <p style={{fontSize:"0.9rem",fontWeight:400,marginBottom:"4px"}}>{td.enseignement}</p>
+                        {td.lienEnseignement&&<a href={td.lienEnseignement} target="_blank" rel="noreferrer"
+                          style={{fontSize:"0.75rem",color:t.accent,textDecoration:"none",fontWeight:500}}>
+                          Écouter →
+                        </a>}
+                      </div>
+                    </div>
+                  ) : (
+                    <p style={{fontSize:"0.82rem",color:t.muted,fontWeight:300,padding:"0.25rem 0",fontStyle:"italic"}}>
+                      Aucun enseignement aujourd'hui.
+                    </p>
+                  )}
+                  {td.rappel && (
+                    <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
+                      background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
+                      <div style={{width:2,minHeight:28,background:t.muted,borderRadius:1,flexShrink:0}}/>
+                      <div>
+                        <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
+                          color:t.muted,marginBottom:"4px",fontWeight:500}}>Note</p>
+                        <p style={{fontSize:"0.9rem",fontWeight:300,lineHeight:1.5}}>{td.rappel}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── PLANIFIER ── */}
+        {page==="planner" && (
+          <div>
+            <div style={{paddingTop:"2rem",paddingBottom:"1.5rem",borderBottom:`1px solid ${t.border}`,marginBottom:"1.5rem"}}>
+              <p style={{fontSize:"0.65rem",letterSpacing:"0.2em",textTransform:"uppercase",color:t.muted,marginBottom:"0.5rem",fontWeight:500}}>
+                Planning
+              </p>
+              <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,fontSize:"2rem",letterSpacing:"0.02em"}}>
+                Mon agenda spirituel
+              </h2>
+            </div>
+
+            {/* Toggle */}
+            <div style={{display:"flex",gap:"1.5rem",marginBottom:"1.25rem",borderBottom:`1px solid ${t.border}`}}>
+              {[["week","Semaine"],["month","Mois"]].map(([v,label])=>(
+                <button key={v} onClick={()=>setView(v)}
+                  style={{background:"none",border:"none",cursor:"pointer",padding:"0.6rem 0",
+                    fontSize:"0.72rem",letterSpacing:"0.15em",textTransform:"uppercase",fontWeight:500,
+                    color:view===v?t.text:t.muted,
+                    borderBottom:`2px solid ${view===v?t.accent:"transparent"}`,
+                    fontFamily:"'DM Sans',sans-serif",transition:"all 0.2s",marginBottom:"-1px"}}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Navigation */}
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"1.25rem"}}>
+              <button onClick={()=>{const d=new Date(cur);d.setDate(d.getDate()-(view==="week"?7:28));setCur(d);}}
+                style={{background:"none",border:"none",cursor:"pointer",color:t.muted,fontSize:"1.2rem",padding:"4px"}}>‹</button>
+              <p style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:400,fontSize:"1rem",letterSpacing:"0.05em"}}>
+                {view==="week"
+                  ? `${week[0].getDate()} – ${week[6].getDate()} ${MONTHS_FR[week[6].getMonth()]} ${week[6].getFullYear()}`
+                  : `${MONTHS_FR[cur.getMonth()]} ${cur.getFullYear()}`}
+              </p>
+              <button onClick={()=>{const d=new Date(cur);d.setDate(d.getDate()+(view==="week"?7:28));setCur(d);}}
+                style={{background:"none",border:"none",cursor:"pointer",color:t.muted,fontSize:"1.2rem",padding:"4px"}}>›</button>
+            </div>
+
+            {view==="week"
+              ? <WeekView dates={week} plan={plan} today={today} t={t} onPick={open}/>
+              : <MonthView year={cur.getFullYear()} month={cur.getMonth()} plan={plan} today={today} t={t} onPick={open}/>
+            }
+
+            <p style={{textAlign:"center",color:t.muted,fontSize:"0.72rem",letterSpacing:"0.1em",
+              textTransform:"uppercase",marginTop:"1.5rem",fontWeight:500}}>
+              Sélectionne un jour pour planifier
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom nav */}
+      <nav style={{position:"fixed",bottom:0,left:0,right:0,background:t.bg,
+        borderTop:`1px solid ${t.border}`,display:"flex",zIndex:100}}>
+        {[["home","Accueil"],["planner","Agenda"]].map(([id,label])=>(
+          <button key={id} onClick={()=>setPage(id)}
+            style={{flex:1,padding:"0.8rem 0.5rem",border:"none",background:"none",cursor:"pointer",
+              display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",
+              fontFamily:"'DM Sans',sans-serif",transition:"color 0.2s",
+              borderTop:`2px solid ${page===id?t.accent:"transparent"}`,
+              color:page===id?t.accent:t.muted}}>
+            <span style={{fontSize:"0.62rem",fontWeight:500,letterSpacing:"0.16em",textTransform:"uppercase"}}>
+              {label}
+            </span>
+          </button>
+        ))}
+      </nav>
+
+      {modal && selDate && (
+        <DayModal date={selDate} data={plan[fmt(selDate)]}
+          onSave={saveDay} onClose={()=>setModal(false)} t={t}/>
+      )}
+    </div>
+  );
+}
