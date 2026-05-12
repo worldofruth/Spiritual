@@ -1,667 +1,2254 @@
-import { useState, useEffect } from “react”;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-// ── Data ──────────────────────────────────────────────────────────────────────
-const VERSES = [
-{ ref: “Philippiens 4:13”, text: “Je puis tout par celui qui me fortifie.” },
-{ ref: “Jérémie 29:11”, text: “Je connais les projets que j’ai formés sur vous — projets de paix, pour vous donner un avenir et de l’espérance.” },
-{ ref: “Psaumes 23:1”, text: “L’Éternel est mon berger : je ne manquerai de rien.” },
-{ ref: “Romains 8:28”, text: “Toutes choses concourent au bien de ceux qui aiment Dieu.” },
-{ ref: “Ésaïe 40:31”, text: “Ceux qui se confient en l’Éternel renouvellent leur force.” },
-{ ref: “Matthieu 6:33”, text: “Cherchez premièrement le royaume de Dieu et sa justice.” },
-{ ref: “Josué 1:9”, text: “Sois fort et courageux. L’Éternel, ton Dieu, est avec toi dans tout ce que tu entreprendras.” },
-{ ref: “Lamentations 3:22-23”, text: “Les compassions de l’Éternel ne cessent point. Elles se renouvellent chaque matin.” },
-{ ref: “Proverbes 3:5”, text: “Confie-toi en l’Éternel de tout ton cœur, et il aplanira tes sentiers.” },
-{ ref: “2 Timothée 1:7”, text: “Dieu nous a donné un esprit de force, d’amour et de sagesse.” },
-{ ref: “Jean 15:5”, text: “Celui qui demeure en moi et en qui je demeure porte beaucoup de fruit.” },
-{ ref: “Psaumes 46:1”, text: “Dieu est pour nous un refuge et un appui, un secours qui ne manque jamais.” },
+<title>Grace Planner</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+
+--bg:#070707;
+--card:#121212;
+--text:#f6f1ea;
+--muted:#948c84;
+--accent:#d6b88d;
+--line:rgba(255,255,255,.06);
+--glow:rgba(215,185,142,.12);
+
+font-family:'Inter',sans-serif;
+
+background:
+radial-gradient(circle at top,
+var(--glow),
+transparent 35%
+),
+var(--bg);
+
+color:var(--text);
+
+min-height:100vh;
+
+overflow-x:hidden;
+
+transition:.4s ease;
+
+}
+
+/* THEMES */
+
+body.theme-sand{
+
+--bg:#f6efe6;
+--card:#fffaf4;
+--text:#211d19;
+--muted:#7c736a;
+--accent:#b68e61;
+--line:rgba(0,0,0,.06);
+--glow:rgba(182,142,97,.16);
+
+}
+
+body.theme-rose{
+
+--bg:#f8eef1;
+--card:#fff8f9;
+--text:#2a2022;
+--muted:#8f7c82;
+--accent:#cf9ba8;
+--line:rgba(0,0,0,.05);
+--glow:rgba(207,155,168,.15);
+
+}
+
+body.theme-blue{
+
+--bg:#0d1422;
+--card:#172031;
+--text:#eef4ff;
+--muted:#92a1bb;
+--accent:#8ca7da;
+--line:rgba(255,255,255,.06);
+--glow:rgba(140,167,218,.12);
+
+}
+
+body.theme-sage{
+
+--bg:#eef2ed;
+--card:#fbfdf9;
+--text:#20251f;
+--muted:#738072;
+--accent:#89a68d;
+--line:rgba(0,0,0,.05);
+--glow:rgba(137,166,141,.16);
+
+}
+
+body::before{
+
+content:'';
+
+position:fixed;
+inset:0;
+
+background-image:
+url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='rgba(255,255,255,0.02)'%3E%3Ccircle cx='10' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
+
+opacity:.35;
+
+pointer-events:none;
+
+}
+
+.hidden{
+display:none !important;
+}
+
+.app{
+
+max-width:430px;
+
+margin:auto;
+
+padding:
+24px
+22px
+140px;
+
+min-height:100vh;
+
+}
+
+/* TOPBAR */
+
+.topbar{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:50px;
+
+}
+
+.logo{
+
+font-size:12px;
+
+letter-spacing:4px;
+
+color:var(--accent);
+
+}
+
+.icon-btn{
+
+width:54px;
+height:54px;
+
+border-radius:50%;
+
+background:
+rgba(255,255,255,.04);
+
+border:1px solid var(--line);
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+backdrop-filter:blur(20px);
+
+cursor:pointer;
+
+transition:.3s ease;
+
+}
+
+.icon-btn:hover{
+transform:scale(.95);
+}
+
+/* THEME MENU */
+
+.theme-menu{
+
+position:fixed;
+
+top:90px;
+right:22px;
+
+width:220px;
+
+padding:20px;
+
+background:var(--card);
+
+border:1px solid var(--line);
+
+border-radius:28px;
+
+backdrop-filter:blur(30px);
+
+z-index:99999;
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.2);
+
+}
+
+.theme-menu h3{
+
+font-size:13px;
+
+letter-spacing:3px;
+
+margin-bottom:18px;
+
+color:var(--muted);
+
+font-weight:500;
+
+}
+
+.theme-option{
+
+display:flex;
+align-items:center;
+gap:14px;
+
+padding:14px;
+
+border-radius:18px;
+
+cursor:pointer;
+
+transition:.25s ease;
+
+}
+
+.theme-option:hover{
+
+background:
+rgba(255,255,255,.04);
+
+}
+
+.theme-preview{
+
+width:24px;
+height:24px;
+
+border-radius:50%;
+
+}
+
+.preview-midnight{
+background:#0c0c0c;
+}
+
+.preview-sand{
+background:#b68e61;
+}
+
+.preview-rose{
+background:#cf9ba8;
+}
+
+.preview-blue{
+background:#8ca7da;
+}
+
+.preview-sage{
+background:#89a68d;
+}
+
+/* HERO */
+
+.hero small{
+
+display:block;
+
+margin-bottom:20px;
+
+font-size:11px;
+
+letter-spacing:4px;
+
+color:var(--muted);
+
+}
+
+.hero h1{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:72px;
+
+line-height:.9;
+
+font-weight:500;
+
+margin-bottom:18px;
+
+}
+
+.hero p{
+
+line-height:1.8;
+
+max-width:320px;
+
+color:var(--muted);
+
+}
+
+/* CARDS */
+
+.card{
+
+margin-top:22px;
+
+padding:28px;
+
+border-radius:34px;
+
+background:
+linear-gradient(
+180deg,
+rgba(255,255,255,.04),
+rgba(255,255,255,.015)
+);
+
+border:1px solid var(--line);
+
+backdrop-filter:blur(24px);
+
+box-shadow:
+0 20px 50px rgba(0,0,0,.12);
+
+}
+
+body.theme-sand .card,
+body.theme-rose .card,
+body.theme-sage .card{
+
+background:
+linear-gradient(
+180deg,
+rgba(255,255,255,.85),
+rgba(255,255,255,.65)
+);
+
+}
+
+.label{
+
+font-size:11px;
+
+letter-spacing:4px;
+
+margin-bottom:22px;
+
+color:var(--accent);
+
+}
+
+.verse{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:48px;
+
+line-height:1.1;
+
+margin-bottom:22px;
+
+}
+
+.reference{
+
+color:var(--muted);
+
+line-height:1.7;
+
+}
+
+.note{
+
+font-size:20px;
+
+line-height:1.8;
+
+font-style:italic;
+
+color:var(--muted);
+
+}
+
+/* STATS */
+
+.stats{
+
+display:grid;
+grid-template-columns:1fr 1fr;
+
+gap:14px;
+
+margin-top:18px;
+
+}
+
+.stat{
+
+padding:24px;
+
+border-radius:28px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+}
+
+.stat-number{
+
+font-size:34px;
+
+margin-bottom:10px;
+
+}
+
+.stat-label{
+
+font-size:14px;
+
+line-height:1.7;
+
+color:var(--muted);
+
+}
+
+/* TASK */
+
+.task{
+
+padding:22px;
+
+border-radius:28px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+margin-bottom:14px;
+
+display:flex;
+gap:18px;
+
+cursor:pointer;
+
+transition:.3s ease;
+
+}
+
+.task:hover{
+transform:translateY(-2px);
+}
+
+.task-line{
+
+width:3px;
+
+border-radius:20px;
+
+background:var(--accent);
+
+}
+
+.task small{
+
+display:block;
+
+margin-bottom:8px;
+
+font-size:10px;
+
+letter-spacing:3px;
+
+color:var(--muted);
+
+}
+
+.task h3{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:30px;
+
+font-weight:500;
+
+}
+
+.task-icons{
+
+margin-top:10px;
+
+display:flex;
+gap:8px;
+
+font-size:14px;
+
+}
+
+/* WEEKLY */
+
+.week-grid{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:14px;
+
+margin-top:22px;
+
+}
+
+.week-day{
+
+padding:24px;
+
+border-radius:30px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+min-height:160px;
+
+cursor:pointer;
+
+transition:.3s ease;
+
+}
+
+.week-day:hover{
+transform:translateY(-2px);
+}
+
+.week-day small{
+
+display:block;
+
+margin-bottom:10px;
+
+font-size:10px;
+
+letter-spacing:3px;
+
+color:var(--muted);
+
+}
+
+.week-day h3{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:34px;
+
+font-weight:500;
+
+margin-bottom:12px;
+
+}
+
+.week-icons{
+
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+
+font-size:14px;
+
+}
+
+/* TOGGLE */
+
+.toggle{
+
+display:flex;
+
+background:
+rgba(255,255,255,.04);
+
+border:1px solid var(--line);
+
+padding:6px;
+
+border-radius:999px;
+
+margin-top:24px;
+
+}
+
+.toggle button{
+
+flex:1;
+
+padding:14px;
+
+border:none;
+
+background:transparent;
+
+color:var(--muted);
+
+border-radius:999px;
+
+cursor:pointer;
+
+}
+
+.toggle button.active{
+
+background:var(--accent);
+
+color:white;
+
+}
+
+/* CALENDAR */
+
+.calendar{
+
+display:grid;
+
+grid-template-columns:repeat(7,1fr);
+
+gap:10px;
+
+margin-top:20px;
+
+}
+
+.day{
+
+aspect-ratio:1;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+border-radius:18px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+cursor:pointer;
+
+}
+
+.day.active{
+
+background:var(--accent);
+
+color:white;
+
+}
+
+/* JOURNAL */
+
+textarea,
+.input{
+
+width:100%;
+
+margin-top:14px;
+
+padding:18px;
+
+border:none;
+
+outline:none;
+
+border-radius:24px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+font-family:inherit;
+
+color:var(--text);
+
+}
+
+textarea{
+
+resize:none;
+
+min-height:160px;
+
+}
+
+.mood-grid{
+
+display:grid;
+
+grid-template-columns:repeat(5,1fr);
+
+gap:10px;
+
+margin-top:18px;
+
+}
+
+.mood{
+
+padding:14px;
+
+border-radius:18px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+text-align:center;
+
+cursor:pointer;
+
+font-size:20px;
+
+transition:.25s ease;
+
+}
+
+.mood:hover{
+
+transform:translateY(-2px);
+
+border-color:var(--accent);
+
+}
+
+.history-entry{
+
+padding:18px 0;
+
+border-bottom:1px solid var(--line);
+
+}
+
+.history-entry:last-child{
+border-bottom:none;
+}
+
+.history-entry h4{
+
+margin-bottom:8px;
+
+font-size:14px;
+
+color:var(--accent);
+
+}
+
+/* BUTTON */
+
+.button{
+
+width:100%;
+
+padding:18px;
+
+margin-top:18px;
+
+border:none;
+
+border-radius:24px;
+
+cursor:pointer;
+
+font-weight:600;
+
+background:
+linear-gradient(
+180deg,
+var(--accent),
+rgba(0,0,0,.25)
+);
+
+color:white;
+
+}
+
+/* PRAYERS */
+
+.prayer-category{
+
+padding:24px;
+
+border-radius:30px;
+
+background:
+rgba(255,255,255,.03);
+
+border:1px solid var(--line);
+
+margin-top:18px;
+
+}
+
+.prayer-category h3{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:38px;
+
+font-weight:500;
+
+margin-bottom:10px;
+
+}
+
+.badge{
+
+display:inline-block;
+
+padding:
+8px
+14px;
+
+border-radius:999px;
+
+background:
+rgba(255,255,255,.06);
+
+margin-top:12px;
+
+font-size:12px;
+
+color:var(--accent);
+
+}
+
+/* SETTINGS */
+
+.setting-row{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:18px 0;
+
+border-bottom:1px solid var(--line);
+
+}
+
+.switch{
+
+width:54px;
+height:30px;
+
+border-radius:999px;
+
+background:
+rgba(255,255,255,.08);
+
+position:relative;
+
+cursor:pointer;
+
+}
+
+.switch::after{
+
+content:'';
+
+position:absolute;
+
+width:22px;
+height:22px;
+
+border-radius:50%;
+
+background:white;
+
+top:4px;
+left:4px;
+
+transition:.3s ease;
+
+}
+
+.switch.active{
+
+background:var(--accent);
+
+}
+
+.switch.active::after{
+
+left:28px;
+
+}
+
+/* SHEET */
+
+.sheet{
+
+position:fixed;
+
+left:0;
+right:0;
+bottom:0;
+
+background:var(--bg);
+
+padding:30px;
+
+border-top-left-radius:40px;
+border-top-right-radius:40px;
+
+z-index:999999;
+
+max-height:90vh;
+
+overflow:auto;
+
+box-shadow:
+0 -20px 50px rgba(0,0,0,.25);
+
+}
+
+.sheet-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+margin-bottom:24px;
+
+}
+
+.sheet h2{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:48px;
+
+font-weight:500;
+
+}
+
+.close{
+
+font-size:28px;
+
+cursor:pointer;
+
+color:var(--muted);
+
+}
+
+/* NAV */
+
+.bottom-nav{
+
+position:fixed;
+
+bottom:18px;
+left:50%;
+
+transform:translateX(-50%);
+
+width:calc(100% - 34px);
+max-width:390px;
+
+padding:18px;
+
+border-radius:34px;
+
+background:
+rgba(15,15,15,.85);
+
+border:1px solid rgba(255,255,255,.05);
+
+backdrop-filter:blur(30px);
+
+display:flex;
+justify-content:space-around;
+
+z-index:9999;
+
+}
+
+body.theme-sand .bottom-nav,
+body.theme-rose .bottom-nav,
+body.theme-sage .bottom-nav{
+
+background:
+rgba(255,255,255,.75);
+
+}
+
+.nav-item{
+
+text-align:center;
+
+font-size:10px;
+
+letter-spacing:2px;
+
+color:var(--muted);
+
+cursor:pointer;
+
+}
+
+.nav-item.active{
+color:var(--accent);
+}
+
+.nav-icon{
+
+font-size:20px;
+
+margin-bottom:8px;
+
+}
+
+/* ONBOARDING */
+
+.onboarding{
+
+position:fixed;
+inset:0;
+
+background:var(--bg);
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:30px;
+
+z-index:9999999;
+
+}
+
+.onboarding-card{
+
+width:100%;
+max-width:380px;
+
+}
+
+.onboarding h1{
+
+font-family:'Cormorant Garamond',serif;
+
+font-size:78px;
+
+line-height:.9;
+
+margin-bottom:18px;
+
+}
+
+.onboarding p{
+
+line-height:1.8;
+
+color:var(--muted);
+
+margin-bottom:28px;
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ONBOARDING -->
+
+<div
+class="onboarding"
+id="onboarding"
+>
+
+<div class="onboarding-card">
+
+<h1>
+Grace<br>
+Planner
+</h1>
+
+<p>
+Organise ta vie spirituelle
+avec paix et intention.
+</p>
+
+<input
+class="input"
+id="nameInput"
+placeholder="Ton prénom"
+/>
+
+<button
+class="button"
+onclick="startApp()"
+>
+Entrer
+</button>
+
+</div>
+
+</div>
+
+<div class="app">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+
+<div class="logo">
+GRACE PLANNER
+</div>
+
+<div
+class="icon-btn"
+onclick="toggleThemeMenu()"
+>
+✦
+</div>
+
+</div>
+
+<!-- THEME MENU -->
+
+<div
+class="theme-menu hidden"
+id="themeMenu"
+>
+
+<h3>
+THÈMES
+</h3>
+
+<div
+class="theme-option"
+onclick="setTheme('')"
+>
+<div class="theme-preview preview-midnight"></div>
+<span>Midnight</span>
+</div>
+
+<div
+class="theme-option"
+onclick="setTheme('theme-sand')"
+>
+<div class="theme-preview preview-sand"></div>
+<span>Sand</span>
+</div>
+
+<div
+class="theme-option"
+onclick="setTheme('theme-rose')"
+>
+<div class="theme-preview preview-rose"></div>
+<span>Rose</span>
+</div>
+
+<div
+class="theme-option"
+onclick="setTheme('theme-blue')"
+>
+<div class="theme-preview preview-blue"></div>
+<span>Blue Night</span>
+</div>
+
+<div
+class="theme-option"
+onclick="setTheme('theme-sage')"
+>
+<div class="theme-preview preview-sage"></div>
+<span>Sage</span>
+</div>
+
+</div>
+
+<!-- HOME -->
+
+<section id="homeScreen">
+
+<div class="hero">
+
+<small id="todayDate">
+MERCREDI 13 MAI
+</small>
+
+<h1 id="heroName">
+Bonjour,<br>
+Clémence
+</h1>
+
+<p>
+Que la paix du Seigneur accompagne
+chacun de tes pas aujourd’hui.
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+PAROLE DU JOUR
+</div>
+
+<div class="verse">
+“Je connais les projets
+que j’ai formés sur vous.”
+</div>
+
+<div class="reference">
+Jérémie 29:11
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+PLANNING DU JOUR
+</div>
+
+<div class="task">
+
+<div class="task-line"></div>
+
+<div>
+
+<small>
+PRIÈRE
+</small>
+
+<h3>
+Famille
+</h3>
+
+<div class="task-icons">
+✞
+</div>
+
+</div>
+
+</div>
+
+<div class="task">
+
+<div class="task-line"></div>
+
+<div>
+
+<small>
+ENSEIGNEMENT
+</small>
+
+<h3>
+Jean 15
+</h3>
+
+<div class="task-icons">
+📖
+</div>
+
+</div>
+
+</div>
+
+<div class="task">
+
+<div class="task-line"></div>
+
+<div>
+
+<small>
+JEÛNE
+</small>
+
+<h3>
+3 jours
+</h3>
+
+<div class="task-icons">
+🔥
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-number">
+🔥 18
+</div>
+
+<div class="stat-label">
+jours avec Dieu
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-number">
+4h12
+</div>
+
+<div class="stat-label">
+avec Dieu cette semaine
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+PETITE NOTE
+</div>
+
+<div class="note">
+Même dans le silence,
+Dieu prépare quelque chose de beau.
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+CETTE SEMAINE AVEC DIEU
+</div>
+
+<div class="note">
+3 méditations<br>
+5 prières<br>
+1 période de jeûne<br>
+4 enseignements
+</div>
+
+</div>
+
+</section>
+
+<!-- PLANNER -->
+
+<section
+id="plannerScreen"
+class="hidden"
+>
+
+<div class="hero">
+
+<small>
+PLANNER
+</small>
+
+<h1>
+Ta semaine
+</h1>
+
+<p>
+Organise tes temps spirituels
+avec paix et clarté.
+</p>
+
+</div>
+
+<div class="toggle">
+
+<button
+class="active"
+id="weeklyBtn"
+onclick="showWeekly()"
+>
+Weekly
+</button>
+
+<button
+id="monthlyBtn"
+onclick="showMonthly()"
+>
+Monthly
+</button>
+
+</div>
+
+<!-- WEEKLY -->
+
+<div id="weeklyPlanner">
+
+<div class="week-grid">
+
+<div
+class="week-day"
+onclick="openSheet('Lundi 4 Mai')"
+>
+
+<small>
+LUNDI
+</small>
+
+<h3>
+04
+</h3>
+
+<div class="week-icons">
+✞ 📖 🔥
+</div>
+
+</div>
+
+<div
+class="week-day"
+onclick="openSheet('Mardi 5 Mai')"
+>
+
+<small>
+MARDI
+</small>
+
+<h3>
+05
+</h3>
+
+<div class="week-icons">
+📖
+</div>
+
+</div>
+
+<div
+class="week-day"
+onclick="openSheet('Mercredi 6 Mai')"
+>
+
+<small>
+MERCREDI
+</small>
+
+<h3>
+06
+</h3>
+
+<div class="week-icons">
+✞
+</div>
+
+</div>
+
+<div
+class="week-day"
+onclick="openSheet('Jeudi 7 Mai')"
+>
+
+<small>
+JEUDI
+</small>
+
+<h3>
+07
+</h3>
+
+<div class="week-icons">
+🔥
+</div>
+
+</div>
+
+<div
+class="week-day"
+onclick="openSheet('Vendredi 8 Mai')"
+>
+
+<small>
+VENDREDI
+</small>
+
+<h3>
+08
+</h3>
+
+<div class="week-icons">
+✞ 📖
+</div>
+
+</div>
+
+<div
+class="week-day"
+onclick="openSheet('Samedi 9 Mai')"
+>
+
+<small>
+SAMEDI
+</small>
+
+<h3>
+09
+</h3>
+
+<div class="week-icons">
+📖
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- MONTHLY -->
+
+<div
+id="monthlyPlanner"
+class="hidden"
+>
+
+<div class="card">
+
+<div class="label">
+MAI 2026
+</div>
+
+<div class="calendar">
+
+<div class="day">1</div>
+<div class="day">2</div>
+<div class="day active">3</div>
+<div class="day">4</div>
+<div class="day">5</div>
+<div class="day">6</div>
+<div class="day">7</div>
+
+<div class="day">8</div>
+<div class="day">9</div>
+<div class="day">10</div>
+<div class="day">11</div>
+<div class="day">12</div>
+<div class="day">13</div>
+<div class="day">14</div>
+
+</div>
+
+<button class="button">
++ Ajouter une période de jeûne
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- JOURNAL -->
+
+<section
+id="journalScreen"
+class="hidden"
+>
+
+<div class="hero">
+
+<small>
+JOURNAL
+</small>
+
+<h1>
+Ton coeur
+</h1>
+
+<p>
+Écris ce que Dieu met dans ton coeur.
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+MERCREDI 13 MAI
+</div>
+
+<div class="mood-grid">
+
+<div class="mood">
+🤍
+</div>
+
+<div class="mood">
+😊
+</div>
+
+<div class="mood">
+🙏
+</div>
+
+<div class="mood">
+😔
+</div>
+
+<div class="mood">
+🔥
+</div>
+
+</div>
+
+<textarea
+id="journalText"
+placeholder="Écris ici..."
+></textarea>
+
+<button
+class="button"
+onclick="saveJournal()"
+>
+Sauvegarder
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+HISTORIQUE
+</div>
+
+<div id="journalHistory"></div>
+
+</div>
+
+</section>
+
+<!-- PRAYERS -->
+
+<section
+id="prayerScreen"
+class="hidden"
+>
+
+<div class="hero">
+
+<small>
+PRIÈRES
+</small>
+
+<h1>
+Tes sujets
+</h1>
+
+</div>
+
+<div class="prayer-category">
+
+<h3>
+Famille
+</h3>
+
+<p class="reference">
+3 sujets de prière
+</p>
+
+<div class="badge">
+Exaucée ✨
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="task">
+
+<div class="task-line"></div>
+
+<div>
+
+<small>
+SUJET
+</small>
+
+<h3>
+Protection des parents
+</h3>
+
+</div>
+
+</div>
+
+<div class="task">
+
+<div class="task-line"></div>
+
+<div>
+
+<small>
+SUJET
+</small>
+
+<h3>
+Paix dans la famille
+</h3>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="prayer-category">
+
+<h3>
+Amis
+</h3>
+
+<p class="reference">
+2 sujets de prière
+</p>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+DIEU A RÉPONDU ICI ✨
+</div>
+
+<div class="note">
+Merci Seigneur pour cette guérison.
+</div>
+
+</div>
+
+</section>
+
+<!-- SETTINGS -->
+
+<section
+id="settingsScreen"
+class="hidden"
+>
+
+<div class="hero">
+
+<small>
+SETTINGS
+</small>
+
+<h1>
+Préférences
+</h1>
+
+</div>
+
+<div class="card">
+
+<div class="setting-row">
+
+<span>
+Notifications
+</span>
+
+<div class="switch active"></div>
+
+</div>
+
+<div class="setting-row">
+
+<span>
+Rappel de prière
+</span>
+
+<div class="switch active"></div>
+
+</div>
+
+<div class="setting-row">
+
+<span>
+Rappel journal
+</span>
+
+<div class="switch"></div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="label">
+PRÉNOM
+</div>
+
+<input
+class="input"
+id="settingsName"
+placeholder="Ton prénom"
+/>
+
+<button
+class="button"
+onclick="saveName()"
+>
+Sauvegarder
+</button>
+
+</div>
+
+</section>
+
+</div>
+
+<!-- SHEET -->
+
+<div
+class="sheet hidden"
+id="plannerSheet"
+>
+
+<div class="sheet-header">
+
+<h2 id="sheetTitle">
+Lundi
+</h2>
+
+<div
+class="close"
+onclick="closeSheet()"
+>
+×
+</div>
+
+</div>
+
+<input
+class="input"
+placeholder="Sujet de prière"
+/>
+
+<input
+class="input"
+placeholder="Enseignement"
+/>
+
+<textarea
+placeholder="Méditation / notes"
+></textarea>
+
+<input
+class="input"
+placeholder="Réunion"
+/>
+
+<input
+class="input"
+placeholder="Période de jeûne"
+/>
+
+<button class="button">
+Sauvegarder
+</button>
+
+</div>
+
+<!-- NAV -->
+
+<nav class="bottom-nav">
+
+<div
+class="nav-item active"
+onclick="showScreen('homeScreen', this)"
+>
+
+<div class="nav-icon">
+✦
+</div>
+
+HOME
+
+</div>
+
+<div
+class="nav-item"
+onclick="showScreen('plannerScreen', this)"
+>
+
+<div class="nav-icon">
+☰
+</div>
+
+PLANNER
+
+</div>
+
+<div
+class="nav-item"
+onclick="showScreen('journalScreen', this)"
+>
+
+<div class="nav-icon">
+☾
+</div>
+
+JOURNAL
+
+</div>
+
+<div
+class="nav-item"
+onclick="showScreen('prayerScreen', this)"
+>
+
+<div class="nav-icon">
+✞
+</div>
+
+PRIÈRES
+
+</div>
+
+<div
+class="nav-item"
+onclick="showScreen('settingsScreen', this)"
+>
+
+<div class="nav-icon">
+⚙
+</div>
+
+SETTINGS
+
+</div>
+
+</nav>
+
+<script>
+
+/* NAVIGATION */
+
+const screens = [
+'homeScreen',
+'plannerScreen',
+'journalScreen',
+'prayerScreen',
+'settingsScreen'
 ];
 
-const THEMES = {
-noir: {
-name: “Noir”, emoji: “◼”,
-bg: “#0e0e0e”, surface: “#161616”, card: “#1e1e1e”,
-accent: “#d4af7a”, text: “#f5f0e8”, muted: “#666”, border: “#2a2a2a”,
-verseCard: “#1a1a1a”,
-},
-creme: {
-name: “Crème”, emoji: “◻”,
-bg: “#f7f3ee”, surface: “#ffffff”, card: “#f0ebe3”,
-accent: “#8b6f47”, text: “#1a1612”, muted: “#9a8f82”, border: “#e0d8cc”,
-verseCard: “#ede8df”,
-},
-ardoise: {
-name: “Ardoise”, emoji: “◈”,
-bg: “#1c2230”, surface: “#242e40”, card: “#2a3448”,
-accent: “#7eb8c9”, text: “#e8eef5”, muted: “#6a7d96”, border: “#2e3a50”,
-verseCard: “#222c3e”,
-},
-sauge: {
-name: “Sauge”, emoji: “◉”,
-bg: “#f2f0eb”, surface: “#fafaf7”, card: “#e8e6de”,
-accent: “#5a6e52”, text: “#1e201a”, muted: “#8a9082”, border: “#d8d5cc”,
-verseCard: “#e5e2d8”,
-},
-};
+function showScreen(id, el){
 
-const DAYS_FR = [“Dim”,“Lun”,“Mar”,“Mer”,“Jeu”,“Ven”,“Sam”];
-const MONTHS_FR = [“Janvier”,“Février”,“Mars”,“Avril”,“Mai”,“Juin”,“Juillet”,“Août”,“Septembre”,“Octobre”,“Novembre”,“Décembre”];
-
-function getVerse() {
-const d = new Date();
-return VERSES[(d.getDate() + d.getMonth() * 3) % VERSES.length];
-}
-function fmt(date) {
-return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-}
-function sameDay(a, b) {
-return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
-}
-function getWeek(ref) {
-const d = new Date(ref);
-const mon = new Date(d);
-mon.setDate(d.getDate() - ((d.getDay()+6)%7));
-return Array.from({length:7},(_,i)=>{const x=new Date(mon);x.setDate(mon.getDate()+i);return x;});
-}
-
-// ── Onboarding ────────────────────────────────────────────────────────────────
-function Onboarding({ onDone }) {
-const [step, setStep] = useState(0);
-const [prenom, setPrenom] = useState(””);
-const [tk, setTk] = useState(“noir”);
-const t = THEMES[tk];
-
-const GLOBAL_STYLES = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap'); *{box-sizing:border-box;margin:0;padding:0;} body{background:${t.bg};} @keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}} .u{animation:up 0.5s ease both;} .u2{animation:up 0.5s ease 0.1s both;} .u3{animation:up 0.5s ease 0.2s both;}`;
-
-return (
-<div style={{minHeight:“100vh”,background:t.bg,color:t.text,display:“flex”,
-alignItems:“center”,justifyContent:“center”,padding:“1.5rem”,
-fontFamily:”‘DM Sans’,sans-serif”}}>
-<style>{GLOBAL_STYLES}</style>
-
-```
-  <div style={{width:"min(360px,100%)",textAlign:"center"}}>
-    {step === 0 && (
-      <>
-        <div className="u" style={{marginBottom:"3rem"}}>
-          <div style={{width:1,height:60,background:t.accent,margin:"0 auto 2rem",opacity:0.6}}/>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
-            fontSize:"3rem",letterSpacing:"0.12em",lineHeight:1,color:t.text,
-            textTransform:"uppercase",marginBottom:"0.6rem"}}>
-            Spirit<br/>Plan
-          </h1>
-          <p style={{color:t.muted,fontSize:"0.8rem",letterSpacing:"0.2em",textTransform:"uppercase",fontWeight:500}}>
-            Vie spirituelle
-          </p>
-        </div>
-        <div className="u2">
-          <p style={{color:t.muted,fontSize:"0.9rem",lineHeight:1.7,marginBottom:"2.5rem",fontWeight:300}}>
-            Un espace pour nourrir ta relation avec Dieu, jour après jour.
-          </p>
-          <button onClick={()=>setStep(1)}
-            style={{background:t.accent,color:t.bg,border:"none",borderRadius:"4px",
-              padding:"0.9rem 2.5rem",fontSize:"0.8rem",fontWeight:500,cursor:"pointer",
-              letterSpacing:"0.15em",textTransform:"uppercase",width:"100%"}}>
-            Commencer
-          </button>
-        </div>
-      </>
-    )}
-
-    {step === 1 && (
-      <>
-        <div className="u" style={{marginBottom:"2.5rem"}}>
-          <p style={{color:t.muted,fontSize:"0.7rem",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:"1rem"}}>01 / 02</p>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,fontSize:"2.2rem",
-            letterSpacing:"0.08em",lineHeight:1.2,marginBottom:"0.75rem"}}>
-            Quel est ton prénom ?
-          </h2>
-          <p style={{color:t.muted,fontSize:"0.85rem",fontWeight:300}}>Pour personnaliser ton espace</p>
-        </div>
-        <div className="u2">
-          <input
-            value={prenom} onChange={e=>setPrenom(e.target.value)}
-            onKeyDown={e=>e.key==="Enter"&&prenom.trim()&&setStep(2)}
-            autoFocus placeholder="Ton prénom..."
-            style={{background:"transparent",border:"none",borderBottom:`1px solid ${t.border}`,
-              padding:"0.75rem 0",fontSize:"1.4rem",color:t.text,width:"100%",
-              textAlign:"center",fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
-              letterSpacing:"0.05em",outline:"none",marginBottom:"2rem"}}
-          />
-          <button disabled={!prenom.trim()} onClick={()=>setStep(2)}
-            style={{background:prenom.trim()?t.accent:"transparent",
-              color:prenom.trim()?t.bg:t.muted,
-              border:`1px solid ${prenom.trim()?t.accent:t.border}`,
-              borderRadius:"4px",padding:"0.9rem 2.5rem",fontSize:"0.8rem",fontWeight:500,
-              cursor:prenom.trim()?"pointer":"default",letterSpacing:"0.15em",
-              textTransform:"uppercase",width:"100%",transition:"all 0.3s"}}>
-            Continuer
-          </button>
-        </div>
-      </>
-    )}
-
-    {step === 2 && (
-      <>
-        <div className="u" style={{marginBottom:"2rem"}}>
-          <p style={{color:t.muted,fontSize:"0.7rem",letterSpacing:"0.2em",textTransform:"uppercase",marginBottom:"1rem"}}>02 / 02</p>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,fontSize:"2.2rem",
-            letterSpacing:"0.08em",lineHeight:1.2,marginBottom:"0.75rem"}}>
-            Choisis ton ambiance
-          </h2>
-        </div>
-        <div className="u2" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0.75rem",marginBottom:"2rem"}}>
-          {Object.entries(THEMES).map(([key,th])=>(
-            <button key={key} onClick={()=>setTk(key)}
-              style={{background:th.bg,border:`1px solid ${tk===key?th.accent:th.border}`,
-                borderRadius:"8px",padding:"1.25rem 1rem",cursor:"pointer",
-                display:"flex",flexDirection:"column",alignItems:"flex-start",gap:"8px",
-                transition:"all 0.2s",
-                boxShadow:tk===key?`inset 0 0 0 1px ${th.accent}`:"none"}}>
-              <div style={{display:"flex",gap:"4px",alignItems:"center"}}>
-                <span style={{width:14,height:14,borderRadius:"50%",background:th.accent,display:"block"}}/>
-                <span style={{width:14,height:14,borderRadius:"50%",background:th.text,display:"block",opacity:0.15}}/>
-              </div>
-              <span style={{fontSize:"0.75rem",fontWeight:500,color:th.text,letterSpacing:"0.08em",textTransform:"uppercase"}}>{th.name}</span>
-            </button>
-          ))}
-        </div>
-        <div className="u3">
-          <button onClick={()=>onDone(prenom.trim(),tk)}
-            style={{background:t.accent,color:t.bg,border:"none",borderRadius:"4px",
-              padding:"0.9rem 2.5rem",fontSize:"0.8rem",fontWeight:500,cursor:"pointer",
-              letterSpacing:"0.15em",textTransform:"uppercase",width:"100%"}}>
-            Créer mon espace
-          </button>
-        </div>
-      </>
-    )}
-  </div>
-</div>
-```
-
-);
-}
-
-// ── Day Modal ─────────────────────────────────────────────────────────────────
-function DayModal({ date, data, onSave, onClose, t }) {
-const [form, setForm] = useState({
-priere:data?.priere||””, verset:data?.verset||””,
-enseignement:data?.enseignement||””, lienEnseignement:data?.lienEnseignement||””,
-reunion:data?.reunion||””, lienReunion:data?.lienReunion||””,
-culte:data?.culte||false, rappel:data?.rappel||””,
+screens.forEach(screen=>{
+document
+.getElementById(screen)
+.classList.add('hidden');
 });
-const u = (k,v) => setForm(p=>({…p,[k]:v}));
 
-const fieldStyle = {
-background:“transparent”,border:“none”,borderBottom:`1px solid ${t.border}`,
-padding:“0.6rem 0”,fontSize:“0.9rem”,color:t.text,width:“100%”,
-fontFamily:”‘DM Sans’,sans-serif”,resize:“none”,outline:“none”,
+document
+.getElementById(id)
+.classList.remove('hidden');
+
+document
+.querySelectorAll('.nav-item')
+.forEach(item=>{
+item.classList.remove('active');
+});
+
+el.classList.add('active');
+
+}
+
+/* THEME MENU */
+
+function toggleThemeMenu(){
+
+document
+.getElementById('themeMenu')
+.classList.toggle('hidden');
+
+}
+
+/* THEMES */
+
+function setTheme(theme){
+
+document.body.classList.remove(
+'theme-sand',
+'theme-rose',
+'theme-blue',
+'theme-sage'
+);
+
+if(theme){
+document.body.classList.add(theme);
+}
+
+localStorage.setItem(
+'graceTheme',
+theme
+);
+
+}
+
+/* SAVED THEME */
+
+const savedTheme =
+localStorage.getItem('graceTheme');
+
+if(savedTheme){
+document.body.classList.add(savedTheme);
+}
+
+/* WEEKLY / MONTHLY */
+
+function showWeekly(){
+
+document
+.getElementById('weeklyPlanner')
+.classList.remove('hidden');
+
+document
+.getElementById('monthlyPlanner')
+.classList.add('hidden');
+
+document
+.getElementById('weeklyBtn')
+.classList.add('active');
+
+document
+.getElementById('monthlyBtn')
+.classList.remove('active');
+
+}
+
+function showMonthly(){
+
+document
+.getElementById('monthlyPlanner')
+.classList.remove('hidden');
+
+document
+.getElementById('weeklyPlanner')
+.classList.add('hidden');
+
+document
+.getElementById('monthlyBtn')
+.classList.add('active');
+
+document
+.getElementById('weeklyBtn')
+.classList.remove('active');
+
+}
+
+/* SHEET */
+
+function openSheet(day){
+
+document
+.getElementById('plannerSheet')
+.classList.remove('hidden');
+
+document
+.getElementById('sheetTitle')
+.innerText = day;
+
+}
+
+function closeSheet(){
+
+document
+.getElementById('plannerSheet')
+.classList.add('hidden');
+
+}
+
+/* ONBOARDING */
+
+function startApp(){
+
+const name =
+document.getElementById('nameInput').value || 'Clémence';
+
+localStorage.setItem(
+'graceName',
+name
+);
+
+document
+.getElementById('heroName')
+.innerHTML =
+`Bonjour,<br>${name}`;
+
+document
+.getElementById('settingsName')
+.value = name;
+
+document
+.getElementById('onboarding')
+.style.display='none';
+
+}
+
+/* LOAD USER */
+
+window.onload = ()=>{
+
+const savedName =
+localStorage.getItem('graceName');
+
+if(savedName){
+
+document
+.getElementById('heroName')
+.innerHTML =
+`Bonjour,<br>${savedName}`;
+
+document
+.getElementById('settingsName')
+.value = savedName;
+
+document
+.getElementById('onboarding')
+.style.display='none';
+
+}
+
+loadJournal();
+
 };
-const labelStyle = {fontSize:“0.65rem”,letterSpacing:“0.18em”,textTransform:“uppercase”,
-color:t.muted,fontWeight:500,display:“block”,marginBottom:“6px”,marginTop:“1.25rem”};
 
-return (
-<div onClick={e=>{if(e.target===e.currentTarget)onClose();}}
-style={{position:“fixed”,inset:0,background:”#00000088”,zIndex:200,backdropFilter:“blur(4px)”,
-display:“flex”,alignItems:“flex-end”,justifyContent:“center”}}>
-<div style={{background:t.surface,width:“100%”,maxWidth:480,maxHeight:“88vh”,
-overflowY:“auto”,padding:“1.75rem 1.5rem”,borderRadius:“16px 16px 0 0”,
-animation:“slideUp 0.35s cubic-bezier(.16,1,.3,1)”}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”,marginBottom:“1.25rem”}}>
-<div>
-<p style={{fontSize:“0.65rem”,letterSpacing:“0.15em”,textTransform:“uppercase”,color:t.muted,marginBottom:“4px”}}>
-Planification
-</p>
-<h3 style={{fontFamily:”‘Cormorant Garamond’,serif”,fontWeight:400,fontSize:“1.4rem”,letterSpacing:“0.03em”}}>
-{date.toLocaleDateString(“fr-FR”,{weekday:“long”,day:“numeric”,month:“long”})}
-</h3>
-</div>
-<button onClick={onClose} style={{background:“none”,border:“none”,color:t.muted,
-fontSize:“1.2rem”,cursor:“pointer”,padding:“4px”,marginTop:“2px”}}>✕</button>
-</div>
+/* SAVE NAME */
 
-```
-    <div style={{width:"100%",height:1,background:t.border,marginBottom:"0.5rem"}}/>
+function saveName(){
 
-    <label style={labelStyle}>Sujet de prière</label>
-    <textarea style={fieldStyle} rows={2} placeholder="Pour quoi vas-tu intercéder aujourd'hui ?"
-      value={form.priere} onChange={e=>u("priere",e.target.value)}/>
+const name =
+document.getElementById('settingsName').value;
 
-    <label style={labelStyle}>Passage à méditer</label>
-    <textarea style={fieldStyle} rows={2} placeholder="Référence ou extrait..."
-      value={form.verset} onChange={e=>u("verset",e.target.value)}/>
-
-    <label style={labelStyle}>Enseignement</label>
-    <input style={{...fieldStyle,resize:"none"}} placeholder="Titre — Prédicateur"
-      value={form.enseignement} onChange={e=>u("enseignement",e.target.value)}/>
-    {form.enseignement && <>
-      <label style={{...labelStyle,marginTop:"0.75rem"}}>Lien de l'enseignement</label>
-      <input style={{...fieldStyle,resize:"none"}} placeholder="https://..."
-        value={form.lienEnseignement} onChange={e=>u("lienEnseignement",e.target.value)}/>
-    </>}
-
-    <label style={labelStyle}>Réunion / Zoom</label>
-    <input style={{...fieldStyle,resize:"none"}} placeholder="Nom, heure..."
-      value={form.reunion} onChange={e=>u("reunion",e.target.value)}/>
-    {form.reunion && <>
-      <label style={{...labelStyle,marginTop:"0.75rem"}}>Lien de la réunion</label>
-      <input style={{...fieldStyle,resize:"none"}} placeholder="https://..."
-        value={form.lienReunion} onChange={e=>u("lienReunion",e.target.value)}/>
-    </>}
-
-    <div style={{display:"flex",alignItems:"center",gap:"0.75rem",marginTop:"1.25rem",marginBottom:"0.5rem"}}>
-      <div onClick={()=>u("culte",!form.culte)}
-        style={{width:20,height:20,borderRadius:"4px",cursor:"pointer",
-          border:`1.5px solid ${form.culte?t.accent:t.border}`,
-          background:form.culte?t.accent:"transparent",display:"flex",alignItems:"center",justifyContent:"center",
-          transition:"all 0.2s",flexShrink:0}}>
-        {form.culte && <span style={{color:t.bg,fontSize:"0.75rem",fontWeight:700}}>✓</span>}
-      </div>
-      <span style={{fontSize:"0.85rem",color:t.text,cursor:"pointer"}} onClick={()=>u("culte",!form.culte)}>
-        Jour de culte
-      </span>
-    </div>
-
-    <label style={labelStyle}>Note / Rappel</label>
-    <textarea style={fieldStyle} rows={2} placeholder="À ne pas oublier..."
-      value={form.rappel} onChange={e=>u("rappel",e.target.value)}/>
-
-    <div style={{width:"100%",height:1,background:t.border,margin:"1.25rem 0"}}/>
-
-    <button onClick={()=>{onSave(date,form);onClose();}}
-      style={{background:t.accent,color:t.bg,border:"none",borderRadius:"4px",
-        padding:"0.9rem",fontSize:"0.8rem",fontWeight:500,cursor:"pointer",
-        letterSpacing:"0.15em",textTransform:"uppercase",width:"100%",
-        fontFamily:"'DM Sans',sans-serif"}}>
-      Enregistrer
-    </button>
-  </div>
-</div>
-```
-
+localStorage.setItem(
+'graceName',
+name
 );
+
+document
+.getElementById('heroName')
+.innerHTML =
+`Bonjour,<br>${name}`;
+
 }
 
-// ── Week View ─────────────────────────────────────────────────────────────────
-function WeekView({ dates, plan, today, t, onPick }) {
-return (
-<div style={{display:“grid”,gridTemplateColumns:“repeat(7,1fr)”,gap:“4px”}}>
-{DAYS_FR.map((d,i)=>(
-<div key={i} style={{textAlign:“center”,fontSize:“0.6rem”,letterSpacing:“0.1em”,
-color:t.muted,paddingBottom:“8px”,fontWeight:500,textTransform:“uppercase”}}>{d}</div>
-))}
-{dates.map((date,i)=>{
-const key=fmt(date), data=plan[key];
-const isToday=sameDay(date,today);
-const has=data&&(data.priere||data.verset||data.enseignement||data.reunion||data.culte||data.rappel);
-return (
-<button key={i} onClick={()=>onPick(date)}
-style={{border:`1px solid ${isToday?t.accent:has?t.accent+"44":t.border}`,
-borderRadius:“8px”,background:isToday?t.accent+“14”:“transparent”,
-color:t.text,padding:“6px 2px”,cursor:“pointer”,minHeight:74,
-display:“flex”,flexDirection:“column”,alignItems:“center”,gap:3,
-transition:“all 0.15s”,
-outline:isToday?`1px solid ${t.accent}`:“none”}}>
-<span style={{fontFamily:”‘Cormorant Garamond’,serif”,fontWeight:isToday?600:400,
-fontSize:“1.1rem”,color:isToday?t.accent:t.text,lineHeight:1}}>{date.getDate()}</span>
-{has && (
-<div style={{display:“flex”,flexWrap:“wrap”,justifyContent:“center”,gap:1,marginTop:2}}>
-{data.priere&&<span style={{width:4,height:4,borderRadius:“50%”,background:t.accent,display:“block”}}/>}
-{data.verset&&<span style={{width:4,height:4,borderRadius:“50%”,background:t.accent,display:“block”,opacity:0.7}}/>}
-{data.enseignement&&<span style={{width:4,height:4,borderRadius:“50%”,background:t.accent,display:“block”,opacity:0.5}}/>}
-{data.reunion&&<span style={{width:4,height:4,borderRadius:“50%”,background:t.muted,display:“block”}}/>}
-{data.culte&&<span style={{width:4,height:4,borderRadius:0,background:t.accent,display:“block”,transform:“rotate(45deg)”}}/>}
-</div>
-)}
-</button>
+/* JOURNAL */
+
+function saveJournal(){
+
+const text =
+document.getElementById('journalText').value;
+
+if(!text) return;
+
+const entries =
+JSON.parse(
+localStorage.getItem('journalEntries') || '[]'
 );
-})}
-</div>
+
+entries.unshift({
+
+date:new Date().toLocaleDateString('fr-FR'),
+
+text:text
+
+});
+
+localStorage.setItem(
+'journalEntries',
+JSON.stringify(entries)
 );
+
+document
+.getElementById('journalText')
+.value='';
+
+loadJournal();
+
 }
 
-// ── Month View ────────────────────────────────────────────────────────────────
-function MonthView({ year, month, plan, today, t, onPick }) {
-const first=new Date(year,month,1);
-const last=new Date(year,month+1,0);
-const cells=[];
-for(let i=0;i<first.getDay();i++) cells.push(null);
-for(let d=1;d<=last.getDate();d++) cells.push(new Date(year,month,d));
+function loadJournal(){
 
-return (
-<div style={{display:“grid”,gridTemplateColumns:“repeat(7,1fr)”,gap:“3px”}}>
-{DAYS_FR.map((d,i)=>(
-<div key={i} style={{textAlign:“center”,fontSize:“0.58rem”,letterSpacing:“0.1em”,
-color:t.muted,paddingBottom:“6px”,fontWeight:500,textTransform:“uppercase”}}>{d}</div>
-))}
-{cells.map((date,i)=>{
-if(!date) return <div key={i}/>;
-const key=fmt(date), data=plan[key];
-const isToday=sameDay(date,today);
-const has=data&&(data.priere||data.verset||data.enseignement||data.reunion||data.culte||data.rappel);
-return (
-<button key={i} onClick={()=>onPick(date)}
-style={{border:`1px solid ${isToday?t.accent:has?t.accent+"33":"transparent"}`,
-borderRadius:“6px”,background:isToday?t.accent+“14”:“transparent”,
-color:t.text,padding:“3px 1px”,cursor:“pointer”,minHeight:36,
-display:“flex”,flexDirection:“column”,alignItems:“center”,gap:2,transition:“all 0.15s”}}>
-<span style={{fontFamily:”‘Cormorant Garamond’,serif”,fontSize:“0.95rem”,
-color:isToday?t.accent:t.text,fontWeight:isToday?600:400}}>{date.getDate()}</span>
-{has&&<span style={{width:4,height:4,borderRadius:“50%”,background:t.accent,display:“block”}}/>}
-</button>
+const container =
+document.getElementById('journalHistory');
+
+if(!container) return;
+
+const entries =
+JSON.parse(
+localStorage.getItem('journalEntries') || '[]'
 );
-})}
+
+container.innerHTML='';
+
+entries.forEach(entry=>{
+
+container.innerHTML += `
+
+<div class="history-entry">
+
+<h4>${entry.date}</h4>
+
+<p>${entry.text}</p>
+
 </div>
-);
+
+`;
+
+});
+
 }
 
-// ── Main App ──────────────────────────────────────────────────────────────────
-export default function App() {
-const [ready, setReady] = useState(false);
-const [prenom, setPrenom] = useState(””);
-const [tk, setTk] = useState(“noir”);
-const [plan, setPlan] = useState({});
-const [page, setPage] = useState(“home”);
-const [view, setView] = useState(“week”);
-const [selDate, setSelDate] = useState(null);
-const [modal, setModal] = useState(false);
-const [settings, setSettings] = useState(false);
-const [cur, setCur] = useState(new Date());
+</script>
 
-const today = new Date();
-const t = THEMES[tk];
-const verse = getVerse();
-const todayKey = fmt(today);
-const td = plan[todayKey];
-const hasToday = td&&(td.priere||td.verset||td.enseignement||td.reunion||td.culte||td.rappel);
-const week = getWeek(cur);
-
-useEffect(()=>{
-try {
-const s = localStorage.getItem(“sp3”);
-if(s){ const d=JSON.parse(s); setPrenom(d.p||””); setTk(d.tk||“noir”); setPlan(d.pl||{}); setReady(true); }
-} catch {}
-},[]);
-
-const save = (p,tk,pl) => { try{ localStorage.setItem(“sp3”,JSON.stringify({p,tk,pl})); }catch{} };
-const onboard = (p,tk) => { setPrenom(p); setTk(tk); setReady(true); save(p,tk,{}); };
-const saveDay = (date,data) => {
-const key=fmt(date), np={…plan,[key]:data};
-setPlan(np); save(prenom,tk,np);
-};
-const open = (date) => { setSelDate(date); setModal(true); };
-
-const STYLES = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap'); *{box-sizing:border-box;margin:0;padding:0;} @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}} @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}} .fi{animation:fadeIn 0.4s ease both;} .fi2{animation:fadeIn 0.4s ease 0.08s both;} .fi3{animation:fadeIn 0.4s ease 0.16s both;} ::-webkit-scrollbar{width:2px;} ::-webkit-scrollbar-thumb{background:${t.border};} input::placeholder,textarea::placeholder{color:${t.muted};}`;
-
-if(!ready) return <Onboarding onDone={onboard}/>;
-
-const DAY_LABEL = today.toLocaleDateString(“fr-FR”,{weekday:“long”,day:“numeric”,month:“long”});
-
-return (
-<div style={{minHeight:“100vh”,background:t.bg,color:t.text,fontFamily:”‘DM Sans’,sans-serif”}}>
-<style>{STYLES}</style>
-
-```
-  {/* Header */}
-  <header style={{position:"sticky",top:0,zIndex:100,background:t.bg,
-    borderBottom:`1px solid ${t.border}`,padding:"0 1.25rem",
-    display:"flex",justifyContent:"space-between",alignItems:"center",height:52}}>
-    <span style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:600,fontSize:"1.1rem",
-      letterSpacing:"0.15em",textTransform:"uppercase",color:t.text}}>SpiritPlan</span>
-    <button onClick={()=>setSettings(s=>!s)}
-      style={{background:"none",border:`1px solid ${t.border}`,borderRadius:"4px",
-        padding:"5px 10px",cursor:"pointer",color:t.muted,fontSize:"0.7rem",
-        letterSpacing:"0.12em",textTransform:"uppercase",fontFamily:"'DM Sans',sans-serif",fontWeight:500}}>
-      Réglages
-    </button>
-  </header>
-
-  {/* Settings dropdown */}
-  {settings && (
-    <div style={{background:t.surface,borderBottom:`1px solid ${t.border}`,padding:"1.25rem",animation:"fadeIn 0.2s ease"}}>
-      <p style={{fontSize:"0.65rem",letterSpacing:"0.18em",textTransform:"uppercase",color:t.muted,marginBottom:"0.9rem",fontWeight:500}}>
-        Ambiance
-      </p>
-      <div style={{display:"flex",gap:"0.6rem",flexWrap:"wrap"}}>
-        {Object.entries(THEMES).map(([key,th])=>(
-          <button key={key} onClick={()=>{setTk(key);save(prenom,key,plan);setSettings(false);}}
-            style={{background:th.bg,border:`1px solid ${tk===key?th.accent:th.border}`,
-              borderRadius:"4px",padding:"0.5rem 1rem",cursor:"pointer",color:th.text,
-              fontSize:"0.75rem",fontWeight:500,letterSpacing:"0.1em",textTransform:"uppercase",
-              transition:"all 0.2s",fontFamily:"'DM Sans',sans-serif"}}>
-            {th.name}
-          </button>
-        ))}
-      </div>
-    </div>
-  )}
-
-  <div style={{padding:"0 1.25rem",maxWidth:480,margin:"0 auto",paddingBottom:"80px"}}>
-
-    {/* ── ACCUEIL ── */}
-    {page==="home" && (
-      <div>
-        {/* Hero section */}
-        <div className="fi" style={{paddingTop:"2rem",paddingBottom:"1.75rem",
-          borderBottom:`1px solid ${t.border}`,marginBottom:"1.5rem"}}>
-          <p style={{fontSize:"0.65rem",letterSpacing:"0.2em",textTransform:"uppercase",
-            color:t.muted,marginBottom:"0.6rem",fontWeight:500}}>
-            {DAY_LABEL}
-          </p>
-          <h1 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
-            fontSize:"2.8rem",lineHeight:1.05,letterSpacing:"-0.01em",marginBottom:"0",color:t.text}}>
-            Bonjour,<br/>
-            <em style={{fontStyle:"italic",fontWeight:400}}>{prenom}</em>
-          </h1>
-        </div>
-
-        {/* Verset du jour */}
-        <div className="fi2" style={{marginBottom:"1.5rem"}}>
-          <p style={{fontSize:"0.62rem",letterSpacing:"0.2em",textTransform:"uppercase",
-            color:t.accent,marginBottom:"1rem",fontWeight:500}}>Parole du jour</p>
-          <blockquote style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,
-            fontStyle:"italic",fontSize:"1.35rem",lineHeight:1.6,color:t.text,
-            marginBottom:"0.6rem",letterSpacing:"0.01em"}}>
-            "{verse.text}"
-          </blockquote>
-          <p style={{fontSize:"0.78rem",color:t.muted,fontWeight:500,letterSpacing:"0.06em"}}>
-            — {verse.ref}
-          </p>
-        </div>
-
-        {/* Divider */}
-        <div style={{width:"100%",height:"1px",background:t.border,marginBottom:"1.5rem"}}/>
-
-        {/* Planning du jour */}
-        <div className="fi3">
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:"1rem"}}>
-            <p style={{fontSize:"0.62rem",letterSpacing:"0.2em",textTransform:"uppercase",color:t.muted,fontWeight:500}}>
-              Aujourd'hui
-            </p>
-            <button onClick={()=>open(today)}
-              style={{background:"none",border:"none",cursor:"pointer",color:t.accent,
-                fontSize:"0.72rem",letterSpacing:"0.12em",textTransform:"uppercase",
-                fontFamily:"'DM Sans',sans-serif",fontWeight:500,padding:0}}>
-              + Modifier
-            </button>
-          </div>
-
-          {!hasToday ? (
-            <div style={{padding:"2rem 0",textAlign:"center"}}>
-              <div style={{width:1,height:32,background:t.border,margin:"0 auto 1rem"}}/>
-              <p style={{color:t.muted,fontSize:"0.85rem",fontWeight:300,marginBottom:"1.25rem",lineHeight:1.6}}>
-                Ta journée n'est pas encore planifiée.
-              </p>
-              <button onClick={()=>open(today)}
-                style={{background:"transparent",border:`1px solid ${t.border}`,borderRadius:"4px",
-                  padding:"0.75rem 1.5rem",cursor:"pointer",color:t.text,
-                  fontSize:"0.75rem",letterSpacing:"0.14em",textTransform:"uppercase",
-                  fontFamily:"'DM Sans',sans-serif",fontWeight:500,transition:"all 0.2s"}}>
-                Planifier maintenant
-              </button>
-            </div>
-          ) : (
-            <div style={{display:"flex",flexDirection:"column",gap:"0.85rem"}}>
-              {td.culte && (
-                <div style={{display:"flex",alignItems:"center",gap:"1rem",
-                  padding:"0.9rem 1rem",background:t.card,borderRadius:"8px",
-                  border:`1px solid ${t.accent}33`}}>
-                  <div style={{width:2,height:28,background:t.accent,borderRadius:1,flexShrink:0}}/>
-                  <div>
-                    <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
-                      color:t.accent,marginBottom:"2px",fontWeight:500}}>Culte</p>
-                    <p style={{fontSize:"0.9rem",fontWeight:400}}>Jour de culte</p>
-                  </div>
-                </div>
-              )}
-              {td.reunion && (
-                <div style={{display:"flex",alignItems:"center",gap:"1rem",
-                  padding:"0.9rem 1rem",background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
-                  <div style={{width:2,height:28,background:t.muted,borderRadius:1,flexShrink:0}}/>
-                  <div style={{flex:1,minWidth:0}}>
-                    <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
-                      color:t.muted,marginBottom:"2px",fontWeight:500}}>Réunion</p>
-                    <p style={{fontSize:"0.9rem",fontWeight:400,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{td.reunion}</p>
-                    {td.lienReunion&&<a href={td.lienReunion} target="_blank" rel="noreferrer"
-                      style={{fontSize:"0.75rem",color:t.accent,textDecoration:"none",fontWeight:500}}>
-                      Rejoindre →
-                    </a>}
-                  </div>
-                </div>
-              )}
-              {td.priere && (
-                <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
-                  background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
-                  <div style={{width:2,minHeight:28,background:t.accent,borderRadius:1,flexShrink:0,opacity:0.7}}/>
-                  <div>
-                    <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
-                      color:t.muted,marginBottom:"4px",fontWeight:500}}>Prière</p>
-                    <p style={{fontSize:"0.9rem",fontWeight:300,lineHeight:1.5}}>{td.priere}</p>
-                  </div>
-                </div>
-              )}
-              {td.verset && (
-                <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
-                  background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
-                  <div style={{width:2,minHeight:28,background:t.accent,borderRadius:1,flexShrink:0,opacity:0.5}}/>
-                  <div>
-                    <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
-                      color:t.muted,marginBottom:"4px",fontWeight:500}}>Méditation</p>
-                    <p style={{fontSize:"0.9rem",fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",lineHeight:1.5}}>{td.verset}</p>
-                  </div>
-                </div>
-              )}
-              {td.enseignement ? (
-                <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
-                  background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
-                  <div style={{width:2,minHeight:28,background:t.accent,borderRadius:1,flexShrink:0,opacity:0.35}}/>
-                  <div>
-                    <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
-                      color:t.muted,marginBottom:"4px",fontWeight:500}}>Enseignement</p>
-                    <p style={{fontSize:"0.9rem",fontWeight:400,marginBottom:"4px"}}>{td.enseignement}</p>
-                    {td.lienEnseignement&&<a href={td.lienEnseignement} target="_blank" rel="noreferrer"
-                      style={{fontSize:"0.75rem",color:t.accent,textDecoration:"none",fontWeight:500}}>
-                      Écouter →
-                    </a>}
-                  </div>
-                </div>
-              ) : (
-                <p style={{fontSize:"0.82rem",color:t.muted,fontWeight:300,padding:"0.25rem 0",fontStyle:"italic"}}>
-                  Aucun enseignement aujourd'hui.
-                </p>
-              )}
-              {td.rappel && (
-                <div style={{display:"flex",gap:"1rem",padding:"0.9rem 1rem",
-                  background:t.card,borderRadius:"8px",border:`1px solid ${t.border}`}}>
-                  <div style={{width:2,minHeight:28,background:t.muted,borderRadius:1,flexShrink:0}}/>
-                  <div>
-                    <p style={{fontSize:"0.62rem",letterSpacing:"0.15em",textTransform:"uppercase",
-                      color:t.muted,marginBottom:"4px",fontWeight:500}}>Note</p>
-                    <p style={{fontSize:"0.9rem",fontWeight:300,lineHeight:1.5}}>{td.rappel}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    )}
-
-    {/* ── PLANIFIER ── */}
-    {page==="planner" && (
-      <div>
-        <div style={{paddingTop:"2rem",paddingBottom:"1.5rem",borderBottom:`1px solid ${t.border}`,marginBottom:"1.5rem"}}>
-          <p style={{fontSize:"0.65rem",letterSpacing:"0.2em",textTransform:"uppercase",color:t.muted,marginBottom:"0.5rem",fontWeight:500}}>
-            Planning
-          </p>
-          <h2 style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:300,fontSize:"2rem",letterSpacing:"0.02em"}}>
-            Mon agenda spirituel
-          </h2>
-        </div>
-
-        {/* Toggle */}
-        <div style={{display:"flex",gap:"1.5rem",marginBottom:"1.25rem",borderBottom:`1px solid ${t.border}`}}>
-          {[["week","Semaine"],["month","Mois"]].map(([v,label])=>(
-            <button key={v} onClick={()=>setView(v)}
-              style={{background:"none",border:"none",cursor:"pointer",padding:"0.6rem 0",
-                fontSize:"0.72rem",letterSpacing:"0.15em",textTransform:"uppercase",fontWeight:500,
-                color:view===v?t.text:t.muted,
-                borderBottom:`2px solid ${view===v?t.accent:"transparent"}`,
-                fontFamily:"'DM Sans',sans-serif",transition:"all 0.2s",marginBottom:"-1px"}}>
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Navigation */}
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"1.25rem"}}>
-          <button onClick={()=>{const d=new Date(cur);d.setDate(d.getDate()-(view==="week"?7:28));setCur(d);}}
-            style={{background:"none",border:"none",cursor:"pointer",color:t.muted,fontSize:"1.2rem",padding:"4px"}}>‹</button>
-          <p style={{fontFamily:"'Cormorant Garamond',serif",fontWeight:400,fontSize:"1rem",letterSpacing:"0.05em"}}>
-            {view==="week"
-              ? `${week[0].getDate()} – ${week[6].getDate()} ${MONTHS_FR[week[6].getMonth()]} ${week[6].getFullYear()}`
-              : `${MONTHS_FR[cur.getMonth()]} ${cur.getFullYear()}`}
-          </p>
-          <button onClick={()=>{const d=new Date(cur);d.setDate(d.getDate()+(view==="week"?7:28));setCur(d);}}
-            style={{background:"none",border:"none",cursor:"pointer",color:t.muted,fontSize:"1.2rem",padding:"4px"}}>›</button>
-        </div>
-
-        {view==="week"
-          ? <WeekView dates={week} plan={plan} today={today} t={t} onPick={open}/>
-          : <MonthView year={cur.getFullYear()} month={cur.getMonth()} plan={plan} today={today} t={t} onPick={open}/>
-        }
-
-        <p style={{textAlign:"center",color:t.muted,fontSize:"0.72rem",letterSpacing:"0.1em",
-          textTransform:"uppercase",marginTop:"1.5rem",fontWeight:500}}>
-          Sélectionne un jour pour planifier
-        </p>
-      </div>
-    )}
-  </div>
-
-  {/* Bottom nav */}
-  <nav style={{position:"fixed",bottom:0,left:0,right:0,background:t.bg,
-    borderTop:`1px solid ${t.border}`,display:"flex",zIndex:100}}>
-    {[["home","Accueil"],["planner","Agenda"]].map(([id,label])=>(
-      <button key={id} onClick={()=>setPage(id)}
-        style={{flex:1,padding:"0.8rem 0.5rem",border:"none",background:"none",cursor:"pointer",
-          display:"flex",flexDirection:"column",alignItems:"center",gap:"3px",
-          fontFamily:"'DM Sans',sans-serif",transition:"color 0.2s",
-          borderTop:`2px solid ${page===id?t.accent:"transparent"}`,
-          color:page===id?t.accent:t.muted}}>
-        <span style={{fontSize:"0.62rem",fontWeight:500,letterSpacing:"0.16em",textTransform:"uppercase"}}>
-          {label}
-        </span>
-      </button>
-    ))}
-  </nav>
-
-  {modal && selDate && (
-    <DayModal date={selDate} data={plan[fmt(selDate)]}
-      onSave={saveDay} onClose={()=>setModal(false)} t={t}/>
-  )}
-</div>
-```
-
-);
-}
+</body>
+</html>
