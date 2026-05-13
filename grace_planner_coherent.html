@@ -1,0 +1,1267 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grace Planner</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+--bg:#090909;
+--card:#151515;
+--text:#f5f2ec;
+--muted:#938b84;
+--accent:#d4b086;
+--line:rgba(255,255,255,.06);
+}
+
+body{
+font-family:Inter,sans-serif;
+background:var(--bg);
+color:var(--text);
+transition:.3s;
+}
+
+body.theme-sand{
+--bg:#f5efe7;
+--card:#fff9f3;
+--text:#241f1b;
+--muted:#7f7368;
+--accent:#b78f65;
+--line:rgba(0,0,0,.06);
+}
+
+body.theme-rose{
+--bg:#f8eef1;
+--card:#fff9fa;
+--text:#2b2325;
+--muted:#8a7b82;
+--accent:#cfa1af;
+--line:rgba(0,0,0,.06);
+}
+
+body.theme-sage{
+--bg:#edf2ec;
+--card:#fbfdf9;
+--text:#222822;
+--muted:#738171;
+--accent:#8ba48d;
+--line:rgba(0,0,0,.06);
+}
+
+.hidden{display:none!important}
+
+.app{
+max-width:430px;
+margin:auto;
+padding:24px 22px 140px;
+min-height:100vh;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:36px;
+}
+
+.logo{
+font-size:11px;
+letter-spacing:5px;
+color:var(--accent);
+}
+
+.theme-btn{
+width:54px;
+height:54px;
+border-radius:50%;
+border:1px solid var(--line);
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+background:rgba(255,255,255,.03);
+}
+
+.hero small{
+display:block;
+font-size:11px;
+letter-spacing:5px;
+color:var(--muted);
+margin-bottom:18px;
+}
+
+.hero h1{
+font-family:"Cormorant Garamond",serif;
+font-size:68px;
+line-height:.92;
+font-weight:500;
+margin-bottom:16px;
+}
+
+.hero p{
+line-height:1.8;
+max-width:320px;
+color:var(--muted);
+}
+
+.card{
+background:rgba(255,255,255,.03);
+border:1px solid var(--line);
+border-radius:34px;
+padding:24px;
+margin-top:18px;
+}
+
+.label{
+font-size:11px;
+letter-spacing:4px;
+color:var(--accent);
+margin-bottom:16px;
+}
+
+.verse{
+font-family:"Cormorant Garamond",serif;
+font-size:28px;
+line-height:1.45;
+margin-bottom:10px;
+}
+
+.reference{
+font-size:14px;
+color:var(--muted);
+}
+
+.task{
+display:flex;
+gap:14px;
+padding:16px 0;
+border-bottom:1px solid var(--line);
+}
+
+.task:last-child{border-bottom:none}
+
+.checkbox{
+width:24px;
+height:24px;
+border-radius:50%;
+border:1px solid var(--accent);
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+flex-shrink:0;
+margin-top:2px;
+}
+
+.checkbox.done{
+background:var(--accent);
+color:white;
+}
+
+.task-title{
+font-size:15px;
+margin-bottom:5px;
+}
+
+.task-sub{
+font-size:13px;
+line-height:1.7;
+color:var(--muted);
+}
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-top:18px;
+}
+
+.stat{
+padding:22px;
+border-radius:28px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.03);
+}
+
+.stat-number{
+font-size:16px;
+font-weight:600;
+line-height:1.7;
+}
+
+.stat-label{
+font-size:13px;
+line-height:1.7;
+color:var(--muted);
+margin-top:10px;
+}
+
+.toggle{
+display:flex;
+padding:6px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.03);
+margin-top:24px;
+}
+
+.toggle button{
+flex:1;
+padding:14px;
+border:none;
+background:transparent;
+border-radius:999px;
+cursor:pointer;
+color:var(--muted);
+}
+
+.toggle button.active{
+background:var(--accent);
+color:white;
+}
+
+.week-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:24px;
+}
+
+.week-card{
+padding:18px;
+border-radius:28px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.03);
+cursor:pointer;
+}
+
+.week-card small{
+font-size:10px;
+letter-spacing:3px;
+color:var(--muted);
+}
+
+.week-card h3{
+font-family:"Cormorant Garamond",serif;
+font-size:38px;
+margin:10px 0;
+}
+
+.month-grid{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:10px;
+margin-top:20px;
+}
+
+.month-day{
+aspect-ratio:1;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:18px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.03);
+cursor:pointer;
+font-size:13px;
+}
+
+textarea,input{
+width:100%;
+padding:16px;
+border-radius:22px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.03);
+outline:none;
+color:var(--text);
+font-family:inherit;
+margin-top:14px;
+}
+
+textarea{
+resize:none;
+min-height:140px;
+}
+
+.button{
+width:100%;
+padding:18px;
+border:none;
+border-radius:22px;
+background:var(--accent);
+color:white;
+font-weight:600;
+cursor:pointer;
+margin-top:18px;
+}
+
+.prayer-theme{
+padding:24px;
+border-radius:30px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.03);
+margin-top:16px;
+}
+
+.prayer-theme h3{
+font-family:"Cormorant Garamond",serif;
+font-size:38px;
+margin-bottom:8px;
+}
+
+.subject{
+padding:16px 0;
+border-top:1px solid var(--line);
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+}
+
+.subject-left{
+display:flex;
+gap:12px;
+align-items:flex-start;
+}
+
+.floating{
+position:fixed;
+right:24px;
+bottom:120px;
+width:64px;
+height:64px;
+border-radius:50%;
+background:var(--accent);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+color:white;
+cursor:pointer;
+z-index:999;
+}
+
+.sheet{
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+background:var(--bg);
+padding:28px;
+border-top-left-radius:40px;
+border-top-right-radius:40px;
+max-height:90vh;
+overflow:auto;
+z-index:9999;
+}
+
+.sheet-head{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.sheet-title{
+font-family:"Cormorant Garamond",serif;
+font-size:42px;
+}
+
+.close{
+font-size:30px;
+cursor:pointer;
+}
+
+.bottom-nav{
+position:fixed;
+left:50%;
+transform:translateX(-50%);
+bottom:18px;
+width:calc(100% - 34px);
+max-width:390px;
+padding:18px;
+border-radius:36px;
+background:#171717ee;
+backdrop-filter:blur(20px);
+display:flex;
+justify-content:space-around;
+z-index:999;
+}
+
+.nav-item{
+text-align:center;
+font-size:10px;
+letter-spacing:2px;
+color:#aaa;
+cursor:pointer;
+}
+
+.nav-item.active{color:var(--accent)}
+
+.nav-icon{
+font-size:18px;
+margin-bottom:8px;
+}
+
+.empty{
+padding:24px 0;
+text-align:center;
+line-height:1.8;
+color:var(--muted);
+}
+
+@media(max-width:390px){
+.hero h1{font-size:56px}
+.week-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="topbar">
+<div class="logo">GRACE PLANNER</div>
+<div class="theme-btn" onclick="cycleTheme()">✦</div>
+</div>
+
+<section id="homeScreen">
+
+<div class="hero">
+<small id="todayDate"></small>
+<h1 id="heroName">Bonjour,<br>Grace</h1>
+<p>Que la paix du Seigneur accompagne chacun de tes pas aujourd’hui.</p>
+</div>
+
+<div class="card">
+<div class="label">PAROLE DU JOUR</div>
+<div class="verse">“Je connais les projets que j’ai formés sur vous.”</div>
+<div class="reference">Jérémie 29:11</div>
+</div>
+
+<div class="card">
+<div class="label">PLANNING DU JOUR</div>
+<div id="todayTasks"></div>
+</div>
+
+<div class="card">
+<div class="label">MA SEMAINE AVEC DIEU ✨</div>
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-number" id="prayerDone">🙏 0 prières</div>
+<div class="stat-label">réalisées cette semaine</div>
+</div>
+
+<div class="stat">
+<div class="stat-number" id="meditationDone">📖 0 méditations</div>
+<div class="stat-label">réalisées cette semaine</div>
+</div>
+
+<div class="stat">
+<div class="stat-number" id="teachingDone">🎧 0 enseignements</div>
+<div class="stat-label">écoutés cette semaine</div>
+</div>
+
+<div class="stat">
+<div class="stat-number" id="fastingDone">🔥 0 jeûnes</div>
+<div class="stat-label">réalisés cette semaine</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+<div class="label">PETITE NOTE</div>
+<textarea id="personalNote" placeholder="Écris ce que tu veux garder dans ton coeur..."></textarea>
+</div>
+
+</section>
+
+<section id="plannerScreen" class="hidden">
+
+<div class="hero">
+<small>PLANNER</small>
+<h1 id="plannerTitle">Ta semaine</h1>
+<p>Prépare tes temps spirituels avec paix et clarté.</p>
+</div>
+
+<div class="toggle">
+<button class="active" id="weekBtn" onclick="showWeek()">Weekly</button>
+<button id="monthBtn" onclick="showMonth()">Monthly</button>
+</div>
+
+<div id="weekView">
+<div class="week-grid" id="weekGrid"></div>
+</div>
+
+<div id="monthView" class="hidden">
+<div class="card">
+<div class="label" id="monthLabel"></div>
+<div class="month-grid" id="monthGrid"></div>
+</div>
+</div>
+
+</section>
+
+<section id="journalScreen" class="hidden">
+
+<div class="hero">
+<small>JOURNAL</small>
+<h1>Ton coeur</h1>
+<p>Écris librement ce que Dieu dépose dans ton esprit.</p>
+</div>
+
+<div class="card">
+<textarea id="journalInput" placeholder="Écris ici..."></textarea>
+<button class="button" onclick="saveJournal()">Enregistrer</button>
+</div>
+
+<div id="journalList"></div>
+
+</section>
+
+<section id="prayerScreen" class="hidden">
+
+<div class="hero">
+<small>PRIÈRES</small>
+<h1>Tes sujets</h1>
+<p>Organise tes espaces de prière personnels.</p>
+</div>
+
+<div id="prayerThemes"></div>
+
+</section>
+
+<section id="settingsScreen" class="hidden">
+
+<div class="hero">
+<small>SETTINGS</small>
+<h1>Préférences</h1>
+<p>Personnalise ton expérience spirituelle.</p>
+</div>
+
+<div class="card">
+<div class="label">PRÉNOM</div>
+<input id="nameInput" placeholder="Ton prénom">
+<button class="button" onclick="saveName()">Sauvegarder</button>
+</div>
+
+<div class="card">
+<div class="label">NOTIFICATIONS</div>
+
+<div style="line-height:2.2;color:var(--muted);">
+🙏 Rappel de prière<br>
+📖 Rappel méditation<br>
+🎧 Rappel enseignement<br>
+🔥 Rappel jeûne<br>
+✨ Encouragement spirituel
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+<div class="floating" id="floatingBtn">+</div>
+
+<div class="sheet hidden" id="plannerSheet">
+
+<div class="sheet-head">
+<div class="sheet-title" id="plannerDateTitle">Jour</div>
+<div class="close" onclick="closeSheet('plannerSheet')">×</div>
+</div>
+
+<input id="plannerPrayer" placeholder="Sujet de prière">
+<input id="plannerMeditation" placeholder="Méditation">
+<input id="plannerTeaching" placeholder="Enseignement">
+<input id="plannerFasting" placeholder="Temps de jeûne">
+<textarea id="plannerNotes" placeholder="Notes"></textarea>
+
+<button class="button" onclick="savePlanner()">Sauvegarder</button>
+
+</div>
+
+<div class="sheet hidden" id="themeSheet">
+
+<div class="sheet-head">
+<div class="sheet-title">Nouveau thème</div>
+<div class="close" onclick="closeSheet('themeSheet')">×</div>
+</div>
+
+<input id="themeInput" placeholder="Famille">
+
+<button class="button" onclick="createTheme()">Créer</button>
+
+</div>
+
+<div class="sheet hidden" id="subjectSheet">
+
+<div class="sheet-head">
+<div class="sheet-title" id="subjectThemeTitle">Sujet</div>
+<div class="close" onclick="closeSheet('subjectSheet')">×</div>
+</div>
+
+<input id="subjectInput" placeholder="Sujet de prière">
+
+<button class="button" onclick="addSubject()">Ajouter</button>
+
+</div>
+
+<nav class="bottom-nav">
+
+<div class="nav-item active" onclick="showScreen('homeScreen',this)">
+<div class="nav-icon">✦</div>HOME
+</div>
+
+<div class="nav-item" onclick="showScreen('plannerScreen',this)">
+<div class="nav-icon">☰</div>PLANNER
+</div>
+
+<div class="nav-item" onclick="showScreen('journalScreen',this)">
+<div class="nav-icon">✎</div>JOURNAL
+</div>
+
+<div class="nav-item" onclick="showScreen('prayerScreen',this)">
+<div class="nav-icon">✞</div>PRIÈRES
+</div>
+
+<div class="nav-item" onclick="showScreen('settingsScreen',this)">
+<div class="nav-icon">⚙</div>SETTINGS
+</div>
+
+</nav>
+
+<script>
+
+const state = JSON.parse(localStorage.getItem('gracePlannerFinal')) || {
+profile:{name:''},
+planner:{},
+journal:[],
+prayers:[],
+settings:{theme:''},
+completed:{}
+};
+
+function save(){
+localStorage.setItem('gracePlannerFinal',JSON.stringify(state));
+}
+
+const screens=['homeScreen','plannerScreen','journalScreen','prayerScreen','settingsScreen'];
+
+function showScreen(id,el){
+
+screens.forEach(s=>{
+document.getElementById(s).classList.add('hidden');
+});
+
+document.getElementById(id).classList.remove('hidden');
+
+document.querySelectorAll('.nav-item').forEach(i=>{
+i.classList.remove('active');
+});
+
+if(el)el.classList.add('active');
+
+updateFloating(id);
+
+}
+
+function updateFloating(id){
+
+const btn=document.getElementById('floatingBtn');
+
+if(id==='plannerScreen'){
+btn.innerHTML='+';
+btn.onclick=()=>openPlanner(new Date().toISOString().split('T')[0]);
+}
+
+else if(id==='prayerScreen'){
+btn.innerHTML='+';
+btn.onclick=()=>openSheet('themeSheet');
+}
+
+else if(id==='journalScreen'){
+btn.innerHTML='✎';
+btn.onclick=()=>document.getElementById('journalInput').focus();
+}
+
+else{
+btn.innerHTML='✦';
+btn.onclick=cycleTheme;
+}
+
+}
+
+const themes=['','theme-sand','theme-rose','theme-sage'];
+let themeIndex=0;
+
+function cycleTheme(){
+
+themeIndex=(themeIndex+1)%themes.length;
+
+document.body.className=themes[themeIndex];
+
+state.settings.theme=themes[themeIndex];
+
+save();
+
+}
+
+function saveName(){
+
+const name=document.getElementById('nameInput').value.trim();
+
+if(!name)return;
+
+state.profile.name=name;
+
+save();
+
+document.getElementById('heroName').innerHTML=`Bonjour,<br>${name}`;
+
+}
+
+function renderDate(){
+
+const now=new Date();
+
+document.getElementById('todayDate').innerText=
+now.toLocaleDateString('fr-FR',{
+weekday:'long',
+day:'numeric',
+month:'long'
+}).toUpperCase();
+
+}
+
+function getMonday(date){
+
+const d=new Date(date);
+
+const day=d.getDay();
+
+const diff=d.getDate()-day+(day===0?-6:1);
+
+return new Date(d.setDate(diff));
+
+}
+
+function renderWeek(){
+
+const grid=document.getElementById('weekGrid');
+
+grid.innerHTML='';
+
+const monday=getMonday(new Date());
+
+for(let i=0;i<7;i++){
+
+const date=new Date(monday);
+
+date.setDate(monday.getDate()+i);
+
+const key=date.toISOString().split('T')[0];
+
+const day=date.toLocaleDateString('fr-FR',{
+weekday:'long'
+}).toUpperCase();
+
+const num=date.getDate();
+
+const data=state.planner[key];
+
+grid.innerHTML+=`
+
+<div class="week-card" onclick="openPlanner('${key}')">
+
+<div>
+
+<small>${day}</small>
+
+<h3>${num}</h3>
+
+</div>
+
+<div style="font-size:13px;color:var(--muted);line-height:1.7;">
+
+${data?.prayer || 'Aucune activité'}
+
+</div>
+
+</div>
+
+`;
+
+}
+
+}
+
+function renderMonth(){
+
+const grid=document.getElementById('monthGrid');
+
+grid.innerHTML='';
+
+const now=new Date();
+
+document.getElementById('monthLabel').innerText=
+now.toLocaleDateString('fr-FR',{
+month:'long',
+year:'numeric'
+}).toUpperCase();
+
+const days=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+
+for(let i=1;i<=days;i++){
+
+const key=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+
+grid.innerHTML+=`
+<div class="month-day" onclick="openPlanner('${key}')">${i}</div>
+`;
+
+}
+
+}
+
+let currentPlanner='';
+
+function openPlanner(key){
+
+currentPlanner=key;
+
+openSheet('plannerSheet');
+
+document.getElementById('plannerDateTitle').innerText=key;
+
+const data=state.planner[key] || {};
+
+document.getElementById('plannerPrayer').value=data.prayer||'';
+document.getElementById('plannerMeditation').value=data.meditation||'';
+document.getElementById('plannerTeaching').value=data.teaching||'';
+document.getElementById('plannerFasting').value=data.fasting||'';
+document.getElementById('plannerNotes').value=data.notes||'';
+
+}
+
+function savePlanner(){
+
+state.planner[currentPlanner]={
+prayer:document.getElementById('plannerPrayer').value,
+meditation:document.getElementById('plannerMeditation').value,
+teaching:document.getElementById('plannerTeaching').value,
+fasting:document.getElementById('plannerFasting').value,
+notes:document.getElementById('plannerNotes').value
+};
+
+save();
+
+closeSheet('plannerSheet');
+
+renderWeek();
+renderToday();
+
+}
+
+function renderToday(){
+
+const container=document.getElementById('todayTasks');
+
+const key=new Date().toISOString().split('T')[0];
+
+const data=state.planner[key];
+
+if(!data){
+
+container.innerHTML='<div class="empty">Aucune activité prévue aujourd’hui 🤍</div>';
+
+return;
+
+}
+
+container.innerHTML='';
+
+const types=[
+['prayer','🙏 Prière'],
+['meditation','📖 Méditation'],
+['teaching','🎧 Enseignement'],
+['fasting','🔥 Jeûne']
+];
+
+types.forEach(type=>{
+
+const value=data[type[0]];
+
+if(value){
+
+const completeKey=`${key}-${type[0]}`;
+
+const completed=state.completed[completeKey];
+
+container.innerHTML+=`
+
+<div class="task">
+
+<div class="checkbox ${completed?'done':''}"
+onclick="toggleTask('${completeKey}',this)">
+${completed?'✓':''}
+</div>
+
+<div>
+
+<div class="task-title">${type[1]}</div>
+
+<div class="task-sub">${value}</div>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+});
+
+}
+
+function toggleTask(key,el){
+
+state.completed[key]=!state.completed[key];
+
+save();
+
+renderToday();
+renderStats();
+
+}
+
+function renderStats(){
+
+let prayer=0;
+let meditation=0;
+let teaching=0;
+let fasting=0;
+
+Object.entries(state.completed).forEach(([key,val])=>{
+
+if(val){
+
+if(key.includes('prayer'))prayer++;
+if(key.includes('meditation'))meditation++;
+if(key.includes('teaching'))teaching++;
+if(key.includes('fasting'))fasting++;
+
+}
+
+});
+
+document.getElementById('prayerDone').innerText=`🙏 ${prayer} prières`;
+document.getElementById('meditationDone').innerText=`📖 ${meditation} méditations`;
+document.getElementById('teachingDone').innerText=`🎧 ${teaching} enseignements`;
+document.getElementById('fastingDone').innerText=`🔥 ${fasting} jeûnes`;
+
+}
+
+function saveJournal(){
+
+const input=document.getElementById('journalInput');
+
+const value=input.value.trim();
+
+if(!value)return;
+
+state.journal.unshift({
+text:value,
+date:new Date().toLocaleDateString('fr-FR')
+});
+
+save();
+
+input.value='';
+
+renderJournal();
+
+}
+
+function renderJournal(){
+
+const container=document.getElementById('journalList');
+
+if(state.journal.length===0){
+
+container.innerHTML='<div class="empty">Ton journal est encore vide ✨</div>';
+
+return;
+
+}
+
+container.innerHTML='';
+
+state.journal.forEach(entry=>{
+
+container.innerHTML+=`
+
+<div class="card">
+
+<div class="label">${entry.date}</div>
+
+<div style="line-height:1.9;">
+${entry.text}
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+function openSheet(id){
+document.getElementById(id).classList.remove('hidden');
+}
+
+function closeSheet(id){
+document.getElementById(id).classList.add('hidden');
+}
+
+function createTheme(){
+
+const input=document.getElementById('themeInput');
+
+const value=input.value.trim();
+
+if(!value)return;
+
+state.prayers.push({
+id:Date.now(),
+name:value,
+subjects:[]
+});
+
+save();
+
+input.value='';
+
+closeSheet('themeSheet');
+
+renderThemes();
+
+}
+
+let currentTheme='';
+
+function openSubject(id,name){
+
+currentTheme=id;
+
+document.getElementById('subjectThemeTitle').innerText=name;
+
+openSheet('subjectSheet');
+
+}
+
+function addSubject(){
+
+const value=document.getElementById('subjectInput').value.trim();
+
+if(!value)return;
+
+const theme=state.prayers.find(t=>t.id===currentTheme);
+
+theme.subjects.push({
+text:value,
+answered:false
+});
+
+save();
+
+document.getElementById('subjectInput').value='';
+
+closeSheet('subjectSheet');
+
+renderThemes();
+
+}
+
+function markAnswered(themeId,index){
+
+state.prayers.find(t=>t.id===themeId)
+.subjects[index]
+.answered=true;
+
+save();
+
+renderThemes();
+
+}
+
+function renderThemes(){
+
+const container=document.getElementById('prayerThemes');
+
+if(state.prayers.length===0){
+
+container.innerHTML='<div class="card"><div class="empty">Aucun thème créé ✨</div></div>';
+
+return;
+
+}
+
+container.innerHTML='';
+
+state.prayers.forEach(theme=>{
+
+let html='';
+
+theme.subjects.forEach((sub,index)=>{
+
+if(!sub.answered){
+
+html+=`
+
+<div class="subject">
+
+<div class="subject-left">
+
+<div>🙏</div>
+
+<div style="line-height:1.7;">
+${sub.text}
+</div>
+
+</div>
+
+<div onclick="markAnswered(${theme.id},${index})" style="cursor:pointer;">
+✨
+</div>
+
+</div>
+
+`;
+
+}
+
+});
+
+container.innerHTML+=`
+
+<div class="prayer-theme">
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+<div>
+
+<h3>${theme.name}</h3>
+
+<div style="color:var(--muted);font-size:14px;">
+${theme.subjects.length} sujet(s)
+</div>
+
+</div>
+
+<div class="theme-btn" onclick="openSubject(${theme.id},'${theme.name}')">
++
+</div>
+
+</div>
+
+${html || '<div class="empty">Aucun sujet</div>'}
+
+</div>
+
+`;
+
+});
+
+}
+
+function showWeek(){
+
+document.getElementById('weekView').classList.remove('hidden');
+document.getElementById('monthView').classList.add('hidden');
+
+document.getElementById('weekBtn').classList.add('active');
+document.getElementById('monthBtn').classList.remove('active');
+
+document.getElementById('plannerTitle').innerText='Ta semaine';
+
+}
+
+function showMonth(){
+
+document.getElementById('monthView').classList.remove('hidden');
+document.getElementById('weekView').classList.add('hidden');
+
+document.getElementById('monthBtn').classList.add('active');
+document.getElementById('weekBtn').classList.remove('active');
+
+document.getElementById('plannerTitle').innerText='Ton mois';
+
+}
+
+function init(){
+
+renderDate();
+
+renderWeek();
+
+renderMonth();
+
+renderToday();
+
+renderStats();
+
+renderJournal();
+
+renderThemes();
+
+updateFloating('homeScreen');
+
+if(state.profile.name){
+
+document.getElementById('heroName').innerHTML=`Bonjour,<br>${state.profile.name}`;
+
+document.getElementById('nameInput').value=state.profile.name;
+
+}
+
+if(state.settings.theme){
+
+document.body.className=state.settings.theme;
+
+themeIndex=themes.indexOf(state.settings.theme);
+
+}
+
+const note=document.getElementById('personalNote');
+
+note.value=localStorage.getItem('grace-note') || '';
+
+note.addEventListener('input',()=>{
+
+localStorage.setItem('grace-note',note.value);
+
+});
+
+}
+
+init();
+
+</script>
+
+</body>
+</html>
