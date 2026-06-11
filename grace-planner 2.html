@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Ruth Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;font-weight:400;transition:background 0.4s,color 0.4s;}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:none;}
+input,textarea{font-family:'DM Sans',sans-serif;border:none;outline:none;background:none;}
+textarea{resize:none;}
+
+/* ── THEMES ── */
+:root{
+  --bg:#F7F4EF;--surface:#FFFFFF;--card:#F0EBE3;--card2:#E8E2D8;
+  --accent:#8B6F47;--accent-soft:#C4A882;--text:#1A1612;--text2:#6B5E52;
+  --muted:#9A8F82;--border:#DDD6CC;--line:#E8E2D8;
+  --sheet:#FFFFFF;--fab:#1A1612;--fab-text:#F7F4EF;
+  --tracker-bg:#F0EBE3;
+}
+[data-theme="rose"]{
+  --bg:#FDF5F3;--surface:#FFFFFF;--card:#F8EDE9;--card2:#F0DDD7;
+  --accent:#B5695A;--accent-soft:#DCA99F;--text:#1E1210;--text2:#6B4A44;
+  --muted:#A08880;--border:#E8D5D0;--line:#F0DDD7;
+  --sheet:#FFFFFF;--fab:#1E1210;--fab-text:#FDF5F3;
+  --tracker-bg:#F8EDE9;
+}
+[data-theme="sauge"]{
+  --bg:#F2F0EB;--surface:#FAFAF7;--card:#E6E4DC;--card2:#D8D6CC;
+  --accent:#5A6E52;--accent-soft:#93A889;--text:#1A1E18;--text2:#566050;
+  --muted:#8A9082;--border:#D4D2C8;--line:#E0DED6;
+  --sheet:#FAFAF7;--fab:#1A1E18;--fab-text:#F2F0EB;
+  --tracker-bg:#E6E4DC;
+}
+[data-theme="dark"]{
+  --bg:#0F0F0F;--surface:#1A1A1A;--card:#222222;--card2:#2A2A2A;
+  --accent:#C9A97A;--accent-soft:#8A6F4A;--text:#F0ECE4;--text2:#B0A898;
+  --muted:#666666;--border:#2E2E2E;--line:#252525;
+  --sheet:#1A1A1A;--fab:#C9A97A;--fab-text:#0F0F0F;
+  --tracker-bg:#1E1E1E;
+}
+[data-theme="nuit"]{
+  --bg:#111828;--surface:#1C2638;--card:#243044;--card2:#2C3A52;
+  --accent:#7EB8C9;--accent-soft:#4A8A9A;--text:#E8F0F8;--text2:#8AA0B8;
+  --muted:#5A7090;--border:#2A3850;--line:#243044;
+  --sheet:#1C2638;--fab:#7EB8C9;--fab-text:#111828;
+  --tracker-bg:#1E2E42;
+}
+
+/* ── LAYOUT ── */
+#app{width:100%;height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--text);overflow:hidden;}
+#screen{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:80px;}
+#screen::-webkit-scrollbar{display:none;}
+
+/* ── NAVBAR ── */
+#navbar{position:fixed;bottom:0;left:0;right:0;height:68px;background:var(--surface);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom,0);z-index:90;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;color:var(--muted);transition:color 0.2s;min-width:60px;}
+.nav-item.active{color:var(--accent);}
+.nav-icon{font-size:1.3rem;line-height:1;}
+.nav-label{font-size:0.58rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;}
+
+/* ── PAGE HEADERS ── */
+.page-header{padding:52px 24px 20px;border-bottom:1px solid var(--line);}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:2rem;letter-spacing:0.02em;margin-bottom:4px;}
+.page-sub{font-size:0.75rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;font-weight:500;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:12px;}
+.card-label{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:6px;}
+.card-value{font-size:0.95rem;color:var(--text);font-weight:400;line-height:1.5;}
+.card-serif{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;line-height:1.6;font-weight:300;}
+
+/* ── DIVIDERS ── */
+.divider{width:100%;height:1px;background:var(--line);margin:16px 0;}
+.divider-v{width:2px;border-radius:2px;background:var(--accent);flex-shrink:0;}
+
+/* ── TRACKER PILLS ── */
+.tracker-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.tracker-pill{background:var(--tracker-bg);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;}
+.tracker-emoji{font-size:1.2rem;}
+.tracker-count{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--accent);}
+.tracker-name{font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+
+/* ── CHECKBOXES ── */
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+.check-row:last-child{border-bottom:none;}
+.checkbox{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all 0.2s;margin-top:1px;}
+.checkbox.done{background:var(--accent);border-color:var(--accent);}
+.checkbox.done::after{content:'✓';color:var(--bg);font-size:0.7rem;font-weight:700;}
+.check-content{flex:1;}
+.check-label{font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:2px;}
+.check-text{font-size:0.9rem;color:var(--text);line-height:1.4;}
+.check-text.striked{text-decoration:line-through;color:var(--muted);}
+
+/* ── PLANNER CALENDAR ── */
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;}
+.cal-day-name{text-align:center;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:4px 0;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;border:1px solid transparent;transition:all 0.15s;gap:2px;padding:2px;}
+.cal-cell:hover{background:var(--card);}
+.cal-cell.today{border-color:var(--accent);background:rgba(139,111,71,0.08);}
+.cal-cell.has-data::after{content:'';width:4px;height:4px;border-radius:50%;background:var(--accent);display:block;}
+.cal-cell.today .cal-num{color:var(--accent);font-weight:600;}
+.cal-cell.other-month .cal-num{color:var(--muted);opacity:0.5;}
+.cal-num{font-family:'Cormorant Garamond',serif;font-size:0.95rem;}
+
+.week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+.week-cell{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 4px;border-radius:10px;border:1px solid var(--line);min-height:72px;background:var(--surface);transition:all 0.15s;}
+.week-cell:hover{border-color:var(--accent-soft);}
+.week-cell.today{border-color:var(--accent);background:rgba(139,111,71,0.06);}
+.week-cell.has-data{border-color:var(--accent-soft);}
+.week-day-name{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.week-day-num{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--text);}
+.week-cell.today .week-day-num{color:var(--accent);}
+.week-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);}
+
+/* ── SHEETS ── */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(2px);}
+.sheet-overlay.open{opacity:1;pointer-events:all;}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--sheet);border-radius:20px 20px 0 0;z-index:201;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.16,1,0.3,1);max-height:90vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,20px);}
+.sheet.open{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:12px auto 0;}
+.sheet-header{padding:16px 20px 12px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;}
+.sheet-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;letter-spacing:0.03em;}
+.sheet-close{color:var(--muted);font-size:1.1rem;padding:4px;}
+.sheet-body{padding:20px;}
+
+/* ── INPUTS ── */
+.field-label{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:500;display:block;margin-bottom:6px;margin-top:16px;}
+.field-label:first-child{margin-top:0;}
+.field-input{width:100%;border-bottom:1px solid var(--border);padding:8px 0;font-size:0.95rem;color:var(--text);background:transparent;}
+.field-input::placeholder{color:var(--muted);}
+.field-input:focus{border-bottom-color:var(--accent);}
+.field-textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;font-size:0.9rem;color:var(--text);background:var(--card);min-height:80px;line-height:1.5;}
+.field-textarea::placeholder{color:var(--muted);}
+.field-textarea:focus{border-color:var(--accent);}
+
+/* ── BUTTONS ── */
+.btn-primary{background:var(--accent);color:var(--bg);border-radius:6px;padding:13px;font-size:0.78rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;width:100%;margin-top:20px;transition:opacity 0.2s;}
+.btn-primary:active{opacity:0.8;}
+.btn-ghost{background:transparent;border:1px solid var(--border);border-radius:6px;padding:10px 16px;font-size:0.75rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);transition:all 0.2s;}
+.btn-ghost:active{opacity:0.7;}
+.btn-danger{color:#D14040;font-size:0.8rem;font-weight:500;padding:8px 0;}
+
+/* ── FAB ── */
+#fab{position:fixed;bottom:84px;right:20px;width:52px;height:52px;border-radius:50%;background:var(--fab);color:var(--fab-text);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:80;transition:all 0.2s;}
+#fab:active{transform:scale(0.93);}
+
+/* ── PRAYER THEME CARD ── */
+.prayer-theme{background:var(--card);border-radius:12px;padding:16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:background 0.15s;}
+.prayer-theme:active{background:var(--card2);}
+.prayer-theme-left{display:flex;align-items:center;gap:12px;}
+.prayer-theme-icon{font-size:1.4rem;}
+.prayer-theme-name{font-size:1rem;font-weight:500;color:var(--text);}
+.prayer-theme-count{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+.prayer-theme-arrow{color:var(--muted);font-size:1rem;}
+
+/* ── PRAYER ITEM ── */
+.prayer-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+.prayer-item:last-child{border-bottom:none;}
+.prayer-status{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all 0.2s;}
+.prayer-status.answered{background:var(--accent);border-color:var(--accent);}
+.prayer-status.answered::after{content:'✨';font-size:0.55rem;}
+.prayer-text{flex:1;font-size:0.9rem;line-height:1.5;color:var(--text);}
+.prayer-date{font-size:0.7rem;color:var(--muted);margin-top:3px;}
+.prayer-actions{display:flex;gap:8px;margin-top:6px;}
+.prayer-action-btn{font-size:0.68rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;font-weight:500;cursor:pointer;}
+.prayer-action-btn.answer{color:var(--accent);}
+
+/* ── JOURNAL ENTRY ── */
+.journal-entry{background:var(--card);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer;transition:background 0.15s;}
+.journal-entry:active{background:var(--card2);}
+.journal-entry-date{font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:6px;}
+.journal-entry-preview{font-size:0.9rem;line-height:1.5;color:var(--text);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.journal-entry-mood{font-size:1.1rem;margin-bottom:6px;}
+
+/* ── MOOD SELECTOR ── */
+.mood-row{display:flex;gap:8px;justify-content:space-between;margin:8px 0;}
+.mood-btn{flex:1;aspect-ratio:1;border-radius:10px;font-size:1.4rem;display:flex;align-items:center;justify-content:center;background:var(--card);border:2px solid transparent;cursor:pointer;transition:all 0.15s;}
+.mood-btn.selected{border-color:var(--accent);background:rgba(139,111,71,0.1);}
+
+/* ── SETTINGS ROWS ── */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);}
+.setting-row:last-child{border-bottom:none;}
+.setting-label{font-size:0.92rem;color:var(--text);}
+.setting-sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+.toggle{width:44px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;transition:background 0.3s;flex-shrink:0;}
+.toggle.on{background:var(--accent);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle.on::after{transform:translateX(18px);}
+
+/* ── THEME SWATCHES ── */
+.theme-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px;}
+.theme-swatch{aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid transparent;transition:all 0.2s;position:relative;overflow:hidden;}
+.theme-swatch.active{border-color:var(--accent);}
+.theme-swatch-inner{width:100%;height:100%;border-radius:8px;}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:40px 20px;}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;opacity:0.5;}
+.empty-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--text);margin-bottom:6px;}
+.empty-sub{font-size:0.82rem;color:var(--muted);line-height:1.5;}
+
+/* ── ONBOARDING ── */
+#onboarding{position:fixed;inset:0;background:var(--bg);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center;}
+.ob-step{display:none;flex-direction:column;align-items:center;width:100%;}
+.ob-step.active{display:flex;animation:ob-in 0.4s ease both;}
+@keyframes ob-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.ob-line{width:1px;height:48px;background:var(--accent);opacity:0.5;margin:0 auto 24px;}
+.ob-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:2.4rem;letter-spacing:0.05em;margin-bottom:8px;}
+.ob-sub{font-size:0.85rem;color:var(--muted);line-height:1.6;margin-bottom:32px;font-weight:300;}
+.ob-input{font-size:1.3rem;font-family:'Cormorant Garamond',serif;border-bottom:1px solid var(--border);padding:8px 0;width:100%;text-align:center;color:var(--text);margin-bottom:32px;background:transparent;}
+.ob-input::placeholder{color:var(--muted);}
+.ob-input:focus{border-bottom-color:var(--accent);}
+
+/* ── SECTION HEADER ── */
+.section-head{padding:20px 24px 12px;display:flex;justify-content:space-between;align-items:baseline;}
+.section-title{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+.section-action{font-size:0.7rem;color:var(--accent);font-weight:500;letter-spacing:0.08em;cursor:pointer;}
+
+/* ── PLANNER NAV ── */
+.planner-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:0 24px 20px;}
+.planner-tab{flex:1;padding:10px 0;text-align:center;font-size:0.7rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
+.planner-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeIn 0.35s ease both;}
+.anim-d1{animation-delay:0.05s;}
+.anim-d2{animation-delay:0.1s;}
+.anim-d3{animation-delay:0.15s;}
+
+/* ── ANSWERED SECTION ── */
+.answered-section{margin-top:20px;padding:14px;background:var(--tracker-bg);border-radius:12px;}
+.answered-title{font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px;}
+.answered-item{font-size:0.85rem;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--line);line-height:1.4;}
+.answered-item:last-child{border-bottom:none;}
+
+/* ── BACK BUTTON ── */
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--accent);font-size:0.8rem;font-weight:500;letter-spacing:0.08em;cursor:pointer;padding:0 24px;margin-top:16px;}
+
+/* ── ENCOURAGEMENT ── */
+.encouragement{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;font-weight:300;color:var(--text2);line-height:1.6;text-align:center;padding:12px 8px;}
+
+/* MISC */
+.badge{display:inline-block;background:var(--accent);color:var(--bg);border-radius:20px;padding:2px 8px;font-size:0.65rem;font-weight:600;letter-spacing:0.06em;}
+.activity-tag{display:inline-flex;align-items:center;gap:4px;background:var(--card2);border-radius:20px;padding:3px 9px;font-size:0.72rem;font-weight:500;color:var(--text2);margin:2px;}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="screen"></div>
+  <nav id="navbar">
+    <div class="nav-item active" data-page="home" onclick="navigate('home')">
+      <span class="nav-icon">☀️</span>
+      <span class="nav-label">Accueil</span>
+    </div>
+    <div class="nav-item" data-page="planner" onclick="navigate('planner')">
+      <span class="nav-icon">📅</span>
+      <span class="nav-label">Agenda</span>
+    </div>
+    <div class="nav-item" data-page="journal" onclick="navigate('journal')">
+      <span class="nav-icon">📓</span>
+      <span class="nav-label">Journal</span>
+    </div>
+    <div class="nav-item" data-page="prayers" onclick="navigate('prayers')">
+      <span class="nav-icon">🙏</span>
+      <span class="nav-label">Prières</span>
+    </div>
+    <div class="nav-item" data-page="settings" onclick="navigate('settings')">
+      <span class="nav-icon">⚙️</span>
+      <span class="nav-label">Réglages</span>
+    </div>
+  </nav>
+  <button id="fab" onclick="fabAction()">+</button>
+</div>
+
+<!-- SHEET OVERLAY -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="sheet" id="mainSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <span class="sheet-title" id="sheetTitle"></span>
+    <button class="sheet-close" onclick="closeSheet()">✕</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<div id="onboarding"></div>
+
+<script>
+// ════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════
+const VERSES = [
+  {ref:"Philippiens 4:13",text:"Je puis tout par celui qui me fortifie."},
+  {ref:"Jérémie 29:11",text:"Je connais les projets que j'ai formés sur vous — projets de paix, pour vous donner un avenir et de l'espérance."},
+  {ref:"Psaumes 23:1",text:"L'Éternel est mon berger : je ne manquerai de rien."},
+  {ref:"Romains 8:28",text:"Toutes choses concourent au bien de ceux qui aiment Dieu."},
+  {ref:"Ésaïe 40:31",text:"Ceux qui se confient en l'Éternel renouvellent leur force. Ils prennent le vol comme les aigles."},
+  {ref:"Matthieu 6:33",text:"Cherchez premièrement le royaume de Dieu et sa justice, et toutes ces choses vous seront données par-dessus."},
+  {ref:"Josué 1:9",text:"Sois fort et courageux. L'Éternel, ton Dieu, est avec toi dans tout ce que tu entreprendras."},
+  {ref:"Lamentations 3:22-23",text:"Les compassions de l'Éternel ne cessent point. Elles se renouvellent chaque matin."},
+  {ref:"Proverbes 3:5-6",text:"Confie-toi en l'Éternel de tout ton cœur, et il aplanira tes sentiers."},
+  {ref:"2 Timothée 1:7",text:"Dieu nous a donné un esprit de force, d'amour et de sagesse."},
+  {ref:"Jean 15:5",text:"Celui qui demeure en moi et en qui je demeure porte beaucoup de fruit."},
+  {ref:"Psaumes 46:1",text:"Dieu est pour nous un refuge et un appui, un secours qui ne manque jamais."},
+];
+
+const ENCOURAGEMENTS_F = [
+  "Sa grâce est suffisante pour toi aujourd'hui.",
+  "Tu es aimée d'un amour éternel.",
+  "Chaque matin est une nouvelle miséricorde.",
+  "Il est proche de toi. Approche-toi de lui.",
+  "Sa paix surpasse tout entendement.",
+  "Laisse-le guider tes pas aujourd'hui.",
+  "Tu es précieuse aux yeux de Dieu.",
+  "Il t'a choisie avant la fondation du monde.",
+];
+const ENCOURAGEMENTS_M = [
+  "Sa grâce est suffisante pour toi aujourd'hui.",
+  "Tu es aimé d'un amour éternel.",
+  "Chaque matin est une nouvelle miséricorde.",
+  "Il est proche de toi. Approche-toi de lui.",
+  "Sa paix surpasse tout entendement.",
+  "Laisse-le guider tes pas aujourd'hui.",
+  "Tu es précieux aux yeux de Dieu.",
+  "Il t'a choisi avant la fondation du monde.",
+];
+
+let state = {
+  profile:{name:"",theme:"sable",genre:"f"},  // "f" ou "m"
+
+  planner:{},      // {dateKey: {priere,verset,enseignement,reunion,jeune,notes}}
+  jeunes:[],       // [{id,label,debut,fin}]  — périodes de jeûne
+  journal:[],      // [{id,date,text,mood}]
+  prayers:{},      // {themeId:{id,name,icon,items:[{id,text,date,answered,answeredDate}]}}
+  settings:{notifPriere:false,notifMeditation:false,notifReunion:false,notifCulte:false,notifEncouragement:false,notifJeune:false},
+  completed:{}     // {dateKey:{priere:bool,verset:bool,enseignement:bool,reunion:bool,jeune:bool}}
+};
+
+let currentPage = 'home';
+let prayerThemeView = null; // id of theme being viewed
+let plannerView = 'week';   // 'week' | 'month'
+let plannerDate = new Date();
+
+// ════════════════════════════════════════
+// STORAGE
+// ════════════════════════════════════════
+function saveState(){
+  try{localStorage.setItem('grace_state', JSON.stringify(state));}catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem('grace_state');
+    if(raw){
+      const saved = JSON.parse(raw);
+      state = {...state, ...saved};
+      if(!state.profile.genre) state.profile.genre='f';
+      if(!Array.isArray(state.jeunes)) state.jeunes=[];
+      // ensure nested
+      state.settings = {...{notifPriere:false,notifMeditation:false,notifReunion:false,notifCulte:false,notifEncouragement:false,notifJeune:false}, ...state.settings};
+    }
+  }catch(e){}
+}
+
+// ════════════════════════════════════════
+// DATE UTILS
+// ════════════════════════════════════════
+function dateKey(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function todayKey(){ return dateKey(new Date()); }
+function todayDate(){ return new Date(); }
+function fmtDateFR(d){
+  const days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const months=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+function fmtShortFR(d){
+  const months=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  return `${d.getDate()} ${months[d.getMonth()]}`;
+}
+function getWeekStart(d){
+  const day = d.getDay();
+  const diff = (day===0)?-6:1-day;
+  const mon = new Date(d);
+  mon.setDate(d.getDate()+diff);
+  mon.setHours(0,0,0,0);
+  return mon;
+}
+function getWeekDays(d){
+  const mon = getWeekStart(d);
+  return Array.from({length:7},(_,i)=>{const x=new Date(mon);x.setDate(mon.getDate()+i);return x;});
+}
+function getMonthDays(year,month){
+  const first = new Date(year,month,1);
+  const last = new Date(year,month+1,0);
+  const cells = [];
+  let startDay = first.getDay();
+  if(startDay===0) startDay=7;
+  for(let i=1;i<startDay;i++){
+    const d=new Date(year,month,1-startDay+i);
+    cells.push({date:d,currentMonth:false});
+  }
+  for(let d=1;d<=last.getDate();d++) cells.push({date:new Date(year,month,d),currentMonth:true});
+  while(cells.length%7!==0){
+    const last2=cells[cells.length-1].date;
+    const next=new Date(last2);next.setDate(last2.getDate()+1);
+    cells.push({date:next,currentMonth:false});
+  }
+  return cells;
+}
+function getVerseOfDay(){
+  const d=new Date();
+  return VERSES[(d.getDate()+d.getMonth()*3)%VERSES.length];
+}
+function getEncouragement(){
+  const d=new Date();
+  const list = state.profile.genre==='m' ? ENCOURAGEMENTS_M : ENCOURAGEMENTS_F;
+  return list[(d.getDate()+d.getMonth())%list.length];
+}
+
+// ════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════
+function navigate(page){
+  currentPage=page;
+  prayerThemeView=null;
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active',el.dataset.page===page);
+  });
+  render();
+}
+
+// ════════════════════════════════════════
+// FAB
+// ════════════════════════════════════════
+function fabAction(){
+  if(currentPage==='home') openThemeSheet();
+  else if(currentPage==='planner'){
+    openPlannerFabSheet();
+  }
+  else if(currentPage==='journal') openJournalWrite(null);
+  else if(currentPage==='prayers'){
+    if(prayerThemeView) openPrayerAddSheet(prayerThemeView);
+    else openPrayerThemeSheet();
+  }
+}
+
+function openPlannerFabSheet(){
+  openSheet('Ajouter',`
+    <div onclick="closeSheet();if(plannerView==='month')openPickDaySheet();else openDaySheet(todayKey());"
+      style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border-radius:10px;cursor:pointer;margin-bottom:10px">
+      <span style="font-size:1.4rem">📋</span>
+      <div>
+        <p style="font-size:0.95rem;font-weight:500;color:var(--text)">Planifier un jour</p>
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:2px">Prière, méditation, enseignement…</p>
+      </div>
+    </div>
+    <div onclick="closeSheet();setTimeout(openJeuneSheet,50);"
+      style="display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border-radius:10px;cursor:pointer">
+      <span style="font-size:1.4rem">🔥</span>
+      <div>
+        <p style="font-size:0.95rem;font-weight:500;color:var(--text)">Période de jeûne</p>
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:2px">Définir du … au …</p>
+      </div>
+    </div>
+  `);
+}
+
+// ════════════════════════════════════════
+// RENDER ROUTER
+// ════════════════════════════════════════
+function render(){
+  const screen = document.getElementById('screen');
+  const fab = document.getElementById('fab');
+  fab.style.display='flex';
+  if(currentPage==='home') renderHome(screen);
+  else if(currentPage==='planner') renderPlanner(screen);
+  else if(currentPage==='journal') renderJournal(screen);
+  else if(currentPage==='prayers') renderPrayers(screen);
+  else if(currentPage==='settings'){renderSettings(screen);fab.style.display='none';}
+}
+
+// ════════════════════════════════════════
+// HOME
+// ════════════════════════════════════════
+function renderHome(screen){
+  const verse=getVerseOfDay();
+  const enc=getEncouragement();
+  const tk=todayKey();
+  const todayPlan=state.planner[tk]||{};
+  const comp=state.completed[tk]||{};
+  const name=state.profile.name||'';
+
+  // tracker counts from completed
+  let countPriere=0,countVerset=0,countEnseignement=0,countJeune=0;
+  const today=new Date();
+  for(let i=0;i<7;i++){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const c=state.completed[dateKey(d)]||{};
+    if(c.priere) countPriere++;
+    if(c.verset) countVerset++;
+    if(c.enseignement) countEnseignement++;
+    if(c.jeune) countJeune++;
+  }
+
+  const hasAnyPlan=todayPlan.priere||todayPlan.verset||todayPlan.enseignement||todayPlan.reunion||todayPlan.jeune;
+
+  screen.innerHTML=`
+  <div class="anim" style="padding:52px 24px 0">
+    <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:6px">${fmtDateFR(todayDate())}</p>
+    <h1 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:2.6rem;line-height:1.05;letter-spacing:-0.01em">Bonjour,<br><em style="font-style:italic;font-weight:400">${name}</em></h1>
+  </div>
+
+  <div class="anim anim-d1" style="padding:20px 24px 0">
+    <div class="divider"></div>
+    <p style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:10px">Parole du jour</p>
+    <p class="card-serif">"${verse.text}"</p>
+    <p style="font-size:0.78rem;color:var(--muted);font-weight:500;margin-top:8px;letter-spacing:0.06em">— ${verse.ref}</p>
+    <p class="encouragement" style="margin-top:14px">${enc}</p>
+    <div class="divider"></div>
+  </div>
+
+  <div class="anim anim-d2" style="padding:0 24px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+      <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:500">Aujourd'hui</p>
+      <span style="font-size:0.7rem;color:var(--accent);font-weight:500;cursor:pointer" onclick="openDaySheet('${tk}')">+ Modifier</span>
+    </div>
+    ${hasAnyPlan ? `<div id="today-plan">${renderTodayPlan(todayPlan,comp,tk)}</div>` : `
+      <div class="empty-state" style="padding:24px 0">
+        <div class="empty-icon">🌅</div>
+        <p class="empty-title">Ta journée t'attend</p>
+        <p class="empty-sub">Planifie ta journée spirituelle pour commencer.</p>
+        <button class="btn-ghost" style="margin-top:14px" onclick="openDaySheet('${tk}')">Planifier aujourd'hui</button>
+      </div>
+    `}
+    <div class="divider"></div>
+  </div>
+
+  <div class="anim anim-d3" style="padding:0 24px 20px">
+    <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:12px">Ma semaine avec Dieu ✨</p>
+    <div class="tracker-grid">
+      <div class="tracker-pill">
+        <span class="tracker-emoji">🙏</span>
+        <span class="tracker-count">${countPriere}</span>
+        <span class="tracker-name">Prières</span>
+      </div>
+      <div class="tracker-pill">
+        <span class="tracker-emoji">📖</span>
+        <span class="tracker-count">${countVerset}</span>
+        <span class="tracker-name">Méditations</span>
+      </div>
+      <div class="tracker-pill">
+        <span class="tracker-emoji">🎧</span>
+        <span class="tracker-count">${countEnseignement}</span>
+        <span class="tracker-name">Enseignements</span>
+      </div>
+      <div class="tracker-pill">
+        <span class="tracker-emoji">🔥</span>
+        <span class="tracker-count">${countJeune}</span>
+        <span class="tracker-name">Jeûnes</span>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+function renderTodayPlan(plan,comp,tk){
+  const items=[
+    {key:'priere',label:'Prière',emoji:'🙏',value:plan.priere},
+    {key:'verset',label:'Méditation',emoji:'📖',value:plan.verset,serif:true},
+    {key:'enseignement',label:'Enseignement',emoji:'🎧',value:plan.enseignement},
+    {key:'reunion',label:'Réunion',emoji:'📹',value:plan.reunion},
+    {key:'jeune',label:'Jeûne',emoji:'🔥',value:plan.jeune},
+  ].filter(i=>i.value);
+
+  if(!items.length) return '<p style="color:var(--muted);font-size:0.85rem;font-style:italic">Rien de planifié.</p>';
+
+  return items.map(item=>`
+    <div class="check-row">
+      <div class="checkbox ${comp[item.key]?'done':''}" onclick="toggleComplete('${tk}','${item.key}')"></div>
+      <div class="check-content">
+        <p class="check-label">${item.emoji} ${item.label}</p>
+        <p class="check-text ${comp[item.key]?'striked':''} ${item.serif?'card-serif':''}">${escHtml(item.value)}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleComplete(tk,key){
+  if(!state.completed[tk]) state.completed[tk]={};
+  state.completed[tk][key]=!state.completed[tk][key];
+  saveState();
+  render();
+}
+
+// ════════════════════════════════════════
+// PLANNER
+// ════════════════════════════════════════
+function renderPlanner(screen){
+  const today=new Date();
+  screen.innerHTML=`
+  <div class="page-header">
+    <p class="page-sub">Ruth Planner</p>
+    <h2 class="page-title">Mon agenda</h2>
+  </div>
+  <div class="planner-tabs" style="margin-top:16px">
+    <div class="planner-tab ${plannerView==='week'?'active':''}" onclick="switchPlannerView('week')">Semaine</div>
+    <div class="planner-tab ${plannerView==='month'?'active':''}" onclick="switchPlannerView('month')">Mois</div>
+  </div>
+  <div style="padding:0 24px 20px" id="planner-content">
+    ${plannerView==='week'?renderWeekPlanner(today):renderMonthPlanner()}
+  </div>
+  `;
+}
+
+function switchPlannerView(v){
+  plannerView=v;
+  renderPlanner(document.getElementById('screen'));
+}
+
+function renderWeekPlanner(ref){
+  const days=getWeekDays(ref||plannerDate);
+  const names=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const today=todayKey();
+  return renderJeunesBannerWeek(ref||plannerDate) + `
+  <div class="week-row">
+    ${days.map((d,i)=>{
+      const k=dateKey(d);
+      const hasData=!!state.planner[k]&&Object.values(state.planner[k]).some(v=>v);
+      const isToday=k===today;
+      return `<div class="week-cell ${isToday?'today':''} ${hasData?'has-data':''}" onclick="openDaySheet('${k}')">
+        <span class="week-day-name">${names[i]}</span>
+        <span class="week-day-num">${d.getDate()}</span>
+        ${hasData?`<span class="week-dot"></span>`:''}
+      </div>`;
+    }).join('')}
+  </div>
+  <div style="margin-top:20px">
+    ${renderWeekSummary(days)}
+  </div>
+  `;
+}
+
+function renderWeekSummary(days){
+  const items=[];
+  days.forEach(d=>{
+    const k=dateKey(d);
+    const p=state.planner[k];
+    if(p&&Object.values(p).some(v=>v)){
+      const names=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+      const dayIdx=(d.getDay()+6)%7;
+      items.push(`<div style="margin-bottom:12px">
+        <p style="font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:6px">${names[dayIdx]} ${d.getDate()}</p>
+        ${['priere','verset','enseignement','reunion','jeune','notes'].filter(key=>p[key]).map(key=>{
+          const icons={priere:'🙏',verset:'📖',enseignement:'🎧',reunion:'📹',jeune:'🔥',notes:'📝'};
+          return `<span class="activity-tag">${icons[key]} ${escHtml(p[key]).slice(0,24)}${p[key].length>24?'…':''}</span>`;
+        }).join('')}
+      </div>`);
+    }
+  });
+  if(!items.length) return `<div class="empty-state" style="padding:16px 0"><div class="empty-icon">📋</div><p class="empty-title">Semaine vierge</p><p class="empty-sub">Clique sur un jour pour planifier.</p></div>`;
+  return items.join('');
+}
+
+function renderMonthPlanner(){
+  const year=plannerDate.getFullYear(), month=plannerDate.getMonth();
+  const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const DAYS=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const today=todayKey();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const FIELD_ICONS={priere:'🙏',verset:'📖',enseignement:'🎧',reunion:'📹',jeune:'🔥',notes:'📝'};
+  const FIELD_LABELS={priere:'Prière',verset:'Méditation',enseignement:'Enseignement',reunion:'Réunion',jeune:'Jeûne',notes:'Note'};
+
+  // Collect all planned days this month
+  const plannedDays=[];
+  for(let d=1;d<=daysInMonth;d++){
+    const date=new Date(year,month,d);
+    const k=dateKey(date);
+    const p=state.planner[k];
+    if(p&&Object.values(p).some(v=>v)) plannedDays.push({date,k,p});
+  }
+
+  const navHtml=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+    <button style="color:var(--muted);font-size:1.3rem;padding:4px 8px;line-height:1" onclick="monthNav(-1)">‹</button>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;letter-spacing:0.05em">${MONTHS[month]} ${year}</p>
+    <button style="color:var(--muted);font-size:1.3rem;padding:4px 8px;line-height:1" onclick="monthNav(1)">›</button>
+  </div>`;
+
+  if(!plannedDays.length){
+    return navHtml+`
+    <div class="empty-state" style="padding:24px 0">
+      <div class="empty-icon">🗓️</div>
+      <p class="empty-title">Mois vierge</p>
+      <p class="empty-sub">Passe en vue Semaine et clique sur un jour pour commencer à planifier.</p>
+    </div>`;
+  }
+
+  const agendaItems=plannedDays.map(({date,k,p})=>{
+    const isToday=k===today;
+    const fields=Object.entries(FIELD_ICONS)
+      .filter(([key])=>p[key])
+      .map(([key,icon])=>`
+        <div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);align-items:flex-start">
+          <span style="font-size:0.9rem;flex-shrink:0;margin-top:1px">${icon}</span>
+          <div>
+            <p style="font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:2px">${FIELD_LABELS[key]}</p>
+            <p style="font-size:0.88rem;color:var(--text);line-height:1.45;${key==='verset'?'font-family:\'Cormorant Garamond\',serif;font-style:italic;font-size:0.95rem':''}">${escHtml(p[key])}</p>
+          </div>
+        </div>
+      `).join('');
+
+    return `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-family:'Cormorant Garamond',serif;font-size:${isToday?'1.6rem':'1.35rem'};font-weight:600;color:${isToday?'var(--accent)':'var(--text)'};line-height:1">${date.getDate()}</span>
+          <span style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:${isToday?'var(--accent)':'var(--muted)'};font-weight:500">${DAYS[date.getDay()]}${isToday?' · Aujourd\'hui':''}</span>
+        </div>
+        <button onclick="openDaySheet('${k}')" style="font-size:0.68rem;color:var(--accent);font-weight:500;letter-spacing:0.1em;text-transform:uppercase">Modifier</button>
+      </div>
+      <div style="background:var(--card);border-radius:10px;padding:2px 12px 0">
+        ${fields}
+      </div>
+    </div>`;
+  }).join('');
+
+  return navHtml + renderJeunesBanner(year,month) + agendaItems;
+}
+
+function renderJeunesBanner(year,month){
+  if(!state.jeunes||!state.jeunes.length) return '';
+  // Find jeunes overlapping this month
+  const monthStart=new Date(year,month,1);
+  const monthEnd=new Date(year,month+1,0);
+  const relevant=state.jeunes.filter(j=>{
+    const d=new Date(j.debut), f=new Date(j.fin);
+    return d<=monthEnd && f>=monthStart;
+  });
+  if(!relevant.length) return '';
+  return `<div style="margin-bottom:16px">
+    ${relevant.map(j=>`
+      <div style="background:var(--card);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;border-left:3px solid var(--accent)">
+        <div>
+          <p style="font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:3px">🔥 Période de jeûne</p>
+          <p style="font-size:0.9rem;color:var(--text);font-weight:500">${escHtml(j.label)}</p>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:2px">${fmtDateBanner(j.debut)} → ${fmtDateBanner(j.fin)}</p>
+        </div>
+        <button onclick="deleteJeune('${j.id}')" style="color:var(--muted);font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:500">✕</button>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function monthNav(dir){
+  plannerDate=new Date(plannerDate.getFullYear(),plannerDate.getMonth()+dir,1);
+  renderPlanner(document.getElementById('screen'));
+}
+
+function fmtDateBanner(iso){
+  const d=new Date(iso+'T00:00:00');
+  const months=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function renderJeunesBannerWeek(ref){
+  if(!state.jeunes||!state.jeunes.length) return '';
+  const days=getWeekDays(ref);
+  const wStart=days[0], wEnd=days[6];
+  const relevant=state.jeunes.filter(j=>{
+    const d=new Date(j.debut+'T00:00:00'), f=new Date(j.fin+'T00:00:00');
+    return d<=wEnd && f>=wStart;
+  });
+  if(!relevant.length) return '';
+  return `<div style="margin-bottom:14px">
+    ${relevant.map(j=>`
+      <div style="background:var(--card);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;border-left:3px solid var(--accent)">
+        <span style="font-size:1rem">🔥</span>
+        <div style="flex:1">
+          <p style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);font-weight:500">Jeûne en cours</p>
+          <p style="font-size:0.85rem;color:var(--text)">${escHtml(j.label)} · ${fmtDateBanner(j.debut)} → ${fmtDateBanner(j.fin)}</p>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function deleteJeune(id){
+  state.jeunes=state.jeunes.filter(j=>j.id!==id);
+  saveState();
+  renderPlanner(document.getElementById('screen'));
+}
+
+function openJeuneSheet(){
+  openSheet('Période de jeûne',`
+    <p style="font-size:0.82rem;color:var(--muted);font-weight:300;margin-bottom:16px;line-height:1.5">Définis une période de jeûne qui s'affichera dans ton agenda.</p>
+    <span class="field-label">Nom du jeûne</span>
+    <input class="field-input" id="f-jeune-label" placeholder="Ex: Jeûne de Daniel, Jeûne partiel..."/>
+    <span class="field-label">Date de début</span>
+    <input class="field-input" id="f-jeune-debut" type="date"/>
+    <span class="field-label">Date de fin</span>
+    <input class="field-input" id="f-jeune-fin" type="date"/>
+    <button class="btn-primary" onclick="saveJeune()">Enregistrer la période</button>
+    ${state.jeunes&&state.jeunes.length?`
+      <div style="margin-top:20px">
+        <p style="font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:10px">Périodes enregistrées</p>
+        ${state.jeunes.map(j=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)">
+            <div>
+              <p style="font-size:0.88rem;color:var(--text)">${escHtml(j.label)}</p>
+              <p style="font-size:0.72rem;color:var(--muted);margin-top:2px">${fmtDateBanner(j.debut)} → ${fmtDateBanner(j.fin)}</p>
+            </div>
+            <button onclick="deleteJeune('${j.id}');closeSheet();setTimeout(()=>openJeuneSheet(),50)" style="color:var(--muted);font-size:0.75rem;padding:4px 8px">✕</button>
+          </div>
+        `).join('')}
+      </div>
+    `:''}
+  `);
+  // Set default dates to today
+  const today=new Date().toISOString().split('T')[0];
+  setTimeout(()=>{
+    const s=document.getElementById('f-jeune-debut');
+    const e=document.getElementById('f-jeune-fin');
+    if(s&&!s.value) s.value=today;
+    if(e&&!e.value) e.value=today;
+  },50);
+}
+
+function saveJeune(){
+  const label=document.getElementById('f-jeune-label')?.value?.trim();
+  const debut=document.getElementById('f-jeune-debut')?.value;
+  const fin=document.getElementById('f-jeune-fin')?.value;
+  if(!label||!debut||!fin) return;
+  if(fin<debut){alert('La date de fin doit être après la date de début.');return;}
+  if(!Array.isArray(state.jeunes)) state.jeunes=[];
+  state.jeunes.push({id:uid(),label,debut,fin});
+  saveState();
+  closeSheet();
+  renderPlanner(document.getElementById('screen'));
+}
+
+function openPickDaySheet(){
+  const year=plannerDate.getFullYear(), month=plannerDate.getMonth();
+  const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const today=todayKey();
+  const DAYS_SHORT=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+
+  const cells = [];
+  for(let d=1;d<=daysInMonth;d++){
+    const date=new Date(year,month,d);
+    const k=dateKey(date);
+    const hasData=!!state.planner[k]&&Object.values(state.planner[k]).some(v=>v);
+    const isToday=k===today;
+    cells.push({date,k,hasData,isToday,dayName:DAYS_SHORT[date.getDay()]});
+  }
+
+  openSheet('Quel jour planifier ?',`
+    <p style="font-size:0.82rem;color:var(--muted);font-weight:300;margin-bottom:16px">${MONTHS[month]} ${year}</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${cells.map(({date,k,hasData,isToday,dayName})=>`
+        <button onclick="closeSheet();openDaySheet('${k}')"
+          style="border-radius:10px;padding:10px 4px;background:${isToday?'var(--accent)':'var(--card)'};
+          border:1.5px solid ${hasData&&!isToday?'var(--accent-soft)':'transparent'};
+          display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;transition:all 0.15s">
+          <span style="font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;color:${isToday?'var(--bg)':'var(--muted)'};font-weight:500">${dayName}</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:${isToday?'var(--bg)':'var(--text)'}">${date.getDate()}</span>
+          ${hasData&&!isToday?`<span style="width:4px;height:4px;border-radius:50%;background:var(--accent);display:block"></span>`:'<span style="width:4px;height:4px;display:block"></span>'}
+        </button>
+      `).join('')}
+    </div>
+  `);
+}
+
+// ════════════════════════════════════════
+// JOURNAL
+// ════════════════════════════════════════
+function renderJournal(screen){
+  const entries=state.journal.slice().sort((a,b)=>b.date.localeCompare(a.date));
+  screen.innerHTML=`
+  <div class="page-header">
+    <p class="page-sub">Ruth Planner</p>
+    <h2 class="page-title">Journal</h2>
+  </div>
+  <div style="padding:0 24px 20px">
+    ${!entries.length?`
+      <div class="empty-state" style="margin-top:20px">
+        <div class="empty-icon">✍️</div>
+        <p class="empty-title">Ton journal t'attend</p>
+        <p class="empty-sub">Écris tes pensées, prières et révélations.</p>
+      </div>
+    `:entries.map(e=>`
+      <div class="journal-entry" onclick="openJournalRead('${e.id}')">
+        ${e.mood?`<div class="journal-entry-mood">${e.mood}</div>`:''}
+        <p class="journal-entry-date">${e.date}</p>
+        <p class="journal-entry-preview">${escHtml(e.text)}</p>
+      </div>
+    `).join('')}
+  </div>
+  `;
+}
+
+// ════════════════════════════════════════
+// PRAYERS
+// ════════════════════════════════════════
+function renderPrayers(screen){
+  if(prayerThemeView){
+    renderPrayerTheme(screen,prayerThemeView);
+    return;
+  }
+  const themes=Object.values(state.prayers);
+  screen.innerHTML=`
+  <div class="page-header">
+    <p class="page-sub">Ruth Planner</p>
+    <h2 class="page-title">Prières</h2>
+  </div>
+  <div style="padding:0 24px 20px">
+    ${!themes.length?`
+      <div class="empty-state" style="margin-top:20px">
+        <div class="empty-icon">🙏</div>
+        <p class="empty-title">Tes intentions de prière</p>
+        <p class="empty-sub">Crée un thème pour organiser tes prières par catégorie.</p>
+      </div>
+    `:themes.map(t=>{
+      const active=(t.items||[]).filter(i=>!i.answered).length;
+      const answered=(t.items||[]).filter(i=>i.answered).length;
+      return `<div class="prayer-theme" onclick="viewPrayerTheme('${t.id}')">
+        <div class="prayer-theme-left">
+          <span class="prayer-theme-icon">${t.icon||'🙏'}</span>
+          <div>
+            <p class="prayer-theme-name">${escHtml(t.name)}</p>
+            <p class="prayer-theme-count">${active} actif${active!==1?'s':''} · ${answered} exaucé${answered!==1?'s':''}</p>
+          </div>
+        </div>
+        <span class="prayer-theme-arrow">›</span>
+      </div>`;
+    }).join('')}
+  </div>
+  `;
+}
+
+function renderPrayerTheme(screen,themeId){
+  const theme=state.prayers[themeId];
+  if(!theme){prayerThemeView=null;renderPrayers(screen);return;}
+  const active=(theme.items||[]).filter(i=>!i.answered);
+  const answered=(theme.items||[]).filter(i=>i.answered);
+
+  screen.innerHTML=`
+  <div class="page-header">
+    <button class="back-btn" onclick="prayerThemeView=null;render()" style="padding:0;margin-bottom:8px">‹ Prières</button>
+    <p class="page-sub">${theme.icon||'🙏'} Thème</p>
+    <h2 class="page-title">${escHtml(theme.name)}</h2>
+  </div>
+  <div style="padding:0 24px 20px">
+    ${!active.length?`<div class="empty-state" style="padding:20px 0"><div class="empty-icon">🌿</div><p class="empty-sub">Ajoute un sujet de prière.</p></div>`:
+      active.map(item=>`
+        <div class="prayer-item">
+          <div class="prayer-status ${item.answered?'answered':''}" onclick="markAnswered('${themeId}','${item.id}')"></div>
+          <div style="flex:1">
+            <p class="prayer-text">${escHtml(item.text)}</p>
+            <p class="prayer-date">${item.date}</p>
+            <div class="prayer-actions">
+              <span class="prayer-action-btn answer" onclick="markAnswered('${themeId}','${item.id}')">✨ Exaucée</span>
+              <span style="color:var(--border);margin:0 6px">·</span>
+              <span class="prayer-action-btn" onclick="deletePrayer('${themeId}','${item.id}')">Supprimer</span>
+            </div>
+          </div>
+        </div>
+      `).join('')
+    }
+    ${answered.length?`
+      <div class="answered-section">
+        <p class="answered-title">Dieu a répondu ici ✨</p>
+        ${answered.map(item=>`
+          <p class="answered-item">✨ ${escHtml(item.text)} <span style="color:var(--muted);font-size:0.72rem">(${item.answeredDate||''})</span></p>
+        `).join('')}
+      </div>
+    `:''}
+  </div>
+  `;
+}
+
+// ════════════════════════════════════════
+// SETTINGS
+// ════════════════════════════════════════
+function renderSettings(screen){
+  const s=state.settings;
+  const themeColors={
+    sable:{bg:'#F7F4EF',ac:'#8B6F47'},
+    rose:{bg:'#FDF5F3',ac:'#B5695A'},
+    sauge:{bg:'#F2F0EB',ac:'#5A6E52'},
+    dark:{bg:'#0F0F0F',ac:'#C9A97A'},
+    nuit:{bg:'#111828',ac:'#7EB8C9'}
+  };
+
+  screen.innerHTML=`
+  <div class="page-header">
+    <p class="page-sub">Ruth Planner</p>
+    <h2 class="page-title">Réglages</h2>
+  </div>
+  <div style="padding:0 24px 20px">
+
+    <p style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:12px;margin-top:4px">Profil</p>
+    <div class="setting-row">
+      <div>
+        <p class="setting-label">Prénom</p>
+        <p class="setting-sub">${state.profile.name||'Non défini'}</p>
+      </div>
+      <button class="btn-ghost" style="padding:8px 14px" onclick="openNameSheet()">Modifier</button>
+    </div>
+    <div class="setting-row">
+      <div>
+        <p class="setting-label">Genre</p>
+        <p class="setting-sub">${state.profile.genre==='m'?'Homme':'Femme'}</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="setGenre('f')" style="padding:7px 14px;border-radius:6px;font-size:0.72rem;font-weight:500;letter-spacing:0.08em;border:1px solid ${state.profile.genre!=='m'?'var(--accent)':'var(--border)'};color:${state.profile.genre!=='m'?'var(--accent)':'var(--muted)'};font-family:'DM Sans',sans-serif">Femme</button>
+        <button onclick="setGenre('m')" style="padding:7px 14px;border-radius:6px;font-size:0.72rem;font-weight:500;letter-spacing:0.08em;border:1px solid ${state.profile.genre==='m'?'var(--accent)':'var(--border)'};color:${state.profile.genre==='m'?'var(--accent)':'var(--muted)'};font-family:'DM Sans',sans-serif">Homme</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:12px">Ambiance</p>
+    <div class="theme-grid">
+      ${Object.entries(themeColors).map(([key,{bg,ac}])=>`
+        <div class="theme-swatch ${state.profile.theme===key?'active':''}" onclick="setTheme('${key}')" title="${key}">
+          <div class="theme-swatch-inner" style="background:${bg};display:flex;align-items:center;justify-content:center">
+            <div style="width:14px;height:14px;border-radius:50%;background:${ac}"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <p style="font-size:0.72rem;color:var(--muted);text-align:center;margin-top:8px;letter-spacing:0.1em;text-transform:capitalize">${state.profile.theme||'sable'}</p>
+
+    <div class="divider"></div>
+    <p style="font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:4px">Rappels</p>
+    ${[
+      {key:'notifPriere',label:'Rappel de prière',sub:'Chaque matin'},
+      {key:'notifMeditation',label:'Rappel de méditation',sub:'Moment de lectio'},
+      {key:'notifReunion',label:'Rappel de réunion',sub:'Avant chaque réunion'},
+      {key:'notifCulte',label:'Rappel de culte',sub:'Jours de culte'},
+      {key:'notifEncouragement',label:'Encouragement spirituel',sub:'Parole du jour'},
+      {key:'notifJeune',label:'Rappel de jeûne',sub:'Pendant les périodes de jeûne'},
+    ].map(({key,label,sub})=>`
+      <div class="setting-row">
+        <div>
+          <p class="setting-label">${label}</p>
+          <p class="setting-sub">${sub}</p>
+        </div>
+        <div class="toggle ${s[key]?'on':''}" onclick="toggleSetting('${key}')"></div>
+      </div>
+    `).join('')}
+
+    <div class="divider"></div>
+    <button class="btn-danger" onclick="resetApp()" style="width:100%;text-align:center;padding:12px;margin-top:4px">
+      Réinitialiser l'application
+    </button>
+  </div>
+  `;
+}
+
+// ════════════════════════════════════════
+// SHEETS
+// ════════════════════════════════════════
+function openSheet(title,body){
+  document.getElementById('sheetTitle').textContent=title;
+  document.getElementById('sheetBody').innerHTML=body;
+  document.getElementById('sheetOverlay').classList.add('open');
+  document.getElementById('mainSheet').classList.add('open');
+}
+function closeSheet(){
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.getElementById('mainSheet').classList.remove('open');
+}
+
+// ── DAY SHEET ──
+function openDaySheet(k){
+  const p=state.planner[k]||{};
+  const d=k.split('-');
+  const date=new Date(d[0],d[1]-1,d[2]);
+  const months=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  const dnames=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const title=`${dnames[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+
+  openSheet(title,`
+    <span class="field-label">🙏 Sujet de prière</span>
+    <input class="field-input" id="f-priere" placeholder="Pour quoi intercéder ?" value="${escAttr(p.priere||'')}"/>
+    <span class="field-label">📖 Passage à méditer</span>
+    <input class="field-input" id="f-verset" placeholder="Référence ou extrait..." value="${escAttr(p.verset||'')}"/>
+    <span class="field-label">🎧 Enseignement</span>
+    <input class="field-input" id="f-enseignement" placeholder="Titre — Prédicateur" value="${escAttr(p.enseignement||'')}"/>
+    <span class="field-label">📹 Réunion / Zoom</span>
+    <input class="field-input" id="f-reunion" placeholder="Nom, heure, lien..." value="${escAttr(p.reunion||'')}"/>
+    <span class="field-label">🔥 Jeûne</span>
+    <input class="field-input" id="f-jeune" placeholder="Type de jeûne, durée..." value="${escAttr(p.jeune||'')}"/>
+    <span class="field-label">📝 Notes & objectifs</span>
+    <textarea class="field-textarea" id="f-notes" placeholder="Tes pensées, objectifs spirituels...">${escHtml(p.notes||'')}</textarea>
+    <button class="btn-primary" onclick="saveDaySheet('${k}')">Enregistrer</button>
+    ${p.priere||p.verset||p.enseignement||p.reunion||p.jeune?`<button class="btn-danger" style="width:100%;text-align:center;margin-top:8px" onclick="clearDaySheet('${k}')">Effacer ce jour</button>`:''}
+  `);
+}
+
+function saveDaySheet(k){
+  const get=id=>document.getElementById(id)?.value?.trim()||'';
+  state.planner[k]={
+    priere:get('f-priere'),
+    verset:get('f-verset'),
+    enseignement:get('f-enseignement'),
+    reunion:get('f-reunion'),
+    jeune:get('f-jeune'),
+    notes:get('f-notes'),
+  };
+  saveState();
+  closeSheet();
+  render();
+}
+
+function clearDaySheet(k){
+  delete state.planner[k];
+  delete state.completed[k];
+  saveState();
+  closeSheet();
+  render();
+}
+
+// ── THEME SHEET (FAB on Home) ──
+function openThemeSheet(){
+  const themeColors={sable:{bg:'#F7F4EF',ac:'#8B6F47'},rose:{bg:'#FDF5F3',ac:'#B5695A'},sauge:{bg:'#F2F0EB',ac:'#5A6E52'},dark:{bg:'#0F0F0F',ac:'#C9A97A'},nuit:{bg:'#111828',ac:'#7EB8C9'}};
+  openSheet('Ambiance',`
+    <p style="font-size:0.85rem;color:var(--text2);margin-bottom:16px;font-weight:300;line-height:1.5">Choisis l'ambiance qui t'inspire aujourd'hui.</p>
+    <div class="theme-grid" style="grid-template-columns:repeat(5,1fr)">
+      ${Object.entries(themeColors).map(([key,{bg,ac}])=>`
+        <div onclick="setTheme('${key}');closeSheet()" style="aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid ${state.profile.theme===key?ac:'var(--border)'};overflow:hidden">
+          <div style="width:100%;height:100%;background:${bg};display:flex;align-items:center;justify-content:center">
+            <div style="width:16px;height:16px;border-radius:50%;background:${ac}"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <p style="font-size:0.72rem;color:var(--muted);text-align:center;margin-top:10px;text-transform:capitalize;letter-spacing:0.1em">${state.profile.theme}</p>
+  `);
+}
+
+// ── NAME SHEET ──
+function openNameSheet(){
+  openSheet('Mon prénom',`
+    <p style="font-size:0.85rem;color:var(--text2);margin-bottom:16px;font-weight:300">Comment veux-tu être appelé(e) ?</p>
+    <input class="field-input" id="f-name" placeholder="Ton prénom..." value="${escAttr(state.profile.name||'')}"/>
+    <button class="btn-primary" onclick="saveName()">Enregistrer</button>
+  `);
+}
+function saveName(){
+  const v=document.getElementById('f-name')?.value?.trim();
+  if(v){state.profile.name=v;saveState();closeSheet();render();}
+}
+
+// ── JOURNAL WRITE ──
+function openJournalWrite(id){
+  const entry=id?state.journal.find(e=>e.id===id):null;
+  const moods=['😊','🙏','😔','😌','🔥','💙','😢','✨'];
+  let selectedMood=entry?.mood||'';
+
+  openSheet(id?'Modifier':'Écrire',`
+    <span class="field-label">Humeur</span>
+    <div class="mood-row">
+      ${moods.map(m=>`<div class="mood-btn ${selectedMood===m?'selected':''}" id="mood-${m}" onclick="selectMood('${m}')">${m}</div>`).join('')}
+    </div>
+    <span class="field-label">Ma pensée du jour</span>
+    <textarea class="field-textarea" id="f-journal" placeholder="Écris librement..." style="min-height:160px">${escHtml(entry?.text||'')}</textarea>
+    <button class="btn-primary" onclick="saveJournal('${id||''}')">Enregistrer</button>
+    ${id?`<button class="btn-danger" style="width:100%;text-align:center;margin-top:8px" onclick="deleteJournal('${id}')">Supprimer</button>`:''}
+  `);
+}
+
+function selectMood(m){
+  document.querySelectorAll('.mood-btn').forEach(el=>el.classList.remove('selected'));
+  const btn=document.getElementById('mood-'+m);
+  if(btn) btn.classList.toggle('selected');
+}
+
+function saveJournal(id){
+  const text=document.getElementById('f-journal')?.value?.trim();
+  if(!text) return;
+  const mood=[...document.querySelectorAll('.mood-btn.selected')].map(el=>el.textContent)[0]||'';
+  const now=new Date();
+  const months=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  const dateStr=`${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+  if(id){
+    const idx=state.journal.findIndex(e=>e.id===id);
+    if(idx>=0){state.journal[idx].text=text;state.journal[idx].mood=mood;}
+  } else {
+    state.journal.unshift({id:uid(),date:dateStr,text,mood});
+  }
+  saveState();closeSheet();render();
+}
+
+function openJournalRead(id){
+  const entry=state.journal.find(e=>e.id===id);
+  if(!entry) return;
+  openSheet(entry.date,`
+    ${entry.mood?`<p style="font-size:1.5rem;margin-bottom:12px">${entry.mood}</p>`:''}
+    <p style="font-size:0.95rem;line-height:1.7;color:var(--text);white-space:pre-wrap;font-weight:300">${escHtml(entry.text)}</p>
+    <div class="divider"></div>
+    <button class="btn-ghost" onclick="openJournalWrite('${id}');closeSheet()" style="width:100%">Modifier</button>
+    <button class="btn-danger" style="width:100%;text-align:center;margin-top:8px" onclick="deleteJournal('${id}')">Supprimer</button>
+  `);
+}
+
+function deleteJournal(id){
+  state.journal=state.journal.filter(e=>e.id!==id);
+  saveState();closeSheet();render();
+}
+
+// ── PRAYER THEME SHEET ──
+function openPrayerThemeSheet(){
+  const icons=['🙏','👨‍👩‍👧','💼','⛪','🌍','💙','🏥','🎓','🏠','✝️'];
+  openSheet('Nouveau thème',`
+    <span class="field-label">Nom du thème</span>
+    <input class="field-input" id="f-theme-name" placeholder="Ex: Famille, Travail, Église..."/>
+    <span class="field-label">Icône</span>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+      ${icons.map(ic=>`<div style="width:40px;height:40px;border-radius:8px;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.3rem;cursor:pointer;border:2px solid transparent" id="ico-${ic}" onclick="selectIcon('${ic}')">${ic}</div>`).join('')}
+    </div>
+    <button class="btn-primary" onclick="savePrayerTheme()">Créer le thème</button>
+  `);
+}
+
+function selectIcon(ic){
+  document.querySelectorAll('[id^="ico-"]').forEach(el=>el.style.borderColor='transparent');
+  const el=document.getElementById('ico-'+ic);
+  if(el) el.style.borderColor='var(--accent)';
+}
+
+function savePrayerTheme(){
+  const name=document.getElementById('f-theme-name')?.value?.trim();
+  if(!name) return;
+  const iconEl=[...document.querySelectorAll('[id^="ico-"]')].find(el=>el.style.borderColor&&!el.style.borderColor.includes('transparent'));
+  const icon=iconEl?iconEl.textContent:'🙏';
+  const id=uid();
+  state.prayers[id]={id,name,icon,items:[]};
+  saveState();closeSheet();render();
+}
+
+// ── PRAYER ADD ──
+function openPrayerAddSheet(themeId){
+  openSheet('Nouveau sujet',`
+    <span class="field-label">Sujet de prière</span>
+    <textarea class="field-textarea" id="f-prayer" placeholder="Décris ton sujet de prière..." style="min-height:100px"></textarea>
+    <button class="btn-primary" onclick="savePrayer('${themeId}')">Ajouter</button>
+  `);
+}
+
+function savePrayer(themeId){
+  const text=document.getElementById('f-prayer')?.value?.trim();
+  if(!text) return;
+  const now=new Date();
+  const months=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  const date=`${now.getDate()} ${months[now.getMonth()]}`;
+  if(!state.prayers[themeId]) return;
+  if(!state.prayers[themeId].items) state.prayers[themeId].items=[];
+  state.prayers[themeId].items.push({id:uid(),text,date,answered:false});
+  saveState();closeSheet();render();
+}
+
+function markAnswered(themeId,itemId){
+  const theme=state.prayers[themeId];
+  if(!theme) return;
+  const item=theme.items.find(i=>i.id===itemId);
+  if(!item) return;
+  item.answered=true;
+  const now=new Date();
+  const months=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  item.answeredDate=`${now.getDate()} ${months[now.getMonth()]}`;
+  saveState();render();
+}
+
+function deletePrayer(themeId,itemId){
+  if(!state.prayers[themeId]) return;
+  state.prayers[themeId].items=state.prayers[themeId].items.filter(i=>i.id!==itemId);
+  saveState();render();
+}
+
+function viewPrayerTheme(id){
+  prayerThemeView=id;
+  render();
+}
+
+// ════════════════════════════════════════
+// SETTINGS ACTIONS
+// ════════════════════════════════════════
+function setGenre(g){
+  state.profile.genre=g;
+  saveState();
+  renderSettings(document.getElementById('screen'));
+  render();
+}
+
+function setTheme(t){
+  state.profile.theme=t;
+  document.documentElement.setAttribute('data-theme',t==='sable'?'':t);
+  saveState();
+  if(document.getElementById('screen').querySelector('.page-title')) render();
+  else render();
+}
+
+function toggleSetting(key){
+  state.settings[key]=!state.settings[key];
+  saveState();
+  renderSettings(document.getElementById('screen'));
+}
+
+function resetApp(){
+  if(confirm('Réinitialiser toutes les données ?')){
+    localStorage.removeItem('grace_state');
+    location.reload();
+  }
+}
+
+// ════════════════════════════════════════
+// ONBOARDING
+// ════════════════════════════════════════
+function showOnboarding(){
+  const ob=document.getElementById('onboarding');
+  const themeColors={sable:'#8B6F47',rose:'#B5695A',sauge:'#5A6E52',dark:'#C9A97A',nuit:'#7EB8C9'};
+  const themeBgs={sable:'#F7F4EF',rose:'#FDF5F3',sauge:'#F2F0EB',dark:'#0F0F0F',nuit:'#111828'};
+  const themeNames={sable:'Sable',rose:'Rose',sauge:'Sauge',dark:'Sombre',nuit:'Nuit'};
+  let obStep=0;
+  let obName='';
+  let obGenre='f';
+  let obTheme='sable';
+
+  function renderOb(){
+    ob.innerHTML='';
+    const wrap=document.createElement('div');
+    wrap.className='ob-step active';
+
+    if(obStep===0){
+      wrap.innerHTML=`
+        <div class="ob-line"></div>
+        <h1 class="ob-title">Ruth<br>Planner</h1>
+        <p class="ob-sub">Un espace pour cultiver ta vie spirituelle avec paix, clarté et élégance.</p>
+        <button class="btn-primary" style="max-width:280px;width:100%" id="ob-btn-0">Commencer</button>
+      `;
+      ob.appendChild(wrap);
+      document.getElementById('ob-btn-0').onclick=()=>{obStep=1;renderOb();};
+
+    } else if(obStep===1){
+      wrap.innerHTML=`
+        <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:32px">01 — Prénom</p>
+        <h2 class="ob-title" style="font-size:2rem">Quel est<br>ton prénom ?</h2>
+        <p class="ob-sub">Pour personnaliser ton espace.</p>
+        <input class="ob-input" id="ob-name" placeholder="Ton prénom..." autocomplete="given-name"/>
+        <button class="btn-primary" style="max-width:280px;width:100%" id="ob-btn-1">Continuer</button>
+      `;
+      ob.appendChild(wrap);
+      const inp=document.getElementById('ob-name');
+      inp.value=obName;
+      inp.focus();
+      inp.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('ob-btn-1').click();});
+      document.getElementById('ob-btn-1').onclick=()=>{
+        const v=document.getElementById('ob-name').value.trim();
+        if(!v) return;
+        obName=v;
+        obStep=2;renderOb();
+      };
+
+    } else if(obStep===2){
+      wrap.innerHTML=`
+        <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:32px">02 — Genre</p>
+        <h2 class="ob-title" style="font-size:2rem">Tu es…</h2>
+        <p class="ob-sub">Pour adapter les accords dans l'application.</p>
+        <div style="display:flex;gap:12px;margin-bottom:32px;width:100%;max-width:280px">
+          <div id="ob-g-f" onclick="obSetGenre('f')" style="flex:1;padding:18px;border-radius:12px;cursor:pointer;text-align:center;border:2px solid ${obGenre==='f'?'var(--accent)':'var(--border)'};background:var(--card);transition:all 0.2s">
+            <p style="font-size:1.6rem;margin-bottom:6px">👩</p>
+            <p style="font-size:0.82rem;font-weight:500;color:var(--text)">Une femme</p>
+          </div>
+          <div id="ob-g-m" onclick="obSetGenre('m')" style="flex:1;padding:18px;border-radius:12px;cursor:pointer;text-align:center;border:2px solid ${obGenre==='m'?'var(--accent)':'var(--border)'};background:var(--card);transition:all 0.2s">
+            <p style="font-size:1.6rem;margin-bottom:6px">👨</p>
+            <p style="font-size:0.82rem;font-weight:500;color:var(--text)">Un homme</p>
+          </div>
+        </div>
+        <button class="btn-primary" style="max-width:280px;width:100%" id="ob-btn-2">Continuer</button>
+      `;
+      ob.appendChild(wrap);
+      document.getElementById('ob-btn-2').onclick=()=>{obStep=3;renderOb();};
+
+    } else if(obStep===3){
+      wrap.innerHTML=`
+        <p style="font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:32px">03 — Ambiance</p>
+        <h2 class="ob-title" style="font-size:2rem">Choisis ton<br>ambiance</h2>
+        <p class="ob-sub">Tu pourras la changer dans les réglages.</p>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;width:100%;max-width:280px">
+          ${Object.entries(themeColors).map(([key,ac])=>`
+            <div id="ob-t-${key}" style="aspect-ratio:1;border-radius:10px;cursor:pointer;border:2px solid ${obTheme===key?ac:'var(--border)'};overflow:hidden;transition:all 0.2s">
+              <div style="width:100%;height:100%;background:${themeBgs[key]};display:flex;align-items:center;justify-content:center">
+                <div style="width:14px;height:14px;border-radius:50%;background:${ac}"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <p id="ob-theme-name" style="font-size:0.72rem;color:var(--muted);text-align:center;margin-bottom:28px;letter-spacing:0.12em;text-transform:capitalize">${themeNames[obTheme]}</p>
+        <button class="btn-primary" style="max-width:280px;width:100%" id="ob-btn-3">Créer mon espace ✨</button>
+      `;
+      ob.appendChild(wrap);
+      Object.keys(themeColors).forEach(key=>{
+        document.getElementById('ob-t-'+key).onclick=()=>{
+          obTheme=key;
+          document.documentElement.setAttribute('data-theme',key==='sable'?'':key);
+          Object.entries(themeColors).forEach(([k,ac])=>{
+            const el=document.getElementById('ob-t-'+k);
+            if(el) el.style.borderColor=k===key?ac:'var(--border)';
+          });
+          const nm=document.getElementById('ob-theme-name');
+          if(nm) nm.textContent=themeNames[key];
+        };
+      });
+      document.getElementById('ob-btn-3').onclick=()=>{
+        state.profile.name=obName;
+        state.profile.genre=obGenre;
+        state.profile.theme=obTheme;
+        saveState();
+        const styleEl=document.createElement('style');
+        styleEl.textContent='@keyframes ob-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-12px)}}';
+        document.head.appendChild(styleEl);
+        ob.style.animation='ob-out 0.4s ease forwards';
+        ob.addEventListener('animationend',()=>{ob.style.display='none';render();},{once:true});
+      };
+    }
+  }
+
+  window.obSetGenre=function(g){
+    obGenre=g;
+    ['f','m'].forEach(x=>{
+      const el=document.getElementById('ob-g-'+x);
+      if(el) el.style.borderColor=x===g?'var(--accent)':'var(--border)';
+    });
+  };
+
+  renderOb();
+}
+
+// ════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escAttr(s){ return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+loadState();
+const savedTheme=state.profile.theme||'sable';
+if(savedTheme!=='sable') document.documentElement.setAttribute('data-theme',savedTheme);
+
+const isFirstLaunch=!state.profile.name;
+if(isFirstLaunch){
+  showOnboarding();
+} else {
+  document.getElementById('onboarding').style.display='none';
+}
+render();
+</script>
+</body>
+</html>
